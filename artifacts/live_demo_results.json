@@ -1,0 +1,61 @@
+{
+  "verified_at": "2026-10-15T23:37:16.520091+00:00",
+  "runs": [
+    {
+      "scenario": "baseline",
+      "run_id": "ea7dfad4-9925-4f97-a7aa-e77bf1f39edf",
+      "directory": "artifacts/runs/baseline-duke-demo-2026-10-15",
+      "model": {
+        "provider": "Duke AI Gateway",
+        "model": "GPT 4.1",
+        "endpoint": "https://litellm.oit.duke.edu/v1",
+        "mode": "live_model",
+        "temperature": 0,
+        "reported_model": "GPT 4.1"
+      },
+      "rule": "R6",
+      "rating": null,
+      "priority": "Insufficient evidence",
+      "elapsed_seconds": 9.688,
+      "model_turns": 3,
+      "tool_executions": 4,
+      "external_evidence_modes": {
+        "THREAT-CNA": "live",
+        "THREAT-COMPONENT": "live",
+        "THREAT-KEV": "live"
+      },
+      "technical_demonstration_passed": true,
+      "human_review": "pending",
+      "credential_scan": "no configured credential values detected"
+    },
+    {
+      "scenario": "positive",
+      "run_id": "e3a890a3-d6fd-4704-be01-e8beb6fc79e5",
+      "directory": "artifacts/runs/positive-duke-demo-2026-10-15",
+      "model": {
+        "provider": "Duke AI Gateway",
+        "model": "GPT 4.1",
+        "endpoint": "https://litellm.oit.duke.edu/v1",
+        "mode": "live_model",
+        "temperature": 0,
+        "reported_model": "GPT 4.1"
+      },
+      "rule": "R1",
+      "rating": "High",
+      "priority": "Critical",
+      "elapsed_seconds": 10.112,
+      "model_turns": 3,
+      "tool_executions": 4,
+      "external_evidence_modes": {
+        "THREAT-CNA": "live",
+        "THREAT-COMPONENT": "live",
+        "THREAT-KEV": "live"
+      },
+      "technical_demonstration_passed": true,
+      "human_review": "pending",
+      "credential_scan": "no configured credential values detected"
+    }
+  ],
+  "human_review": "pending",
+  "recording": "not created"
+}

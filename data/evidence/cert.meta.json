@@ -1,0 +1,8 @@
+{
+  "source": "https://cert.europa.eu/publications/security-advisories/2024-018/",
+  "retrieved_at": "2026-10-13T03:52:00.184907+00:00",
+  "source_sha256": "35716ec0395c27fdd25dc5f7150703975d7126a3e68b8ee1c5b45ade46d9df47",
+  "retrieval_method": "HTTPS download; public authoritative source",
+  "source_mode": "live_at_acquisition",
+  "saved_sha256": "35716ec0395c27fdd25dc5f7150703975d7126a3e68b8ee1c5b45ade46d9df47"
+}

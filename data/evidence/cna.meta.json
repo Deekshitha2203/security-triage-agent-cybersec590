@@ -1,0 +1,8 @@
+{
+  "source": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2024/21xxx/CVE-2024-21762.json",
+  "retrieved_at": "2026-10-13T03:52:00.184186+00:00",
+  "source_sha256": "1b38e10fb9c1c445e0da4a3560a068c5eb995d2c31ccb46b901784eafbd9bab4",
+  "retrieval_method": "HTTPS download; public authoritative source",
+  "source_mode": "live_at_acquisition",
+  "saved_sha256": "1b38e10fb9c1c445e0da4a3560a068c5eb995d2c31ccb46b901784eafbd9bab4"
+}

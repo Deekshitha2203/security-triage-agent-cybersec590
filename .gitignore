@@ -1,0 +1,13 @@
+.env
+.env.*
+!.env.example
+*.secret
+*secrets.local*
+Recorded Future*API Key*.pdf
+tmp/
+.DS_Store
+__pycache__/
+*.py[cod]
+.venv/
+dist/
+artifacts/runs/private-*/

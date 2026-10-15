@@ -1,0 +1,23 @@
+{
+  "verified_at": "2026-10-15T23:28:47.778248+00:00",
+  "self_contained_folder": "security-triage-agent",
+  "independent_temporary_copy_runs": [
+    {
+      "scenario": "baseline",
+      "rule": "R6",
+      "rating": null,
+      "priority": "Insufficient evidence",
+      "passed": true
+    },
+    {
+      "scenario": "positive",
+      "rule": "R1",
+      "rating": "High",
+      "priority": "Critical",
+      "passed": true
+    }
+  ],
+  "automated_tests_after_move": 29,
+  "original_course_folder_not_required": true,
+  "course_api_key_pdf_excluded": "[REDACTED]"
+}

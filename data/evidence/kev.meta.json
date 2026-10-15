@@ -1,0 +1,11 @@
+{
+  "source": "https://raw.githubusercontent.com/cisagov/kev-data/main/known_exploited_vulnerabilities.json",
+  "retrieved_at": "2026-10-13T03:52:00.185895+00:00",
+  "source_sha256": "fb1621beec7db19d99c1f919dede3d4cc01ad88acd16f79f1592929c4826dfee",
+  "retrieval_method": "HTTPS download; public authoritative source",
+  "source_mode": "live_at_acquisition",
+  "original_locator": "/vulnerabilities/663",
+  "saved_excerpt": true,
+  "excerpt_scope": "Only CVE-2024-21762; do not use this excerpt for other CVEs",
+  "saved_sha256": "21b56d598ddaa1ea45a2c6c51bafbc2f6019002b2981683dc89068d8c0579052"
+}
