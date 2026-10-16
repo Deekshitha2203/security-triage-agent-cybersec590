@@ -192,22 +192,29 @@ class Tools:
                 source = "kev" if name == "lookup_kev" else arguments["source"]
                 raw, meta, mode, attempts = self.source(source)
                 if source == "kev":
-                    # Persist only this CVE's public entry, not unrelated catalog text.
+                    # Preserve the fetched catalog; return only the selected CVE to the model.
                     catalog = json.loads(raw)
                     selected = [(i, v) for i, v in enumerate(catalog["vulnerabilities"]) if v["cveID"] == CVE]
                     meta = {**meta, "original_locator": meta.get("original_locator") or (f"/vulnerabilities/{selected[0][0]}" if selected else "/vulnerabilities"),
                             "source_sha256": meta.get("source_sha256", digest(raw))}
-                    if mode == "live":
-                        excerpt = {k: v for k, v in catalog.items() if k != "vulnerabilities"}
-                        excerpt["vulnerabilities"] = [v for _, v in selected]
-                        raw = (json.dumps(excerpt, indent=2) + "\n").encode()
+                    
                 artifact_path = self.output / "evidence" / SOURCE_FILES[source]
                 artifact_path.parent.mkdir(parents=True, exist_ok=True)
                 # Public payloads contain no provider credentials. Block any known secret before saving.
-                from .common import redact
-                clean_raw = redact(raw.decode()).encode()
-                if clean_raw != raw:
+                import os
+                from .common import SECRET_ENV
+
+                text = raw.decode("utf-8")
+                contains_secret = any(
+                    os.environ.get(key) and os.environ[key] in text
+                    for key in SECRET_ENV
+                )
+                contains_key = re.search(
+                    r"\bsk-[A-Za-z0-9_-]{12,}\b", text
+                )
+                if contains_secret or contains_key:
                     raise SafeError("credential_in_source_payload")
+                
                 artifact_path.write_bytes(raw)
                 data = normalize(source, raw, meta, mode, "evidence/" + SOURCE_FILES[source])
                 result["attempts"] = attempts

@@ -173,23 +173,56 @@ class WorkflowTests(unittest.TestCase):
         self.assertEqual(len(result["attempts"]), 2)
         self.assertNotIn("data", result)
 
-    def test_live_kev_saves_only_selected_entry_with_original_hash(self):
+    def test_live_kev_saves_full_catalog_with_original_hash(self):
         from triage.common import digest
+
         catalog = read_json(ROOT / "data/evidence/kev.json")
-        catalog["vulnerabilities"].insert(0, {"cveID": "CVE-OTHER", "shortDescription": "Unrelated catalog prose about Bearer authentication."})
+        catalog["vulnerabilities"].insert(
+            0,
+            {
+                "cveID": "CVE-OTHER",
+                "shortDescription": "Unrelated public vulnerability description."
+            }
+        )
+        catalog["count"] = len(catalog["vulnerabilities"])
         raw = json.dumps(catalog).encode()
-        tools = Tools(read_json(ROOT / "data/environment/positive.json"), Budget(self.config), self.output, "live")
-        call = {"id": "live-kev", "function": {"name": "lookup_kev", "arguments": {"cve_id": "CVE-2024-21762"}}}
+
+        tools = Tools(
+            read_json(ROOT / "data/environment/positive.json"),
+            Budget(self.config),
+            self.output,
+            "live"
+        )
+        call = {
+            "id": "live-kev",
+            "function": {
+                "name": "lookup_kev",
+                "arguments": {"cve_id": "CVE-2024-21762"}
+            }
+        }
+
         with patch("triage.tools.http", return_value=raw):
             result = tools.execute(call)
-        self.assertEqual(result["status"], "ok")
-        e = result["data"]["evidence"][0]
-        self.assertEqual(e["source_mode"], "live")
-        self.assertEqual(e["source_sha256"], digest(raw))
-        self.assertEqual(e["locator"], "/vulnerabilities/1")
-        saved = read_json(self.output / "evidence/kev.json")
-        self.assertEqual(len(saved["vulnerabilities"]), 1)
-        self.assertNotIn("Unrelated", json.dumps(saved))
+
+        self.assertEqual(result["status"], "ok", result.get("error_code"))
+
+        evidence = result["data"]["evidence"][0]
+        self.assertEqual(evidence["source_mode"], "live")
+        self.assertEqual(evidence["source_sha256"], digest(raw))
+        self.assertEqual(evidence["saved_sha256"], digest(raw))
+
+        saved_path = self.output / "evidence/kev.json"
+        self.assertEqual(saved_path.read_bytes(), raw)
+
+        saved = read_json(saved_path)
+        self.assertEqual(saved, catalog)
+
+        index = next(
+            i for i, entry in enumerate(saved["vulnerabilities"])
+            if entry["cveID"] == "CVE-2024-21762"
+        )
+        self.assertEqual(evidence["locator"], f"/vulnerabilities/{index}")
+        self.assertNotIn("Unrelated public", json.dumps(result["data"]))
 
     def test_model_synthesis_cannot_invent_claims_or_change_rating(self):
         assessment, _ = self.execute()
