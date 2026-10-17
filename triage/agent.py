@@ -1,4 +1,5 @@
 """Bounded model/tool loop, checked synthesis, and complete-run artifacts."""
+# Think of agent.py as the person coordinating a security investigation.
 from __future__ import annotations
 
 import json
@@ -25,6 +26,8 @@ All local records are simulated. Never imply local compromise based solely on a 
 
 
 def code_manifest():
+    ## Fingerprint the Python files so a saved run can be tied to the exact code
+    # used to produce it, even when no Git commit is available.
     paths = []
     for folder in ("triage", "scripts", "tests"):
         paths.extend((ROOT / folder).rglob("*.py"))
@@ -33,6 +36,8 @@ def code_manifest():
 
 
 def report(assessment):
+    # Format the existing assessment as Markdown for human review. This only
+    # presents the decision and evidence; it does not calculate a new rating.
     d = assessment
     lines = ["# Security triage assessment", "", f"**Asset:** {d['asset_id']}  ", f"**Threat:** {d['threat_id']}  ",
              f"**Scope:** {d['assessment_scope']}  ",
@@ -69,6 +74,9 @@ def report(assessment):
 
 
 def run(snapshot_path, output, config=None, provider="duke", evidence_mode="auto", controlled_failure=None, model=None):
+    # Coordinate one assessment: gather evidence through model-selected tools,
+    # apply the policy in code, validate the model's synthesis, and save the run.
+    # A supplied model lets tests exercise this workflow without a live service.
     config = config or read_json(ROOT / "config/agent.json")
     snapshot = read_json(snapshot_path)
     output = Path(output)
@@ -90,6 +98,8 @@ def run(snapshot_path, output, config=None, provider="duke", evidence_mode="auto
     try:
         live_provider = model or (ReplayModel(config) if provider == "replay" else DukeModel(config))
         required = {"lookup_environment", "lookup_vulnerability:cna", "lookup_vulnerability:cert", "lookup_kev"}
+        # Track attempts separately from successes: an unavailable source must
+        # remain an evidence gap rather than cause endless requests.
         attempted = set()
         call_ids = set()
         while True:
@@ -127,6 +137,8 @@ def run(snapshot_path, output, config=None, provider="duke", evidence_mode="auto
                 except (ValueError, TypeError, AttributeError):
                     pass
                 message = {"role": "tool", "tool_call_id": call["id"], "content": json.dumps(result)}
+                # Return each result with its request ID so the model can match
+                # the evidence or error to the tool call that produced it.
                 messages.append(message)
                 transcript.append(message)
                 if tools.invalid > 1:
@@ -134,11 +146,14 @@ def run(snapshot_path, output, config=None, provider="duke", evidence_mode="auto
                 if result.get("error_code") in {"scope_mismatch", "tool_budget_exhausted", "run_deadline_exhausted", "environment_scope_or_mode_mismatch", "invalid_environment_schema", "environment_evidence_missing", "environment_evidence_mode_mismatch"}:
                     raise SafeError(result["error_code"])
         assessment = build(tools, snapshot)
+        # The host has computed the decision. The model now selects supported
+        # claims and actions; it cannot change the rating or invent citations.
         packet = {"decision": {k: assessment[k] for k in ("policy_rule", "rating", "priority")},
                   "claims": assessment["claims"], "actions": assessment["recommended_actions"]}
         messages.append({"role": "user", "content": "Return only JSON with policy_rule, rating, priority, claim_ids and action_ids. Match the host's decision exactly. Select supported claim IDs including C-POLICY and C-GAPS when present, and all action IDs. Do not add prose or invent facts."})
         transcript.append(messages[-1])
         for attempt in range(2):
+            # Allow one correction if the model's final JSON fails validation.
             messages.append({"role": "user", "content": json.dumps(packet)})
             transcript.append(messages[-1])
             budget.use_model()
@@ -181,6 +196,8 @@ def run(snapshot_path, output, config=None, provider="duke", evidence_mode="auto
         "real_model_used": model_meta["mode"] == "live_model",
         "human_evidence_review": assessment["human_review"]["status"] == "accepted"
     }
+    # Keep technical completion and actual human review separate so automated
+    # checks cannot stand in for the group's required evidence review.
     checklist = {"checks": checks, "complete_run_technical_requirements_met": all(v for k, v in checks.items() if k != "human_evidence_review"),
                  "submission_demo_complete": all(checks.values()), "note": "Replay and pending human review cannot be reported as a completed submission demonstration."}
     manifest = {"run_id": run_id, "created_at": now(), "python": platform.python_version(), "model": model_meta,
