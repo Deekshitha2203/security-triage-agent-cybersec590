@@ -1,0 +1,394 @@
+{
+  "threat_id": "CVE-2024-21762",
+  "asset_id": "N02",
+  "assessed_at": "2026-10-19T21:00:59.352887+00:00",
+  "policy_version": "2.0",
+  "policy_rule": "R6",
+  "rating": null,
+  "priority": "Insufficient evidence",
+  "status": "insufficient_evidence",
+  "rationale": "Missing decisive evidence: version_affected, ssl_vpn_enabled, attack_path, internet_reachable.",
+  "snapshot_id": "northbridge-docx-v1",
+  "scenario": "baseline",
+  "assessment_scope": "N02 cohort; individual gateway versions and configurations are not supplied",
+  "applicability": "unknown",
+  "policy_inputs": {
+    "product_match": {
+      "value": true,
+      "evidence_ids": [
+        "ENV-ASSET",
+        "THREAT-CNA"
+      ]
+    },
+    "version_affected": {
+      "value": null,
+      "evidence_ids": [
+        "ENV-UNKNOWN",
+        "THREAT-CNA"
+      ]
+    },
+    "ssl_vpn_enabled": {
+      "value": null,
+      "evidence_ids": [
+        "ENV-ASSET",
+        "ENV-NETWORK",
+        "THREAT-COMPONENT"
+      ]
+    },
+    "attack_path": {
+      "value": null,
+      "evidence_ids": [
+        "ENV-NETWORK",
+        "S02",
+        "THREAT-COMPONENT"
+      ]
+    },
+    "internet_reachable": {
+      "value": null,
+      "evidence_ids": [
+        "ENV-NETWORK",
+        "THREAT-COMPONENT"
+      ]
+    },
+    "impact": {
+      "value": "High",
+      "evidence_ids": [
+        "ENV-ASSET",
+        "ENV-ORGANIZATION"
+      ]
+    }
+  },
+  "evidence": [
+    {
+      "evidence_id": "ENV-ASSET",
+      "publisher": "Course fictional environment",
+      "source": "Windows_Enterprise_Environment.docx",
+      "locator": "Endpoints appliances and cloud services; infrastructure table; N02 row",
+      "quote": "N02 Remote access VPN gateways | 2 | Fortinet FortiGate 100F; FortiOS",
+      "source_mode": "simulated",
+      "source_date": null,
+      "retrieved_at": "2026-10-13T04:04:26.224334+00:00",
+      "source_sha256": "522af177abdddef0dacb2d8676d058e7d2a0de71f1550dc83288b6124c03e59d",
+      "scope": "Northbridge Services teaching environment"
+    },
+    {
+      "evidence_id": "ENV-NETWORK",
+      "publisher": "Course fictional environment",
+      "source": "Windows_Enterprise_Environment.docx",
+      "locator": "Network architecture and access; public services paragraph",
+      "quote": "Default policy denies unlisted inter-zone traffic and unsolicited inbound Internet traffic. Public services use documentation addresses: portal 192.0.2.10:443, VPN 192.0.2.20:443 and partner SFTP 192.0.2.30:22. No public RDP, SMB, LDAP, SQL or management interface is published.",
+      "source_mode": "simulated",
+      "source_date": null,
+      "retrieved_at": "2026-10-13T04:04:26.224437+00:00",
+      "source_sha256": "522af177abdddef0dacb2d8676d058e7d2a0de71f1550dc83288b6124c03e59d",
+      "scope": "Northbridge Services teaching environment"
+    },
+    {
+      "evidence_id": "ENV-ORGANIZATION",
+      "publisher": "Course fictional environment",
+      "source": "Windows_Enterprise_Environment.docx",
+      "locator": "Organization and scope; opening paragraph",
+      "quote": "Northbridge Services has 1,000 staff: 700 assigned to headquarters, 150 to a branch and 150 working remotely. Its applications support customer service, orders, invoicing and payroll. A recovery site hosts infrastructure and replicated data. The company uses one Active Directory forest and domain, corp.northbridge.example, synchronized to one Microsoft Entra tenant.",
+      "source_mode": "simulated",
+      "source_date": null,
+      "retrieved_at": "2026-10-13T04:04:26.224469+00:00",
+      "source_sha256": "522af177abdddef0dacb2d8676d058e7d2a0de71f1550dc83288b6124c03e59d",
+      "scope": "Northbridge Services teaching environment"
+    },
+    {
+      "evidence_id": "S02",
+      "publisher": "Course fictional environment",
+      "source": "Windows_Enterprise_Environment.docx",
+      "locator": "Evidence controls table; S02 row",
+      "quote": "S02 network design and reviewed access policy | Unlisted inter-zone traffic and unsolicited Internet ingress denied by default. No Internet-facing RDP, SMB, LDAP, SQL or appliance management.",
+      "source_mode": "simulated",
+      "source_date": null,
+      "retrieved_at": "2026-10-13T04:04:26.224498+00:00",
+      "source_sha256": "522af177abdddef0dacb2d8676d058e7d2a0de71f1550dc83288b6124c03e59d",
+      "scope": "Northbridge Services teaching environment"
+    },
+    {
+      "evidence_id": "S04",
+      "publisher": "Course fictional environment",
+      "source": "Windows_Enterprise_Environment.docx",
+      "locator": "Evidence controls table; S04 row",
+      "quote": "S04 telemetry coverage summary | AD authentication, Microsoft 365 audit, firewall and VPN logs retained online for 90 days. Twelve E02 endpoint sensor heartbeats are older than seven days.",
+      "source_mode": "simulated",
+      "source_date": null,
+      "retrieved_at": "2026-10-13T04:04:26.224526+00:00",
+      "source_sha256": "522af177abdddef0dacb2d8676d058e7d2a0de71f1550dc83288b6124c03e59d",
+      "scope": "Northbridge Services teaching environment"
+    },
+    {
+      "evidence_id": "S05",
+      "publisher": "Course fictional environment",
+      "source": "Windows_Enterprise_Environment.docx",
+      "locator": "Evidence controls table; S05 row",
+      "quote": "S05 business impact and recovery worksheet | Identity outage can block new logins across 1000 staff; existing sessions may continue temporarily. ERP supports 300 daily operations staff; outages beyond four hours delay orders and invoicing.",
+      "source_mode": "simulated",
+      "source_date": null,
+      "retrieved_at": "2026-10-13T04:04:26.224555+00:00",
+      "source_sha256": "522af177abdddef0dacb2d8676d058e7d2a0de71f1550dc83288b6124c03e59d",
+      "scope": "Northbridge Services teaching environment"
+    },
+    {
+      "evidence_id": "ENV-UNKNOWN",
+      "publisher": "Course fictional environment",
+      "source": "Windows_Enterprise_Environment.docx",
+      "locator": "Endpoints appliances and cloud services; additional devices paragraph",
+      "quote": "Additional devices: 40 managed wireless APs (N11) and 30 printers (P01). Appliance firmware and precise patch builds are unknown. HQ has two firewalls in an active/passive pair; the branch and recovery site each have one. The HQ VPN and WAF each have active/standby pairs.",
+      "source_mode": "simulated",
+      "source_date": null,
+      "retrieved_at": "2026-10-13T04:04:26.224582+00:00",
+      "source_sha256": "522af177abdddef0dacb2d8676d058e7d2a0de71f1550dc83288b6124c03e59d",
+      "scope": "Northbridge Services teaching environment"
+    },
+    {
+      "publisher": "Fortinet CNA via official CVE list",
+      "source": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2024/21xxx/CVE-2024-21762.json",
+      "source_mode": "live",
+      "retrieved_at": "2026-10-19T21:00:52.286648+00:00",
+      "used_at": "2026-10-19T21:00:52.287567+00:00",
+      "source_sha256": "1b38e10fb9c1c445e0da4a3560a068c5eb995d2c31ccb46b901784eafbd9bab4",
+      "saved_sha256": "1b38e10fb9c1c445e0da4a3560a068c5eb995d2c31ccb46b901784eafbd9bab4",
+      "saved_artifact": "evidence/cna.json",
+      "fallback_reason": null,
+      "evidence_id": "THREAT-CNA",
+      "locator": "/containers/cna/affected/1",
+      "source_date": "2026-08-04T03:55:55.226Z",
+      "published_at": "2024-02-09T08:14:25.954Z",
+      "quote": {
+        "vendor": "Fortinet",
+        "product": "FortiOS",
+        "defaultStatus": "unaffected",
+        "versions": [
+          {
+            "versionType": "semver",
+            "version": "7.4.0",
+            "lessThanOrEqual": "7.4.2",
+            "status": "affected"
+          },
+          {
+            "versionType": "semver",
+            "version": "7.2.0",
+            "lessThanOrEqual": "7.2.6",
+            "status": "affected"
+          },
+          {
+            "versionType": "semver",
+            "version": "7.0.0",
+            "lessThanOrEqual": "7.0.13",
+            "status": "affected"
+          },
+          {
+            "versionType": "semver",
+            "version": "6.4.0",
+            "lessThanOrEqual": "6.4.14",
+            "status": "affected"
+          },
+          {
+            "versionType": "semver",
+            "version": "6.2.0",
+            "lessThanOrEqual": "6.2.15",
+            "status": "affected"
+          },
+          {
+            "versionType": "semver",
+            "version": "6.0.0",
+            "lessThanOrEqual": "6.0.17",
+            "status": "affected"
+          }
+        ]
+      },
+      "solutions": [
+        {
+          "lang": "en",
+          "value": "Please upgrade to FortiProxy version 7.4.3 or above \nPlease upgrade to FortiProxy version 7.2.9 or above \nPlease upgrade to FortiProxy version 7.0.15 or above \nPlease upgrade to FortiProxy version 2.0.14 or above \nPlease upgrade to FortiOS version 7.6.0 or above \nPlease upgrade to FortiOS version 7.4.3 or above \nPlease upgrade to FortiOS version 7.2.7 or above \nPlease upgrade to FortiOS version 7.0.14 or above \nPlease upgrade to FortiOS version 6.4.15 or above \nPlease upgrade to FortiOS version 6.2.16 or above"
+        }
+      ],
+      "metrics": [
+        {
+          "format": "CVSS",
+          "cvssV3_1": {
+            "version": "3.1",
+            "attackComplexity": "LOW",
+            "attackVector": "NETWORK",
+            "availabilityImpact": "HIGH",
+            "baseScore": 9.6,
+            "baseSeverity": "CRITICAL",
+            "confidentialityImpact": "HIGH",
+            "integrityImpact": "HIGH",
+            "privilegesRequired": "NONE",
+            "scope": "UNCHANGED",
+            "userInteraction": "NONE",
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H/E:H/RL:W/RC:C"
+          }
+        }
+      ]
+    },
+    {
+      "publisher": "CERT-EU",
+      "source": "https://cert.europa.eu/publications/security-advisories/2024-018/",
+      "source_mode": "live",
+      "retrieved_at": "2026-10-19T21:00:53.024110+00:00",
+      "used_at": "2026-10-19T21:00:53.027196+00:00",
+      "source_sha256": "51f135a9f3e259589f785476ac2feca410a1281dd409c035c97f9dcfc9dc32a8",
+      "saved_sha256": "51f135a9f3e259589f785476ac2feca410a1281dd409c035c97f9dcfc9dc32a8",
+      "saved_artifact": "evidence/cert.html",
+      "fallback_reason": null,
+      "evidence_id": "THREAT-COMPONENT",
+      "locator": "Technical Details; paragraph beginning The vulnerability CVE-2024-21762",
+      "source_date": "2024-02-09",
+      "quote": "The vulnerability CVE-2024-21762 [1], with a CVSS score of 9.8, is due to incorrect parameter checks in FortiOS SSL-VPN. When exploited by a remote and unauthenticated attacker via crafted HTTP requests, a reduced number of bytes could be copied outside buffer bounds, leading to memory corruption and flow redirection. This allows execution of arbitrary code or command."
+    },
+    {
+      "publisher": "CISA",
+      "source": "https://raw.githubusercontent.com/cisagov/kev-data/main/known_exploited_vulnerabilities.json",
+      "source_mode": "live",
+      "retrieved_at": "2026-10-19T21:00:53.251476+00:00",
+      "used_at": "2026-10-19T21:00:53.300401+00:00",
+      "source_sha256": "b6e27975f6635ecfc546fbd4fd6e444ba63a07ab2abc8876229d77fe083d357d",
+      "saved_sha256": "b6e27975f6635ecfc546fbd4fd6e444ba63a07ab2abc8876229d77fe083d357d",
+      "saved_artifact": "evidence/kev.json",
+      "fallback_reason": null,
+      "evidence_id": "THREAT-KEV",
+      "locator": "/vulnerabilities/672",
+      "source_date": "2026-10-16T17:15:48.8752Z",
+      "quote": {
+        "cveID": "CVE-2024-21762",
+        "vendorProject": "Fortinet",
+        "product": "FortiOS",
+        "vulnerabilityName": "Fortinet FortiOS Out-of-Bound Write Vulnerability",
+        "dateAdded": "2024-02-09",
+        "shortDescription": "Fortinet FortiOS contains an out-of-bound write vulnerability that allows a remote unauthenticated attacker to execute code or commands via specially crafted HTTP requests.",
+        "requiredAction": "Apply mitigations per vendor instructions or discontinue use of the product if mitigations are unavailable.",
+        "dueDate": "2024-02-16",
+        "knownRansomwareCampaignUse": "Known",
+        "forensicTriage": "No",
+        "notes": "https://fortiguard.fortinet.com/psirt/FG-IR-24-015 ;   https://nvd.nist.gov/vuln/detail/CVE-2024-21762",
+        "cwes": [
+          "CWE-787"
+        ]
+      },
+      "catalog_version": "2026.10.16",
+      "lookup_scope": "CVE ID in fetched catalog"
+    }
+  ],
+  "unknowns": [
+    "version_affected",
+    "ssl_vpn_enabled",
+    "attack_path",
+    "internet_reachable",
+    "exact_firmware_version"
+  ],
+  "conflicts": [],
+  "assumptions": [
+    "High impact is a policy interpretation of the production remote-access role, pending analyst review."
+  ],
+  "limitations": [
+    "DOCX-derived subset; companion JSON/CSV/lookup script were not supplied.",
+    "The original DOCX documents public VPN TCP/443 but does not identify SSL-VPN termination or enabled status; fixture values are explicit simulated overrides.",
+    "No per-gateway state, configuration date, exact internal flows, or VPN-specific RTO is supplied.",
+    "No telemetry events establish actual exploitation or compromise."
+  ],
+  "confidence": {
+    "level": "limited",
+    "reason": "Synthetic environment and pending human review; confidence is not a numeric probability."
+  },
+  "exploitation_context": "known_exploited",
+  "human_review": {
+    "status": "pending",
+    "reviewer": null,
+    "reviewed_at": null
+  },
+  "claims": {
+    "C-POLICY": {
+      "text": "Missing decisive evidence: version_affected, ssl_vpn_enabled, attack_path, internet_reachable.",
+      "evidence_ids": [
+        "ENV-ASSET",
+        "ENV-NETWORK",
+        "ENV-ORGANIZATION",
+        "ENV-UNKNOWN",
+        "S02",
+        "THREAT-CNA",
+        "THREAT-COMPONENT"
+      ]
+    },
+    "C-SCOPE": {
+      "text": "N02 cohort; individual gateway versions and configurations are not supplied; all local evidence is simulated.",
+      "evidence_ids": [
+        "ENV-ASSET"
+      ]
+    },
+    "C-IMPACT": {
+      "text": "Business impact is High; this is a policy interpretation of the cited business context, not observed compromise.",
+      "evidence_ids": [
+        "ENV-ASSET",
+        "ENV-ORGANIZATION"
+      ]
+    },
+    "C-GAPS": {
+      "text": "Unknowns: version_affected, ssl_vpn_enabled, attack_path, internet_reachable, exact_firmware_version; conflicts: none.",
+      "evidence_ids": [
+        "ENV-ASSET",
+        "ENV-NETWORK",
+        "ENV-ORGANIZATION",
+        "ENV-UNKNOWN",
+        "S02",
+        "THREAT-CNA",
+        "THREAT-COMPONENT"
+      ]
+    },
+    "C-KEV": {
+      "text": "CISA catalog lookup reports known exploitation; it does not establish local compromise.",
+      "evidence_ids": [
+        "THREAT-KEV"
+      ]
+    }
+  },
+  "recommended_actions": {
+    "A-RESOLVE": {
+      "text": "Obtain dated firmware and SSL-VPN configuration evidence for each assessed gateway, verify the affected endpoint and attack path, and reconcile decisive conflicts before reassessment.",
+      "owner": "VPN owner and SOC analyst",
+      "urgency": "Prompt evidence resolution",
+      "evidence_ids": [
+        "ENV-ASSET",
+        "ENV-NETWORK",
+        "ENV-ORGANIZATION",
+        "ENV-UNKNOWN",
+        "S02",
+        "THREAT-CNA",
+        "THREAT-COMPONENT"
+      ]
+    }
+  },
+  "stop_reason": null,
+  "evidence_needed_to_change_decision": "Dated firmware, component state, supported route/exposure, and business-dependency evidence for the assessed scope; version/configuration changes or reconciled contradictions trigger reassessment.",
+  "run_id": "4f990635-615d-446e-b8c7-938cf2a149e9",
+  "model": {
+    "provider": "Duke AI Gateway",
+    "model": "GPT 4.1",
+    "endpoint": "https://litellm.oit.duke.edu/v1",
+    "mode": "live_model",
+    "temperature": 0,
+    "reported_model": "GPT 4.1"
+  },
+  "model_synthesis": {
+    "policy_rule": "R6",
+    "rating": null,
+    "priority": "Insufficient evidence",
+    "claim_ids": [
+      "C-POLICY",
+      "C-SCOPE",
+      "C-IMPACT",
+      "C-GAPS",
+      "C-KEV"
+    ],
+    "action_ids": [
+      "A-RESOLVE"
+    ]
+  },
+  "snapshot_sha256": "b7205c6cfdd297d67a7a87019e64dbaf3e58b19b2c6ea329f94e808f5741029d",
+  "tool_errors": [],
+  "execution_status": "complete"
+}

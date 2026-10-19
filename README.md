@@ -2,13 +2,13 @@
 
 CVE-2024-21762 assessment for Northbridge Services' N02 FortiOS VPN gateways. The agent gathers attributed evidence, applies the group's R1–R6 policy, and produces a risk rating, separate priority, uncertainty, and recommended actions.
 
-**Group:** Atharva Ashish Jog, Varun Bhanushali, Shweta Mittal. **Deadline:** October 14, 2026; check the exact Canvas cutoff separately.
+**Group:** Atharva Ashish Jog, Varun Bhanushali, Shweta Mittal, Deekshitha Manjunatha Reddy 
 
 The original environment has unknown firmware and SSL-VPN configuration. Its supported result is **Insufficient evidence**, not a presumed vulnerability. The positive scenario is explicitly simulated and produces **High / Critical** under R1. It represents one test instance, not a confirmed finding about both gateway members.
 
 ## Portable project folder
 
-Everything needed to run and review this project is inside `security-triage-agent/`. You can move this entire folder to another location without relying on the surrounding course folder. Open a terminal in the moved folder before running the commands below. Required assignment and environment documents are included at the project root; class slides are retained under `resources/course/`. The course API-key PDF is excluded.
+Everything needed to run and review this project is inside this repository folder (`Security-Triage-Agent-CYBERSEC-590/` when cloned from GitHub). You can move this entire folder to another location without relying on the surrounding course folder. Open a terminal in the moved folder before running the commands below. Required assignment and environment documents are included at the project root; class slides are retained under `resources/course/`. The course API-key PDF is excluded.
 
 ```text
 security-triage-agent/
@@ -121,7 +121,7 @@ Evaluate reliable absent prerequisites before unrelated unknowns, then decisive 
 python3 -m triage package
 ```
 
-This builds `dist/security-triage-agent.zip` and a file/hash audit from explicit allowlisted code, docs, inputs and run artifacts. It excludes the API-key PDF, local secrets, temp extraction files, caches of Python bytecode and private run folders. The package scans configured credential values and common credential patterns before creation. Inspect `dist/package_audit.json` and the ZIP contents before uploading to Canvas. A ZIP is the selected delivery option; no GitHub repository or external publication is created automatically.
+This builds `dist/security-triage-agent.zip` and a file/hash audit from explicit allowlisted code, docs, inputs and run artifacts. It excludes the API-key PDF, local secrets, temp extraction files, caches of Python bytecode and private run folders. The package scans configured credential values and common credential patterns before creation. We are submitting this GitHub repository link. The ZIP command above is kept as a backup option.
 
 Before submission, complete the actual member contribution record and group consensus/evidence review. Run a real Duke model demonstration and follow `docs/DEMO_WALKTHROUGH.md`. If the group does not present in class, record and submit the required video; the walkthrough is a recording script, not a video.
 

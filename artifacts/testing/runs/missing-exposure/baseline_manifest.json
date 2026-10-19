@@ -1,7 +1,7 @@
 {
-  "run_id": "3063f506-4f44-47a4-bfba-dbdbfedc2845",
-  "created_at": "2026-10-13T16:39:41.417970+00:00",
-  "python": "3.12.3",
+  "run_id": "e71c6f6b-7280-4b30-8821-daf237a832c1",
+  "created_at": "2026-10-19T21:02:46.730479+00:00",
+  "python": "3.12.4",
   "model": {
     "provider": "Scripted test fixture",
     "model": "replay-v1",
@@ -9,10 +9,10 @@
   },
   "code_version": {
     "files": {
-      "scripts/evaluate.py": "9327acce70e2b993665036b14735eab2ca0232422b3ffb842286b4efd963b49d",
-      "scripts/package_submission.py": "5025b44d8320bf7b7ff92761439ec7569d8d5426e3054ad94b18d2b7eddce864",
-      "scripts/prepare_inputs.py": "b4e39690df7b7b7bb6704eae1403a70bbae1c12a6f7eef34c65b9fc73a4e428d",
-      "tests/test_triage.py": "c55f5c203b4de65a82c292e61b23e85845ba1780ece25e4b549d761bd9d53fac",
+      "scripts/evaluate.py": "16979ae5be800a8b7afe21090786b86f4db4db278ee68713bb8dab9454c27ad4",
+      "scripts/package_submission.py": "a94ccba133256a4c3d7fa0b9fd90c3437a78f034df880fbfe97a31de4ab9a513",
+      "scripts/prepare_inputs.py": "a14eede247509b8faaa32fb7bcc0d9fb556b02501264851ae45592b161b95551",
+      "tests/test_triage.py": "617511308a7782a47d952712c50da9395738b2f1568d30c24ace0aa948650191",
       "triage/__init__.py": "07d0cf521f146119ae46927beab5d80fcd37b90d9433fef423ce5c10bacf12fa",
       "triage/__main__.py": "53d2fad438da8b838444c3b6827d440b7f7cf661564b504496cb563bc63651f2",
       "triage/agent.py": "849bf3b6cbb35768b14208ce11391cfecc9d28a2938ee6320201d507fab66f11",
@@ -20,9 +20,9 @@
       "triage/common.py": "268476f03fc1e1aa35ec70e4a15332c5a07974328feb98f51425f0433076af24",
       "triage/models.py": "f2588893b3540d0c64fe20bba86241fe320fe3a3b5ea55def0ee1a677470e16d",
       "triage/policy.py": "89c78e24d3749342895412625d4dd7342649ab3f71c8efe9048d22d86fe9efe2",
-      "triage/tools.py": "aad6f909a202eb2cfce1c195f1a68fbc834d50bf08d6f09382885ffe8abab301"
+      "triage/tools.py": "5ca0b4a60ca65c18513e188767837b032c9cd58630955b0bf48f9446f11326f2"
     },
-    "sha256": "c339ce42a868eb595481d6e13521043bf9cfe2485df98d86c6f0e11ff80420f5"
+    "sha256": "07731bec4b8ea45d4dd6e69ed91a8274f4674e42f6168f92dc00862f940099c8"
   },
   "configuration": {
     "provider": "duke",
@@ -64,7 +64,7 @@
     {},
     {}
   ],
-  "elapsed_seconds": 0.008,
+  "elapsed_seconds": 0.018,
   "stop_reason": null,
   "baseline_purpose": "Assignment 4 reproducibility; no prior Assignment 2 run is fabricated"
 }

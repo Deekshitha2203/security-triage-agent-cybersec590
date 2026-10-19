@@ -1,9 +1,8 @@
 # Step 1 Security Triage Agent Design
 
 **Case:** CVE-2024-21762 in Northbridge Services' FortiOS VPN gateways  
-**Deadline:** October 14, 2026  
 **Status:** Design approved for implementation; policy and controlled replay tests implemented. Real-model execution and human review are recorded separately in run artifacts.  
-**Members:** Atharva Ashish Jog, Varun Bhanushali, Shweta Mittal. Record actual contributions before submission.
+**Members:** Atharva Ashish Jog, Varun Bhanushali, Shweta Mittal, Deekshitha Manjunatha Reddy. 
 
 We propose one agent that gathers attributed environment and threat evidence, compares exploit prerequisites with local facts, and produces a policy-supported High, Medium, or Low risk rating plus a separate response priority, or an explicit Insufficient evidence / Review status. The original scenario cannot establish vulnerability because gateway firmware and SSL-VPN configuration are unknown. We will retain this uncertainty and use separate, labeled simulated variants for a positive demonstration and policy checks.
 
@@ -269,7 +268,7 @@ For every case preserve inputs, overrides, expected and actual status/rating/pri
 
 The assignment text inconsistently mentions Assignment 2 in the testing/baseline section; the rubric explicitly asks for a baseline for Assignment 4. Preserve the current project's complete baseline and note the course-text inconsistency without inventing a prior Assignment 2 submission.
 
-Suggested sequence: approve design and complete implementation/testing on October 13; review the evidence, contribution record and demo, then submit an instructor-accessible GitHub repository or sanitized ZIP on October 14. The PDF supplies a date, not an exact submission time; verify Canvas cutoff separately.
+and is submitted as an instructor-accessible GitHub repository.
 
 ## Sources and research limitations
 

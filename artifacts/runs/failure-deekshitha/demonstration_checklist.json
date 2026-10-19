@@ -1,0 +1,15 @@
+{
+  "checks": {
+    "selected_snapshot_loaded": true,
+    "model_requested_executed_tool": true,
+    "results_returned_with_call_ids": true,
+    "environment_and_external_evidence_contribute": false,
+    "policy_and_citations_checked": true,
+    "checked_model_synthesis": true,
+    "real_model_used": false,
+    "human_evidence_review": false
+  },
+  "complete_run_technical_requirements_met": false,
+  "submission_demo_complete": false,
+  "note": "Replay and pending human review cannot be reported as a completed submission demonstration."
+}

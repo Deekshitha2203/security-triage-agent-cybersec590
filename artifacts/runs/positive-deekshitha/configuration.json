@@ -1,0 +1,14 @@
+{
+  "provider": "duke",
+  "model": "GPT 4.1",
+  "policy_version": "2.0",
+  "max_tool_executions": 8,
+  "max_model_turns": 8,
+  "run_timeout_seconds": 180,
+  "http_timeout_seconds": 10,
+  "model_timeout_seconds": 30,
+  "temperature": 0,
+  "max_output_tokens": 1600,
+  "evidence_mode": "auto",
+  "controlled_failure": null
+}
