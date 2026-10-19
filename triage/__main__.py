@@ -11,6 +11,8 @@ from .common import ROOT, SafeError, http, load_local_env, now, read_json
 
 
 def main():
+    # Read the command and its options, then start the requested task. Keeping
+    # command handling here lets the other modules focus on the assessment itself.
     parser = argparse.ArgumentParser(description="Read-only CVE-2024-21762 security triage")
     sub = parser.add_subparsers(dest="command", required=True)
     run_cmd = sub.add_parser("run", help="Execute a real model run or explicitly scripted replay")
@@ -23,12 +25,12 @@ def main():
     sub.add_parser("models", help="List model IDs currently accessible to your Duke key")
     sub.add_parser("doctor", help="Check setup without revealing credentials")
     sub.add_parser("evaluate", help="Run controlled replay scenarios and write actual results")
-    package = sub.add_parser("package", help="Build sanitized submission ZIP from an explicit allowlist")
-    package.add_argument("--output", type=Path, default=ROOT / "dist/security-triage-agent.zip")
     args = parser.parse_args()
     load_local_env()
     try:
         if args.command == "configure":
+            # Collect credentials privately and limit access to the saved file
+            # so the user does not need to put an API token in source code.
             key = getpass.getpass("Duke AI Gateway token (hidden; do not paste into chat): ")
             if not key or any(c.isspace() for c in key):
                 raise SafeError("invalid_token_format")
@@ -40,14 +42,16 @@ def main():
             os.fchmod(fd, 0o600)
             with os.fdopen(fd, "w") as stream:
                 stream.write("LITELLM_TOKEN=" + key + "\nTRIAGE_MODEL=" + model + "\n")
-            print("Saved private local configuration to ignored .env. No key is printed or included in submission packages.")
+            print("Saved private local configuration to ignored .env")
         elif args.command == "models":
+            # Ask Duke which models this credential can access before a run.
             from .models import DukeModel, DUKE_BASE
             provider = DukeModel(read_json(ROOT / "config/agent.json"))
             response = json.loads(http(DUKE_BASE + "/models", 10, credential=provider.credential))
             for record in response.get("data", []):
                 print(record["id"])
         elif args.command == "doctor":
+            # Check local setup and cached evidence without making a model call.
             print("Python:", sys.version.split()[0])
             print("Duke credential:", "configured" if os.environ.get("LITELLM_TOKEN") or os.environ.get("DUKE_AI_GATEWAY_API_KEY") else "missing (python3 -m triage configure)")
             print("Model:", os.environ.get("TRIAGE_MODEL") or read_json(ROOT / "config/agent.json")["model"])
@@ -61,10 +65,9 @@ def main():
         elif args.command == "evaluate":
             from scripts.evaluate import evaluate
             evaluate()
-        elif args.command == "package":
-            from scripts.package_submission import package_submission
-            package_submission(args.output)
         else:
+            # Delegate the assessment to the agent and print a short summary.
+            # Insufficient evidence is a valid result; stopped execution is an error.
             from .agent import run
             output = args.output or ROOT / "artifacts/runs" / (args.scenario + "-" + args.provider + "-" + now().replace(":", "").replace("+", ""))
             assessment, checklist = run(ROOT / f"data/environment/{args.scenario}.json", output,
@@ -84,4 +87,5 @@ def main():
 
 
 if __name__ == "__main__":
+    # Running `python -m triage` starts here; return the command's exit status.
     raise SystemExit(main())

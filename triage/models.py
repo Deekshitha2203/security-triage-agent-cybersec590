@@ -13,6 +13,8 @@ class DukeModel:
     mode = "live_model"
 
     def __init__(self, config):
+        # Resolve the model and private credential once, and retain safe provider
+        # metadata for the assessment. Fail explicitly if setup is incomplete.
         self.config = config
         self.name = os.environ.get("TRIAGE_MODEL") or config["model"]
         self.credential = os.environ.get("LITELLM_TOKEN") or os.environ.get("DUKE_AI_GATEWAY_API_KEY")
@@ -22,6 +24,9 @@ class DukeModel:
                          "mode": self.mode, "temperature": config["temperature"]}
 
     def chat(self, messages, tools, timeout, final=False):
+        # Translate the agent's conversation into a Duke request and return the
+        # assistant message plus usage. Gathering allows tools; final synthesis
+        # requests JSON so the host can validate the selected claims and actions.
         payload = {"model": self.name, "messages": messages, "stream": False,
                    "temperature": self.config["temperature"], "max_tokens": self.config["max_output_tokens"]}
         if final:
@@ -48,11 +53,16 @@ class ReplayModel:
     mode = "scripted_replay"
 
     def __init__(self, config, invalid_first=False):
+        # Match the live provider's interface for offline tests. The optional
+        # invalid request tests rejection and recovery without executing it.
         self.invalid_first = invalid_first
         self.sent_invalid = False
         self.metadata = {"provider": "Scripted test fixture", "model": "replay-v1", "mode": self.mode}
 
     def chat(self, messages, tools, timeout, final=False):
+        # Simulate responses without an LLM: inspect prior requests and issue the
+        # next predefined query. For synthesis, select the supplied supported IDs.
+        # This tests orchestration, not the reasoning quality of a real model.
         if final:
             packet = json.loads(messages[-1]["content"])
             d = packet["decision"]
