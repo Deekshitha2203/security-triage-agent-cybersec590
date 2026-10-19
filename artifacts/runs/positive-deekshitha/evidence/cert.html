@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <!-- Meta Data -->
+    <meta charset="UTF-8">
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1" name="viewport">
+    <link href="/favicon.ico" rel="apple-touch-icon" sizes="180x180">
+    <link href="/favicon.ico" rel="icon" sizes="32x32" type="image/png">
+    <link href="/favicon.ico" rel="icon" sizes="16x16" type="image/png">
+
+    <!-- Site Stylesheet -->
+    <link href="/files/css/styles.min.css?v=1.0" rel="stylesheet">
+    <link href="//fonts.googleapis.com" rel="preconnect">
+    <link crossorigin href="//fonts.gstatic.com" rel="preconnect">
+    <link href="//fonts.googleapis.com/css2?family=Barlow:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+    <!--Basic meta information-->
+    <title>CERT-EU - Critical Vulnerabilities in FortiOS</title>
+    <meta content="CERT-EU - Critical Vulnerabilities in FortiOS" name="description">
+    <meta content="CERT-EU - Critical Vulnerabilities in FortiOS" name="keywords">
+
+    <!--Share information-->
+    <meta property="og:title" content="Critical Vulnerabilities in FortiOS">
+    <meta property="og:description" content="Critical Vulnerabilities in FortiOS">
+    <meta property="og:url" content="https://cert.europa.eu/publications/security-advisories/2024-018">
+    <meta property="og:image" content="https://cert.europa.eu/files/images/certeu_home_share-v2.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="600">
+</head>
+<body>
+<header class="header_website--not_scrolled">
+    <section class="header_website_top d-flex justify-content-between px-15">
+        <div class="header_website_top--social d-flex align-items-center">
+            <a href="https://www.linkedin.com/company/certeu/mycompany/" target="_blank"
+               class="header_website_top--social--icon">
+                <span class="share-xs share-icon-linkedin-white m-2"></span>
+            </a>
+            <a href="https://github.com/certeu" target="_blank" class="header_website_top--social--icon">
+                <span class="share-sm share-icon-github-white"></span>
+            </a>
+            <a href="https://infosec.exchange/@cert_eu" target="_blank"
+               class="header_website_top--social--icon" rel="me">
+                <span class="share-sm share-icon-mastodon-white"></span>
+            </a>
+        </div>
+        <div class="d-flex">
+            <a class="header_website_top--right mt-5 mr-40 a-norm-rev" href="//goo.gl/maps/sNEAsRwQ739XLHVz9"
+               target="_blank">
+                Address: Rue de la Loi 107, 1049 Brussels, Belgium
+            </a>
+            <a class="header_website_top--right mt-5 a-norm-rev" href="tel:+32 229 52100">Tel: +32 2 295 2100</a>
+        </div>
+    </section>
+
+    <section class="d-flex flex-row px-10 header_website">
+        <a href="/" class="flex-grow-1 align-self-center header_website--logo"></a>
+        <input class="menu-btn" id="menu-btn" type="checkbox"/>
+        <nav class="align-self-center horizontal-menu" role="navigation">
+            <ul>
+                <li><a class="small-caps hover-underline-animation-white" href="/about-us">About us</a></li>
+
+                <li><a class="small-caps hover-underline-animation-white" href="/blog">Blog</a></li>
+                <li><a class="small-caps" href="/publications">Publications</a>
+                    <ul>
+                        <li>
+                            <a class="small-caps hover-underline-animation-blue"
+                               href="/publications/security-advisories/">
+                                Security advisories
+                            </a>
+                        </li>
+                        <li>
+                            <a class="small-caps hover-underline-animation-blue"
+                               href="/publications/security-guidance/">
+                                Security guidance
+                            </a>
+                        </li>
+                        <li>
+                            <a class="small-caps hover-underline-animation-blue"
+                               href="/publications/threat-intelligence/">
+                                Threat intelligence
+                            </a>
+                        </li>
+                        <li>
+                            <a class="small-caps hover-underline-animation-blue"
+                               href="/publications/tlr-10-years/">
+                                TLR 10 Years
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li><a class="small-caps hover-underline-animation-white" href="/vacancies">Vacancies</a></li>
+                <li>
+                    <a class="small-caps hover-underline-animation-white" href="/hall-of-fame">
+                        Hall of fame
+                    </a>
+                </li>
+                <li><a class="small-caps" href="/iicb/">IICB</a></li>
+                <li><a class="small-caps hover-underline-animation-white" href="/contact-us">Contact us</a></li>
+            </ul>
+        </nav>
+        <label class="menu-icon" for="menu-btn"><span class="navicon"></span></label>
+    </section>
+</header>
+
+<main>
+    <section class="top_section d-flex flex-column justify-content-center">
+        <h1 class="top_section--title text-center">Security Advisory 2024-018</h1>
+        <ul class="top_section--breadcrumb d-flex flex-row justify-content-center mt-20">
+            <li><a class="a-norm" href="/">Home</a></li>
+            <li><a class="a-norm" href="/publications/security-advisories/">Security Advisories</a></li>
+        </ul>
+    </section>
+
+    <section class="news py-30 publication">
+        <article class="container d-flex flex-column">
+            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center">
+                <div class="d-flex flex-row flex-wrap">
+                    <span class="mr-5 text-grey">Release Date:</span>
+                    <time class="text-grey">09-02-2024 08:56:16</time>
+                </div>
+                <aside
+                    class="mt-30-sm mt-40-lg align-self-center align-self-sm-end mt-20 mt-sm-0">
+                    <div class="font-amender">
+                        <a data-font-amender-class="font-amender-small">A</a>
+                        <a data-font-amender-class="font-amender-normal" class="font-amender-selected">A</a>
+                        <a data-font-amender-class="font-amender-medium">A</a>
+                        <a data-font-amender-class="font-amender-big">A</a>
+                    </div>
+                </aside>
+            </div>
+
+            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center mt-30">
+                <h2 class="publication--title">Critical Vulnerabilities in FortiOS</h2>
+
+                
+                <div class="align-self-center mt-20 mt-sm-0 ml-0 ml-sm-20 btn-dropdown">
+                    <div class="btn btn-lg">Download</div>
+                    <ul>
+                        
+                        <li class="publication--download">
+                            <a href="/publications/security-advisories/2024-018/pdf"
+                               class="d-flex align-items-center a-norm"
+                               download="CERT-EU-SA2024-018.pdf">
+                                <div class="share-icon-download-grey share-xs"></div>
+                                <div class="ml-5">Download PDF</div>
+                            </a>
+                            <div class="d-flex flex-wrap justify-content-between">
+                                <div class="share-icon-copy-grey mt-10 publication--download--checksum"
+                                     data-value="41b558deead3c21eda5c0876cfa50d20">MD5
+                                </div>
+                                <div class="share-icon-copy-grey mt-10 publication--download--checksum"
+                                     data-value="b0dcf482589aa502ccef14559ce49a2daaf536d5">SHA-1
+                                </div>
+                                <div class="share-icon-copy-grey mt-10 publication--download--checksum"
+                                     data-value="f7a10f2b2973d2e93b7048936392910247f6c70e4a49d2cb9575585c349e8fe9">SHA-256
+                                </div>
+                                <div class="share-icon-copy-grey mt-10 publication--download--checksum"
+                                     data-value="8d1d2d1133aa015989ddfb345b61548d1f878a9cf5dbec0e035562a029c32cef12508b6d4e72841af68ea2be749b87c413557f45d31104ba763a650d7e17ad11">SHA-512
+                                </div>
+                            </div>
+                        </li>
+                        
+                        
+                        <li class="publication--download">
+                            <a href="/publications/security-advisories/2024-018/markdown"
+                               target="_blank"
+                               class="d-flex align-items-center a-norm">
+                                <div class="share-icon-download-grey share-xs"></div>
+                                <div class="ml-5">Download MARKDOWN</div>
+                            </a>
+                        </li>
+                        
+                        <li class="publication--download">
+                            <a href="/publications/security-advisories/2024-018/json"
+                               target="_blank"
+                               class="d-flex align-items-center a-norm">
+                                <div class="share-icon-download-grey share-xs"></div>
+                                <div class="ml-5">Download JSON</div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+            </div>
+
+            <div class="mt-sm-30 publication--body font-amender-apply">
+                
+                <p><em>History:</em></p><ul><li><em>09/02/2024 --- v1.0 -- Initial publication</em></li></ul><h2 id="summary">Summary</h2><p>On February 9, 2024, Fortinet released an advisory regarding critical vulnerabilities affecting FortiOS that, if exploited, would allow a remote and unauthenticated to execute code on the affected device.</p><p>One of the critical vulnerabilities is potentially being exploited in the wild. It is recommended updating as soon as possible.</p><h2 id="technical-details">Technical Details</h2><p>The vulnerability <strong>CVE-2024-21762</strong> [1], with a CVSS score of 9.8, is due to incorrect parameter checks in FortiOS SSL-VPN. When exploited by a remote and unauthenticated attacker via crafted HTTP requests, a reduced number of bytes could be copied outside buffer bounds, leading to memory corruption and flow redirection. This allows execution of arbitrary code or command.</p><p>The vulnerability <strong>CVE-2024-23113</strong> [2], with a CVSS score of 9.8, is due to an externally controlled format string vulnerability in FortiOS fgfmd daemon, and may allow a remote unauthenticated attacker to execute arbitrary code or commands via specially crafted requests.</p><h2 id="affected-products">Affected Products</h2><p>The following product versions are affected:</p><ul><li>FortiOS version 7.4.0 through 7.4.2;</li><li>FortiOS version 7.2.0 through 7.2.6;</li><li>FortiOS version 7.0.0 through 7.0.13; </li><li>FortiOS version 6.4.0 through 6.4.14;</li><li>FortiOS version 6.2.0 through 6.2.15;</li><li>FortiOS 6.0 all versions (only affected by CVE-2024-21762).</li></ul><h2 id="recommendations">Recommendations</h2><p>CERT-EU recommends updating or upgrading to a non-vulnerable version of the product as soon as possible.</p><h2 id="references">References</h2><p>[1] <a rel="noopener" target="_blank" href="https://www.fortiguard.com/psirt/FG-IR-24-015">https://www.fortiguard.com/psirt/FG-IR-24-015</a></p><p>[2] <a rel="noopener" target="_blank" href="https://www.fortiguard.com/psirt/FG-IR-24-029">https://www.fortiguard.com/psirt/FG-IR-24-029</a></p>
+                
+            </div>
+
+            <div class="mt-40">
+                <div class="share-title">Share this publication</div>
+                <ul class="mt-15 d-flex flex-row justify-content-between publication--share">
+                    <li>
+                        <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://cert.europa.eu/publications/security-advisories/2024-018/"
+                           target="_blank" class="share-md share-icon-linkedin-blue_dark"></a>
+                    </li>
+                    <li>
+                        <a href="https://www.facebook.com/sharer.php?u=https://cert.europa.eu/publications/security-advisories/2024-018/"
+                           target="_blank" class="share-md share-icon-fb-blue_dark"></a>
+                    </li>
+                    <li>
+                        <a href="mailto:?subject=Critical Vulnerabilities in FortiOS&body=Hi,%0D%0DI thought the following article might be of interest to you:%0Dhttps://cert.europa.eu/publications/security-advisories/2024-018/%0D%0DCheers."
+                           target="_blank" class="share-md share-icon-email-blue_dark"></a>
+                    </li>
+                </ul>
+            </div>
+        </article>
+    </section>
+
+        <section class="accept_cookies">
+        <div class="accept_cookies--modal d-flex flex-column">
+        <h2>We got cookies</h2>
+            <p class="mt-30">
+                We only use cookies that are necessary for the technical functioning of our website. Find out more on
+                <a class="a-norm" href="/cookies-policy">here</a>.
+            </p>
+            <div class="align-self-end mt-auto">
+                <button class="btn accept_cookies--modal--btn--accept">OK</button>
+            </div>
+        </div>
+    </section>
+        <section class="hidden" data-certeu-scrollTop=""></section>
+</main>
+
+<footer class="footer_website d-flex flex-row flex-lg-column">
+    <section class="container">
+        <p>
+            This website is managed by CERT-EU.
+        </p>
+        <div class="d-flex flex-column flex-lg-row pb-lg-20 bb-0 bb-1-lg bc-200">
+            <div class="mr-lg-30">
+                <p class="mt-20">
+                    <strong>Please send any comments or suggestions to</strong>
+                    <br>
+                    <a class="a-norm" href="mailto:services@cert.europa.eu">services@cert.europa.eu</a>
+                </p>
+                <p class="footer_website--link-sm-h">
+                    <strong>The information on this site is subject to a</strong>
+                    <br>
+                    <a class="a-norm" href="/legal-notice">Legal notice</a>
+                </p>
+            </div>
+            <div class="mr-lg-30">
+                <p class="mt-20">
+                    <strong>PGP fingerprint:</strong>
+                    <br>
+                    <a class="a-norm" href="/files/certs/2025-CERT-EU-PGP.asc" target="_blank">
+                        152D 5B54 B526 4A3D F420 35D3 FCB2 4C57 FE5E 446A</a>
+                    <br>
+                    <a class="a-norm footer_website--link-sm" href="/files/certs/891D04EC_Revocation_certificate-2024.asc"
+                       target="_blank">
+                        revocation certificate</a>
+                </p>
+                <p class="mt-20">
+                    <strong>Emergency phone:</strong>
+                    <br>
+                    <a class="a-norm" href="tel:+3222990005">+32 2 299 0005</a>
+                </p>
+            </div>
+            <div class="ml-lg-auto footer_website--social">
+                <div class="d-flex flex-row mt-20">
+                    <a href="https://www.linkedin.com/company/certeu/mycompany/" target="_blank"
+                       class="footer_website--social--icon">
+                        <span class="share-sm share-icon-linkedin-white m-4"></span>
+                    </a>
+                    <a href="https://github.com/certeu" target="_blank" class="footer_website--social--icon">
+                        <span class="share-md share-icon-github-white"></span>
+                    </a>
+                    <a href="https://infosec.exchange/@cert_eu" target="_blank"
+                       class="footer_website--social--icon" rel="me">
+                        <span class="share-md share-icon-mastodon-white"></span>
+                    </a>
+                </div>
+                <p class="mt-20">
+                    <strong>Address:</strong>
+                    <br>
+                    <a class="a-norm" href="//goo.gl/maps/sNEAsRwQ739XLHVz9" target="_blank">
+                        Rue de la Loi 107<br>1049 Brussels, Belgium
+                    </a>
+                </p>
+            </div>
+        </div>
+        <div class="d-flex flex-column flex-lg-row mt-20 footer_website--bottom">
+            <div class="d-flex flex-column flex-lg-row mt-20 footer_website--bottom--left">
+                <a class="a-norm mx-lg-10 footer_website--bottom--item" href="/cookies-policy">Cookies</a>
+                <a class="a-norm mx-lg-10 footer_website--bottom--item" href="/privacy-policy">Privacy policy</a>
+                <a class="a-norm mx-lg-10 footer_website--bottom--item"
+                   href="/coordinated-vulnerability-disclosure-policy">
+                    Coordinated vulnerability disclosure policy</a>
+                <a class="a-norm mx-lg-10 footer_website--bottom--item"
+                   href="/static/files/RFC2350.pdf" target="_blank">RFC2350</a>
+            </div>
+            <div class="d-flex flex-column flex-lg-row mt-20 footer_website--bottom--right ml-auto">
+                &copy; 2022-2026 CERT-EU. All rights reserved.
+            </div>
+        </div>
+    </section>
+</footer>
+
+<script src="/files/js/functions.min.js?v=1.1" nonce="bjLLb3x2wYwSziFR8v3BIi61tcKtyLcs"></script>
+<script type="text/javascript" nonce="bjLLb3x2wYwSziFR8v3BIi61tcKtyLcs">
+    CERTEU.UTILS.MENUBAR_HORIZONTAL_LEVEL1.init();
+    CERTEU.UTILS.SCROLL_TOP.init();
+    CERTEU.UTILS.STICKY_HEADER.init();
+    CERTEU.UTILS.COOKIES_POLICY.init();
+</script>
+
+
+<script type="text/javascript" nonce="bjLLb3x2wYwSziFR8v3BIi61tcKtyLcs">
+    CERTEU.UTILS.FONT_AMENDER.init();
+    CERTEU.UTILS.BTN_DROPDOWN.init();
+</script>
+</body>
+</html>

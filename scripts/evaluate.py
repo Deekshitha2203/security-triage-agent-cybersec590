@@ -1,7 +1,8 @@
-"""Save expected versus actual policy/integration results without inventing consensus."""
 from triage.agent import run
 from triage.common import ROOT, now, write_json, write_text
+# runs all the test scenarios and saves expected vs actual results
 
+# each case is a tuple of (case name, scenario file, failure to simulate, expected (rule, rating, priority, status))
 CASES = [
     ("baseline", "baseline", None, ("R6", None, "Insufficient evidence", "insufficient_evidence")),
     ("positive", "positive", None, ("R1", "High", "Critical", "rated")),
@@ -16,13 +17,13 @@ CASES = [
     ("controlled-failure", "positive", "threat_unavailable", ("R6", None, "Insufficient evidence", "insufficient_evidence")),
 ]
 
+def evaluate():  # runs every case, compares it with what we expected, and writes the results and the testing report
 
-def evaluate():
-    # Record expectations BEFORE execution; policy-defined, group consensus still pending.
     out = ROOT / "artifacts/testing"
     write_json(out / "expected_results.json", {"created_at": now(), "source": "approved documented policy; human consensus signoff pending",
                "model_mode": "scripted_replay", "cases": [{"case": name, "scenario": scenario, "failure": failure,
                     "expected": dict(zip(("rule", "rating", "priority", "status"), expected))} for name, scenario, failure, expected in CASES]})
+    # run each case and check the actual result against the expected one
     results = []
     for name, scenario, failure, expected in CASES:
         assessment, checklist = run(ROOT / f"data/environment/{scenario}.json", out / "runs" / name,
@@ -35,12 +36,14 @@ def evaluate():
                         "actual": dict(zip(("rule", "rating", "priority", "status"), actual)),
                         "pass": expected == actual and machine_audit, "attributed_evidence_audit": machine_audit,
                         "run": f"runs/{name}", "model_mode": "scripted_replay", "human_consensus": "pending"})
+    # save all results as json
     passed = sum(r["pass"] for r in results)
     summary = {"generated_at": now(), "policy_version": "2.0", "passed": passed, "total": len(results),
                "model_mode": "scripted_replay", "group_consensus_review": "pending", "cases": results,
                "limitations": ["Controlled fixtures are not broad accuracy evaluation.", "Replay is scripted, not an LLM run.",
                                "Live Duke demonstration and actual group evidence review are separate requirements."]}
     write_json(out / "results.json", summary)
+    # write the testing report as a markdown table
     lines = ["# Testing results", "", f"**Actual controlled results:** {passed}/{len(results)} passed.", "",
              "Expected outcomes were saved before execution. Tests use scripted replay and verified cached public evidence; local scenario facts are simulated.",
              "No expert/group consensus, real model performance, or completed human review is claimed.", "",
@@ -53,6 +56,7 @@ def evaluate():
               "", "## Limitations", ""] + ["- " + s for s in summary["limitations"]]
     write_text(out / "TESTING_REPORT.md", "\n".join(lines) + "\n")
     print(f"Controlled replay cases: {passed}/{len(results)} passed; human consensus and real-model demonstration are tracked separately.")
+    # exit with an error if any case failed
     if passed != len(results):
         raise SystemExit(1)
 

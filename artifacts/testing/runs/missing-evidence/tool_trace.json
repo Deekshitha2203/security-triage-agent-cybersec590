@@ -3,7 +3,7 @@
     "tool_call_id": "replay-call-0",
     "tool": "lookup_environment",
     "status": "ok",
-    "time": "2026-10-13T16:39:41.378689+00:00",
+    "time": "2026-10-19T21:02:46.647210+00:00",
     "arguments": {
       "asset_id": "N02",
       "snapshot_id": "northbridge-missing-v1"
@@ -220,13 +220,13 @@
       ],
       "source_mode": "simulated"
     },
-    "completed_at": "2026-10-13T16:39:41.378712+00:00"
+    "completed_at": "2026-10-19T21:02:46.647257+00:00"
   },
   {
     "tool_call_id": "replay-call-1",
     "tool": "lookup_vulnerability",
     "status": "ok",
-    "time": "2026-10-13T16:39:41.379766+00:00",
+    "time": "2026-10-19T21:02:46.649216+00:00",
     "attempts": [],
     "arguments": {
       "cve_id": "CVE-2024-21762",
@@ -279,7 +279,7 @@
           "source": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2024/21xxx/CVE-2024-21762.json",
           "source_mode": "cached",
           "retrieved_at": "2026-10-13T03:52:00.184186+00:00",
-          "used_at": "2026-10-13T16:39:41.380215+00:00",
+          "used_at": "2026-10-19T21:02:46.649773+00:00",
           "source_sha256": "1b38e10fb9c1c445e0da4a3560a068c5eb995d2c31ccb46b901784eafbd9bab4",
           "saved_sha256": "1b38e10fb9c1c445e0da4a3560a068c5eb995d2c31ccb46b901784eafbd9bab4",
           "saved_artifact": "evidence/cna.json",
@@ -359,13 +359,13 @@
         }
       ]
     },
-    "completed_at": "2026-10-13T16:39:41.380275+00:00"
+    "completed_at": "2026-10-19T21:02:46.649894+00:00"
   },
   {
     "tool_call_id": "replay-call-2",
     "tool": "lookup_vulnerability",
     "status": "ok",
-    "time": "2026-10-13T16:39:41.381454+00:00",
+    "time": "2026-10-19T21:02:46.652498+00:00",
     "attempts": [],
     "arguments": {
       "cve_id": "CVE-2024-21762",
@@ -381,7 +381,7 @@
           "source": "https://cert.europa.eu/publications/security-advisories/2024-018/",
           "source_mode": "cached",
           "retrieved_at": "2026-10-13T03:52:00.184907+00:00",
-          "used_at": "2026-10-13T16:39:41.381890+00:00",
+          "used_at": "2026-10-19T21:02:46.653376+00:00",
           "source_sha256": "35716ec0395c27fdd25dc5f7150703975d7126a3e68b8ee1c5b45ade46d9df47",
           "saved_sha256": "35716ec0395c27fdd25dc5f7150703975d7126a3e68b8ee1c5b45ade46d9df47",
           "saved_artifact": "evidence/cert.html",
@@ -393,13 +393,13 @@
         }
       ]
     },
-    "completed_at": "2026-10-13T16:39:41.382780+00:00"
+    "completed_at": "2026-10-19T21:02:46.655495+00:00"
   },
   {
     "tool_call_id": "replay-call-3",
     "tool": "lookup_kev",
     "status": "ok",
-    "time": "2026-10-13T16:39:41.383989+00:00",
+    "time": "2026-10-19T21:02:46.658249+00:00",
     "attempts": [],
     "arguments": {
       "cve_id": "CVE-2024-21762"
@@ -429,7 +429,7 @@
           "source": "https://raw.githubusercontent.com/cisagov/kev-data/main/known_exploited_vulnerabilities.json",
           "source_mode": "cached",
           "retrieved_at": "2026-10-13T03:52:00.185895+00:00",
-          "used_at": "2026-10-13T16:39:41.384243+00:00",
+          "used_at": "2026-10-19T21:02:46.658620+00:00",
           "source_sha256": "fb1621beec7db19d99c1f919dede3d4cc01ad88acd16f79f1592929c4826dfee",
           "saved_sha256": "21b56d598ddaa1ea45a2c6c51bafbc2f6019002b2981683dc89068d8c0579052",
           "saved_artifact": "evidence/kev.json",
@@ -458,6 +458,6 @@
         }
       ]
     },
-    "completed_at": "2026-10-13T16:39:41.384254+00:00"
+    "completed_at": "2026-10-19T21:02:46.658647+00:00"
   }
 ]

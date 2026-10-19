@@ -1,5 +1,5 @@
-"""Build an explicit allowlisted ZIP; never recursively package course credential files."""
-from pathlib import Path
+# this builds the submission zip from a fixed list of files and checks no secret gets in
+from pathlib import Path 
 import json
 import re
 import os
@@ -8,7 +8,7 @@ from zipfile import ZipFile, ZIP_DEFLATED
 from triage.common import ROOT, SafeError, SECRET_ENV, digest, now, write_json
 
 
-def selected_files():
+def selected_files():   # picks which files go into the zip, and only allowed folders and file types get in. Excludes .env or the key pdf
     files = [ROOT / n for n in ("README.md", "requirements.txt", ".env.example", ".gitignore",
                                "Assignment 3_ Build a Security Triage Agent.pdf", "Windows_Enterprise_Environment.docx")]
     for folder in ("triage", "scripts", "tests", "config", "docs", "data", "artifacts"):
@@ -18,7 +18,7 @@ def selected_files():
     return sorted(set(p for p in files if p.is_file()))
 
 
-def scan(files):
+def scan(files): # looks through every file for our real api key or anything that looks like a key
     findings = []
     values = [os.environ[k].encode() for k in SECRET_ENV if os.environ.get(k)]
     for p in files:
@@ -35,7 +35,7 @@ def scan(files):
     return findings
 
 
-def package_submission(output):
+def package_submission(output):  # makes the zip and an audit file listing every file with its hash, stops if a key is found
     files = selected_files()
     findings = scan(files)
     audit = {"created_at": now(), "allowlist_file_count": len(files), "secret_findings": findings,

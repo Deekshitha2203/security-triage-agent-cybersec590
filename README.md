@@ -2,7 +2,7 @@
 
 CVE-2024-21762 assessment for Northbridge Services' N02 FortiOS VPN gateways. The agent gathers attributed evidence, applies the group's R1–R6 policy, and produces a risk rating, separate priority, uncertainty, and recommended actions.
 
-**Group:** Atharva Ashish Jog, Varun Bhanushali, Shweta Mittal. **Deadline:** October 14, 2026; check the exact Canvas cutoff separately.
+**Group:** Atharva Ashish Jog, Varun Bhanushali, Shweta Mittal, Deekshitha Manjunatha Reddy 
 
 The original environment has unknown firmware and SSL-VPN configuration. Its supported result is **Insufficient evidence**, not a presumed vulnerability. The positive scenario is explicitly simulated and produces **High / Critical** under R1. It represents one test instance, not a confirmed finding about both gateway members.
 
