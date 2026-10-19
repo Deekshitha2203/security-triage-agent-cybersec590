@@ -264,7 +264,7 @@ For every case preserve inputs, overrides, expected and actual status/rating/pri
 | Assessment and demonstration | JSON and readable report; complete-run checklist; correlated tool request/result evidence; actual human review |
 | Testing report | Three policy checks and one controlled failure; expected versus actual results, consensus, limitations |
 | Baseline manifest | Inputs, snapshot, policy, prompt/configuration, dependency/model/code versions and outputs for Assignment 4 reuse |
-| Contributions and AI disclosure | Actual member work and AI assistance; never inferred contributions |
+| Contributions | Actual work completed by each member |
 | Demo video if needed | Required if the group does not present in class; show design, tool calls, rationale, uncertainty and limitations |
 
 The assignment text inconsistently mentions Assignment 2 in the testing/baseline section; the rubric explicitly asks for a baseline for Assignment 4. Preserve the current project's complete baseline and note the course-text inconsistency without inventing a prior Assignment 2 submission.

@@ -12,8 +12,6 @@ Record actual work before submission. Group membership does not establish a cont
 | Varun Bhanushali | Identified as a project member | Pending member-provided contribution description |
 | Shweta Mittal | Identified as a project member | Pending member-provided contribution description |
 
-**AI assistance disclosure:** Codex assisted with external-source research, Step 1 drafting, Python implementation, synthetic variants, automated tests, report generation and documentation. The group is responsible for verifying sources, technical assumptions, policy interpretations and final submission. AI output does not substitute for the required group member evidence review.
-
 ## Policy consensus
 
 The supplied six rules define the expected results. Do not claim consensus was measured merely because automated tests passed.

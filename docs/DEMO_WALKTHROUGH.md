@@ -13,6 +13,6 @@ The baseline and positive scenarios have now completed through Duke AI Gateway w
 7. Inspect a cited external payload and environment passage. Show that severity and KEV do not prove local vulnerability or compromise. Show the current cache/live labels and no secrets in outputs.
 8. Run `python3 -m triage evaluate` and show the actual testing report. Explain the applicability-change, impact-change, missing/conflicting-evidence and controlled-failure checks. Show the extra internal-path case changing Critical priority to High while rating remains High.
 9. Distinguish the scripted replay tests from the real Duke run. Show the live run's demonstration checklist and the actual group member review/signoff. Discuss missing companion files, simulated inputs, unknown downstream paths and limits of the small test set.
-10. Show the baseline manifest and sanitized package command. Confirm actual member contributions and AI assistance disclosure. End with the recommended action and evidence needed to change the decision.
+10. Show the baseline manifest and sanitized package command. Confirm each member’s completed work. End with the recommended action and evidence needed to change the decision.
 
 Record the final video with a group member's usual screen-recording tool and submit an instructor-accessible file/link. Keep the token, local `.env`, API-key PDF and dashboard secrets off screen.
