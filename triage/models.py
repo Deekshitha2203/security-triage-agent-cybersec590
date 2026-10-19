@@ -1,4 +1,3 @@
-"""Duke native tool-call adapter and explicitly scripted offline test provider."""
 from __future__ import annotations
 
 import json
@@ -44,7 +43,6 @@ class DukeModel:
 
 
 class ReplayModel:
-    """Never presented as a real LLM. Supports reproducible workflow integration tests."""
     mode = "scripted_replay"
 
     def __init__(self, config, invalid_first=False):

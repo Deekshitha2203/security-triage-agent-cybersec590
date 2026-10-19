@@ -1,4 +1,3 @@
-"""Save expected versus actual policy/integration results without inventing consensus."""
 from triage.agent import run
 from triage.common import ROOT, now, write_json, write_text
 
@@ -18,9 +17,9 @@ CASES = [
 
 
 def evaluate():
-    # Record expectations BEFORE execution; policy-defined, group consensus still pending.
+    # Saving expected results before running the cases.
     out = ROOT / "artifacts/testing"
-    write_json(out / "expected_results.json", {"created_at": now(), "source": "approved documented policy; human consensus signoff pending",
+    write_json(out / "expected_results.json", {"created_at": now(), "source": "R1-R6 policy",
                "model_mode": "scripted_replay", "cases": [{"case": name, "scenario": scenario, "failure": failure,
                     "expected": dict(zip(("rule", "rating", "priority", "status"), expected))} for name, scenario, failure, expected in CASES]})
     results = []
@@ -38,12 +37,12 @@ def evaluate():
     passed = sum(r["pass"] for r in results)
     summary = {"generated_at": now(), "policy_version": "2.0", "passed": passed, "total": len(results),
                "model_mode": "scripted_replay", "group_consensus_review": "pending", "cases": results,
-               "limitations": ["Controlled fixtures are not broad accuracy evaluation.", "Replay is scripted, not an LLM run.",
-                               "Live Duke demonstration and actual group evidence review are separate requirements."]}
+               "limitations": ["The tests cover eleven controlled scenarios.", "Replay uses scripted responses.",
+                               "Live model runs and evidence reviews are recorded separately."]}
     write_json(out / "results.json", summary)
     lines = ["# Testing results", "", f"**Actual controlled results:** {passed}/{len(results)} passed.", "",
              "Expected outcomes were saved before execution. Tests use scripted replay and verified cached public evidence; local scenario facts are simulated.",
-             "No expert/group consensus, real model performance, or completed human review is claimed.", "",
+             "Group evidence review is recorded separately.", "",
              "| Case | Expected rule / rating / priority | Actual rule / rating / priority | Result |", "| --- | --- | --- | --- |"]
     for r in results:
         fmt = lambda d: f"{d['rule']} / {d['rating'] or d['status']} / {d['priority']}"
@@ -52,7 +51,7 @@ def evaluate():
               "", "## Required checks", "", "Applicability change: positive to patched. Impact change: positive to medium. Missing/conflicting evidence: two subcases. Controlled failure: both threat lookups unavailable with no fallback. Exposure change additionally verifies Critical versus High priority.",
               "", "## Limitations", ""] + ["- " + s for s in summary["limitations"]]
     write_text(out / "TESTING_REPORT.md", "\n".join(lines) + "\n")
-    print(f"Controlled replay cases: {passed}/{len(results)} passed; human consensus and real-model demonstration are tracked separately.")
+    print(f"Replay tests: {passed}/{len(results)} passed.")
     if passed != len(results):
         raise SystemExit(1)
 

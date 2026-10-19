@@ -1,4 +1,3 @@
-"""Build an explicit allowlisted ZIP; never recursively package course credential files."""
 from pathlib import Path
 import json
 import re
@@ -52,7 +51,7 @@ def package_submission(output):
         for p in files:
             z.write(p, "security-triage-agent/" + str(p.relative_to(ROOT)))
         z.writestr("security-triage-agent/package_audit.json", json.dumps(audit, indent=2) + "\n")
-    print(f"Sanitized ZIP saved: {output}; {len(files)} allowlisted files, no detected credentials.")
+    print(f"Saved {output} ({len(files)} files).")
 
 
 if __name__ == "__main__":

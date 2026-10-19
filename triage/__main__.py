@@ -23,13 +23,13 @@ def main():
     sub.add_parser("models", help="List model IDs currently accessible to your Duke key")
     sub.add_parser("doctor", help="Check setup without revealing credentials")
     sub.add_parser("evaluate", help="Run controlled replay scenarios and write actual results")
-    package = sub.add_parser("package", help="Build sanitized submission ZIP from an explicit allowlist")
+    package = sub.add_parser("package", help="Build submission ZIP")
     package.add_argument("--output", type=Path, default=ROOT / "dist/security-triage-agent.zip")
     args = parser.parse_args()
     load_local_env()
     try:
         if args.command == "configure":
-            key = getpass.getpass("Duke AI Gateway token (hidden; do not paste into chat): ")
+            key = getpass.getpass("Duke AI Gateway token: ")
             if not key or any(c.isspace() for c in key):
                 raise SafeError("invalid_token_format")
             model = input("Model ID [GPT 4.1]: ").strip() or "GPT 4.1"
@@ -40,7 +40,7 @@ def main():
             os.fchmod(fd, 0o600)
             with os.fdopen(fd, "w") as stream:
                 stream.write("LITELLM_TOKEN=" + key + "\nTRIAGE_MODEL=" + model + "\n")
-            print("Saved private local configuration to ignored .env. No key is printed or included in submission packages.")
+            print("Saved configuration to ignored .env.")
         elif args.command == "models":
             from .models import DukeModel, DUKE_BASE
             provider = DukeModel(read_json(ROOT / "config/agent.json"))

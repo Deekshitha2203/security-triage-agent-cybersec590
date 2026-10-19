@@ -1,4 +1,3 @@
-"""Fixed-source tools with attributed evidence and guarded dispatch."""
 from __future__ import annotations
 
 from html.parser import HTMLParser
@@ -122,7 +121,6 @@ class Tools:
                 try:
                     raw = http(SOURCES[source], self.budget.timeout(self.budget.config["http_timeout_seconds"]))
                     parsed_meta = {"retrieved_at": now(), "source_sha256": digest(raw)}
-                    # Validate semantics before treating a live payload as evidence.
                     normalize(source, raw, parsed_meta, "live", "pending")
                     attempts.append({"attempt": attempt + 1, "status": "ok", "time": now()})
                     return raw, parsed_meta, "live", attempts
@@ -170,7 +168,7 @@ class Tools:
             self.seen.add(fingerprint)
             self.budget.use_tool()
             if self.controlled_failure == "threat_unavailable" and name == "lookup_vulnerability":
-                # The synthetic failure uses two attempts and forbids fallback by construction.
+                # Simulating two failed attempts without using the cache.
                 self.budget.use_tool()
                 result["attempts"] = [{"attempt": 1, "status": "error", "error_code": "simulated_timeout"},
                                       {"attempt": 2, "status": "error", "error_code": "simulated_timeout"}]
@@ -192,7 +190,7 @@ class Tools:
                 source = "kev" if name == "lookup_kev" else arguments["source"]
                 raw, meta, mode, attempts = self.source(source)
                 if source == "kev":
-                    # Preserve the fetched catalog; return only the selected CVE to the model.
+                    # Saving the full catalog and returning only this CVE.
                     catalog = json.loads(raw)
                     selected = [(i, v) for i, v in enumerate(catalog["vulnerabilities"]) if v["cveID"] == CVE]
                     meta = {**meta, "original_locator": meta.get("original_locator") or (f"/vulnerabilities/{selected[0][0]}" if selected else "/vulnerabilities"),
@@ -200,7 +198,6 @@ class Tools:
                     
                 artifact_path = self.output / "evidence" / SOURCE_FILES[source]
                 artifact_path.parent.mkdir(parents=True, exist_ok=True)
-                # Public payloads contain no provider credentials. Block any known secret before saving.
                 import os
                 from .common import SECRET_ENV
 

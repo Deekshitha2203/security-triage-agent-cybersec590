@@ -1,4 +1,3 @@
-"""Derive a scoped snapshot from the supplied DOCX and create labeled test variants."""
 from copy import deepcopy
 import json
 from pathlib import Path

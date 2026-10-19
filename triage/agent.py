@@ -1,4 +1,3 @@
-"""Bounded model/tool loop, checked synthesis, and complete-run artifacts."""
 from __future__ import annotations
 
 import json
@@ -182,13 +181,13 @@ def run(snapshot_path, output, config=None, provider="duke", evidence_mode="auto
         "human_evidence_review": assessment["human_review"]["status"] == "accepted"
     }
     checklist = {"checks": checks, "complete_run_technical_requirements_met": all(v for k, v in checks.items() if k != "human_evidence_review"),
-                 "submission_demo_complete": all(checks.values()), "note": "Replay and pending human review cannot be reported as a completed submission demonstration."}
+                 "submission_demo_complete": all(checks.values()), "note": "Human review is recorded separately from technical checks."}
     manifest = {"run_id": run_id, "created_at": now(), "python": platform.python_version(), "model": model_meta,
                 "code_version": code_manifest(), "configuration": config, "policy_version": "2.0", "snapshot_sha256": digest(snapshot_raw),
                 "source_modes": {e["evidence_id"]: e["source_mode"] for e in assessment["evidence"]},
                 "tool_executions": budget.executions, "model_turns": budget.model_turns, "usage": usage,
                 "elapsed_seconds": round(config["run_timeout_seconds"] - budget.remaining(), 3),
-                "stop_reason": stopped, "baseline_purpose": "Assignment 4 reproducibility; no prior Assignment 2 run is fabricated"}
+                "stop_reason": stopped, "baseline_purpose": "Assignment 4 reproducibility"}
     write_json(output / "assessment.json", assessment)
     write_text(output / "assessment.md", report(assessment))
     write_json(output / "model_messages.json", transcript)

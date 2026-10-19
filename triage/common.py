@@ -1,4 +1,3 @@
-"""Safe persistence, source hashing, and bounded HTTP without third-party packages."""
 from __future__ import annotations
 
 import hashlib
@@ -17,7 +16,7 @@ SECRET_ENV = ("LITELLM_TOKEN", "DUKE_AI_GATEWAY_API_KEY", "TRIAGE_MODEL_API_KEY"
 
 
 class SafeError(Exception):
-    """Only application-defined messages; never include remote exception bodies."""
+    pass
 
 
 def now():
@@ -33,7 +32,6 @@ def read_json(path):
 
 
 def load_local_env():
-    """Read only known config names from an ignored .env; never evaluate its content."""
     path = ROOT / ".env"
     if not path.exists():
         return
@@ -47,7 +45,6 @@ def load_local_env():
 
 
 def redact(value):
-    """Remove configured secrets and common credential patterns recursively."""
     if isinstance(value, dict):
         return {k: "[REDACTED]" if re.search(r"authorization|api[_-]?key|token|password|secret", k, re.I)
                 and k not in {"max_output_tokens", "max_tokens", "prompt_tokens", "completion_tokens", "total_tokens"}
