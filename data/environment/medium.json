@@ -8,7 +8,7 @@
   "assessment_scope": "One explicitly simulated N02 test instance; does not assert the state of both cohort members",
   "source_document": "Windows_Enterprise_Environment.docx",
   "source_document_sha256": "522af177abdddef0dacb2d8676d058e7d2a0de71f1550dc83288b6124c03e59d",
-  "created_at": "2026-10-13T04:04:26.224635+00:00",
+  "created_at": "2026-10-19T23:07:02.879521+00:00",
   "facts": {
     "product": {
       "value": "FortiOS",
@@ -56,7 +56,7 @@
       "quote": "N02 Remote access VPN gateways | 2 | Fortinet FortiGate 100F; FortiOS",
       "source_mode": "simulated",
       "source_date": null,
-      "retrieved_at": "2026-10-13T04:04:26.224334+00:00",
+      "retrieved_at": "2026-10-19T23:07:02.878516+00:00",
       "source_sha256": "522af177abdddef0dacb2d8676d058e7d2a0de71f1550dc83288b6124c03e59d",
       "scope": "Northbridge Services teaching environment"
     },
@@ -68,7 +68,7 @@
       "quote": "Default policy denies unlisted inter-zone traffic and unsolicited inbound Internet traffic. Public services use documentation addresses: portal 192.0.2.10:443, VPN 192.0.2.20:443 and partner SFTP 192.0.2.30:22. No public RDP, SMB, LDAP, SQL or management interface is published.",
       "source_mode": "simulated",
       "source_date": null,
-      "retrieved_at": "2026-10-13T04:04:26.224437+00:00",
+      "retrieved_at": "2026-10-19T23:07:02.879521+00:00",
       "source_sha256": "522af177abdddef0dacb2d8676d058e7d2a0de71f1550dc83288b6124c03e59d",
       "scope": "Northbridge Services teaching environment"
     },
@@ -80,7 +80,7 @@
       "quote": "Northbridge Services has 1,000 staff: 700 assigned to headquarters, 150 to a branch and 150 working remotely. Its applications support customer service, orders, invoicing and payroll. A recovery site hosts infrastructure and replicated data. The company uses one Active Directory forest and domain, corp.northbridge.example, synchronized to one Microsoft Entra tenant.",
       "source_mode": "simulated",
       "source_date": null,
-      "retrieved_at": "2026-10-13T04:04:26.224469+00:00",
+      "retrieved_at": "2026-10-19T23:07:02.879521+00:00",
       "source_sha256": "522af177abdddef0dacb2d8676d058e7d2a0de71f1550dc83288b6124c03e59d",
       "scope": "Northbridge Services teaching environment"
     },
@@ -92,7 +92,7 @@
       "quote": "S02 network design and reviewed access policy | Unlisted inter-zone traffic and unsolicited Internet ingress denied by default. No Internet-facing RDP, SMB, LDAP, SQL or appliance management.",
       "source_mode": "simulated",
       "source_date": null,
-      "retrieved_at": "2026-10-13T04:04:26.224498+00:00",
+      "retrieved_at": "2026-10-19T23:07:02.879521+00:00",
       "source_sha256": "522af177abdddef0dacb2d8676d058e7d2a0de71f1550dc83288b6124c03e59d",
       "scope": "Northbridge Services teaching environment"
     },
@@ -104,7 +104,7 @@
       "quote": "S04 telemetry coverage summary | AD authentication, Microsoft 365 audit, firewall and VPN logs retained online for 90 days. Twelve E02 endpoint sensor heartbeats are older than seven days.",
       "source_mode": "simulated",
       "source_date": null,
-      "retrieved_at": "2026-10-13T04:04:26.224526+00:00",
+      "retrieved_at": "2026-10-19T23:07:02.879521+00:00",
       "source_sha256": "522af177abdddef0dacb2d8676d058e7d2a0de71f1550dc83288b6124c03e59d",
       "scope": "Northbridge Services teaching environment"
     },
@@ -116,7 +116,7 @@
       "quote": "S05 business impact and recovery worksheet | Identity outage can block new logins across 1000 staff; existing sessions may continue temporarily. ERP supports 300 daily operations staff; outages beyond four hours delay orders and invoicing.",
       "source_mode": "simulated",
       "source_date": null,
-      "retrieved_at": "2026-10-13T04:04:26.224555+00:00",
+      "retrieved_at": "2026-10-19T23:07:02.879521+00:00",
       "source_sha256": "522af177abdddef0dacb2d8676d058e7d2a0de71f1550dc83288b6124c03e59d",
       "scope": "Northbridge Services teaching environment"
     },
@@ -128,7 +128,7 @@
       "quote": "Additional devices: 40 managed wireless APs (N11) and 30 printers (P01). Appliance firmware and precise patch builds are unknown. HQ has two firewalls in an active/passive pair; the branch and recovery site each have one. The HQ VPN and WAF each have active/standby pairs.",
       "source_mode": "simulated",
       "source_date": null,
-      "retrieved_at": "2026-10-13T04:04:26.224582+00:00",
+      "retrieved_at": "2026-10-19T23:07:02.879521+00:00",
       "source_sha256": "522af177abdddef0dacb2d8676d058e7d2a0de71f1550dc83288b6124c03e59d",
       "scope": "Northbridge Services teaching environment"
     },
@@ -140,7 +140,7 @@
       "quote": "Test override: firmware = \"7.2.6\".",
       "source_mode": "simulated",
       "source_date": null,
-      "retrieved_at": "2026-10-13T04:04:26.227884+00:00",
+      "retrieved_at": "2026-10-19T23:07:02.888958+00:00",
       "scope": "One explicitly simulated N02 test instance; does not assert the state of both cohort members"
     },
     {
@@ -151,7 +151,7 @@
       "quote": "Test override: ssl_vpn_enabled = true.",
       "source_mode": "simulated",
       "source_date": null,
-      "retrieved_at": "2026-10-13T04:04:26.227888+00:00",
+      "retrieved_at": "2026-10-19T23:07:02.888958+00:00",
       "scope": "One explicitly simulated N02 test instance; does not assert the state of both cohort members"
     },
     {
@@ -162,7 +162,7 @@
       "quote": "Test override: attack_path = true. An unauthenticated threat source can reach the affected SSL-VPN service within the fixture's declared scope.",
       "source_mode": "simulated",
       "source_date": null,
-      "retrieved_at": "2026-10-13T04:04:26.227890+00:00",
+      "retrieved_at": "2026-10-19T23:07:02.888958+00:00",
       "scope": "One explicitly simulated N02 test instance; does not assert the state of both cohort members"
     },
     {
@@ -173,7 +173,7 @@
       "quote": "Test override: internet_reachable = true.",
       "source_mode": "simulated",
       "source_date": null,
-      "retrieved_at": "2026-10-13T04:04:26.227892+00:00",
+      "retrieved_at": "2026-10-19T23:07:02.888958+00:00",
       "scope": "One explicitly simulated N02 test instance; does not assert the state of both cohort members"
     },
     {
@@ -184,15 +184,15 @@
       "quote": "Test override: impact = \"Medium\". Noncritical test-team service; limited interruption; documented separation from production and sensitive data.",
       "source_mode": "simulated",
       "source_date": null,
-      "retrieved_at": "2026-10-13T04:04:26.227894+00:00",
+      "retrieved_at": "2026-10-19T23:07:02.888958+00:00",
       "scope": "One explicitly simulated N02 test instance; does not assert the state of both cohort members"
     }
   ],
   "assumptions": [],
   "limitations": [
     "DOCX-derived subset; companion JSON/CSV/lookup script were not supplied.",
-    "The original DOCX documents public VPN TCP/443 but does not identify SSL-VPN termination or enabled status; fixture values are explicit simulated overrides.",
-    "No per-gateway state, configuration date, exact internal flows, or VPN-specific RTO is supplied.",
+    "Public VPN access on TCP/443 is documented, but reachability and enabled status of the vulnerable SSL-VPN component are unknown in the baseline.",
+    "The original document supplies no per-gateway firmware/configuration observations, exact internal flows, or VPN-specific RTO. Variant values are simulated test conditions, not observed gateway settings.",
     "No telemetry events establish actual exploitation or compromise."
   ],
   "overrides": [

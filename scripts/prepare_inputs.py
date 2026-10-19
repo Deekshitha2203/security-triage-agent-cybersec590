@@ -56,12 +56,12 @@ def prepare():
                     "impact": fact("High", ["ENV-ASSET", "ENV-ORGANIZATION"],
                                    interpretation=True, reason="Production remote-access gateway compromise or interruption could materially disrupt work; simultaneous dependency of all remote staff is not asserted.")},
                 "evidence": evidence, "assumptions": ["High impact is a policy interpretation of the production remote-access role, pending analyst review."],
+
                 "limitations": ["DOCX-derived subset; companion JSON/CSV/lookup script were not supplied.",
-                                "The original DOCX documents public VPN TCP/443 but does not identify SSL-VPN termination or enabled status; fixture values are explicit simulated overrides.",
-                                "No per-gateway state, configuration date, exact internal flows, or VPN-specific RTO is supplied.",
+                                "Public VPN access on TCP/443 is documented, but reachability and enabled status of the vulnerable SSL-VPN component are unknown in the baseline.",
+                                "The original document supplies no per-gateway firmware/configuration observations, exact internal flows, or VPN-specific RTO. Variant values are simulated test conditions, not observed gateway settings.",
                                 "No telemetry events establish actual exploitation or compromise."], "overrides": []}
     write_json(ROOT / "data/environment/baseline.json", baseline)
-
     overrides = {
         "positive": {"firmware": "7.2.6", "ssl_vpn_enabled": True, "attack_path": True, "internet_reachable": True},
         "patched": {"firmware": "7.2.7", "ssl_vpn_enabled": True, "attack_path": True, "internet_reachable": True},
@@ -87,7 +87,7 @@ def prepare():
             if field == "impact" and value == "Medium":
                 quote += " Noncritical test-team service; limited interruption; documented separation from production and sensitive data."
             if field == "impact" and value == "Low":
-                quote += " Disposable isolated test service; synthetic data, no sensitive credentials or production dependencies, negligible operational consequences. Isolation limits consequences but a lab threat source can reach SSL-VPN."
+                quote += " Disposable test service with an Internet-reachable SSL-VPN interface; synthetic data, no sensitive credentials or production dependencies, and negligible operational consequences. Isolation applies to downstream access, not Internet ingress."
             record = {"evidence_id": eid, "publisher": "Group controlled scenario variant", "source": f"data/environment/{name}.json",
                       "locator": f"/facts/{field}", "quote": quote, "source_mode": "simulated", "source_date": None,
                       "retrieved_at": now(), "scope": variant["assessment_scope"]}

@@ -1,1 +1,2 @@
 artifacts/runs/**/evidence/** -text
+data/evidence/** -text
