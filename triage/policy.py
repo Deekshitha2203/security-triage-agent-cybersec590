@@ -1,10 +1,10 @@
-"""Deterministic implementation of the group's R1-R6 rules."""
-from __future__ import annotations
-
 import re
 
 VERSION = "2.0"
-FIELDS = ("product_match", "version_affected", "ssl_vpn_enabled", "attack_path", "internet_reachable", "impact")
+FIELDS = (
+    "product_match", "version_affected", "ssl_vpn_enabled",
+    "attack_path", "internet_reachable", "impact",
+)
 
 
 def version_tuple(value):
@@ -14,7 +14,6 @@ def version_tuple(value):
 
 
 def affected_version(value, ranges):
-    """Require an explicit covered branch; never guess for an unknown build/branch."""
     version = version_tuple(value)
     if version is None:
         return None
@@ -29,33 +28,37 @@ def affected_version(value, ranges):
         covered = True
         if start <= version <= end:
             return True
+    # Keeping unlisted firmware branches unknown.
     return False if covered else None
 
 
 def decision(rule, rating=None, priority="Insufficient evidence", status="insufficient_evidence", reason=""):
-    return {"policy_version": VERSION, "policy_rule": rule, "rating": rating,
-            "priority": priority, "status": status, "rationale": reason}
+    return {
+        "policy_version": VERSION, "policy_rule": rule, "rating": rating,
+        "priority": priority, "status": status, "rationale": reason,
+    }
 
 
 def apply(facts):
-    """None is unknown; 'conflicting' is distinct from false. Validate before rating."""
     if set(facts) != set(FIELDS):
         return decision(None, priority="Review", status="review_required", reason="Invalid policy input fields.")
     for field in FIELDS:
         value = facts[field]
-        allowed = (None, "conflicting", "High", "Medium", "Low") if field == "impact" else (None, "conflicting", True, False)
+        allowed = (None, "conflicting", True, False)
+        if field == "impact":
+            allowed = (None, "conflicting", "High", "Medium", "Low")
         if not any(type(value) is type(v) and value == v for v in allowed):
             return decision(None, priority="Review", status="review_required", reason="Invalid policy input type.")
     if facts["internet_reachable"] is True and facts["attack_path"] is False:
         return decision(None, priority="Review", status="review_required", reason="Contradictory attack-path inputs.")
-    # A reliable absent prerequisite resolves this CVE even if unrelated inputs are unknown.
-    for field in FIELDS[:-1]:
-        if field != "internet_reachable" and facts[field] is False:
+    # Checking absent prerequisites before unrelated evidence gaps.
+    prerequisites = ("product_match", "version_affected", "ssl_vpn_enabled", "attack_path")
+    for field in prerequisites:
+        if facts[field] is False:
             return decision("R5", "Low", "Informational", "rated", f"Decisive prerequisite absent: {field}.")
     if "conflicting" in facts.values():
         return decision("R6", priority="Review", status="review_required", reason="Unresolved decisive evidence conflict.")
-    required = ("product_match", "version_affected", "ssl_vpn_enabled", "attack_path", "impact")
-    missing = [f for f in required if facts[f] is None]
+    missing = [field for field in (*prerequisites, "impact") if facts[field] is None]
     if facts["impact"] == "High" and facts["internet_reachable"] is None:
         missing.append("internet_reachable")
     if missing:
