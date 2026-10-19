@@ -268,7 +268,7 @@ For every case preserve inputs, overrides, expected and actual status/rating/pri
 
 The assignment text inconsistently mentions Assignment 2 in the testing/baseline section; the rubric explicitly asks for a baseline for Assignment 4. Preserve the current project's complete baseline and note the course-text inconsistency without inventing a prior Assignment 2 submission.
 
-The design was implemented, tested and reviewed, and is submitted as an instructor-accessible GitHub repository.
+and is submitted as an instructor-accessible GitHub repository.
 
 ## Sources and research limitations
 
