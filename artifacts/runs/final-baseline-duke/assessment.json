@@ -1,7 +1,7 @@
 {
   "threat_id": "CVE-2024-21762",
   "asset_id": "N02",
-  "assessed_at": "2026-10-19T21:00:59.352887+00:00",
+  "assessed_at": "2026-10-20T00:58:33.421179+00:00",
   "policy_version": "2.0",
   "policy_rule": "R6",
   "rating": null,
@@ -67,7 +67,7 @@
       "quote": "N02 Remote access VPN gateways | 2 | Fortinet FortiGate 100F; FortiOS",
       "source_mode": "simulated",
       "source_date": null,
-      "retrieved_at": "2026-10-13T04:04:26.224334+00:00",
+      "retrieved_at": "2026-10-19T23:07:02.878516+00:00",
       "source_sha256": "522af177abdddef0dacb2d8676d058e7d2a0de71f1550dc83288b6124c03e59d",
       "scope": "Northbridge Services teaching environment"
     },
@@ -79,7 +79,7 @@
       "quote": "Default policy denies unlisted inter-zone traffic and unsolicited inbound Internet traffic. Public services use documentation addresses: portal 192.0.2.10:443, VPN 192.0.2.20:443 and partner SFTP 192.0.2.30:22. No public RDP, SMB, LDAP, SQL or management interface is published.",
       "source_mode": "simulated",
       "source_date": null,
-      "retrieved_at": "2026-10-13T04:04:26.224437+00:00",
+      "retrieved_at": "2026-10-19T23:07:02.879521+00:00",
       "source_sha256": "522af177abdddef0dacb2d8676d058e7d2a0de71f1550dc83288b6124c03e59d",
       "scope": "Northbridge Services teaching environment"
     },
@@ -91,7 +91,7 @@
       "quote": "Northbridge Services has 1,000 staff: 700 assigned to headquarters, 150 to a branch and 150 working remotely. Its applications support customer service, orders, invoicing and payroll. A recovery site hosts infrastructure and replicated data. The company uses one Active Directory forest and domain, corp.northbridge.example, synchronized to one Microsoft Entra tenant.",
       "source_mode": "simulated",
       "source_date": null,
-      "retrieved_at": "2026-10-13T04:04:26.224469+00:00",
+      "retrieved_at": "2026-10-19T23:07:02.879521+00:00",
       "source_sha256": "522af177abdddef0dacb2d8676d058e7d2a0de71f1550dc83288b6124c03e59d",
       "scope": "Northbridge Services teaching environment"
     },
@@ -103,7 +103,7 @@
       "quote": "S02 network design and reviewed access policy | Unlisted inter-zone traffic and unsolicited Internet ingress denied by default. No Internet-facing RDP, SMB, LDAP, SQL or appliance management.",
       "source_mode": "simulated",
       "source_date": null,
-      "retrieved_at": "2026-10-13T04:04:26.224498+00:00",
+      "retrieved_at": "2026-10-19T23:07:02.879521+00:00",
       "source_sha256": "522af177abdddef0dacb2d8676d058e7d2a0de71f1550dc83288b6124c03e59d",
       "scope": "Northbridge Services teaching environment"
     },
@@ -115,7 +115,7 @@
       "quote": "S04 telemetry coverage summary | AD authentication, Microsoft 365 audit, firewall and VPN logs retained online for 90 days. Twelve E02 endpoint sensor heartbeats are older than seven days.",
       "source_mode": "simulated",
       "source_date": null,
-      "retrieved_at": "2026-10-13T04:04:26.224526+00:00",
+      "retrieved_at": "2026-10-19T23:07:02.879521+00:00",
       "source_sha256": "522af177abdddef0dacb2d8676d058e7d2a0de71f1550dc83288b6124c03e59d",
       "scope": "Northbridge Services teaching environment"
     },
@@ -127,7 +127,7 @@
       "quote": "S05 business impact and recovery worksheet | Identity outage can block new logins across 1000 staff; existing sessions may continue temporarily. ERP supports 300 daily operations staff; outages beyond four hours delay orders and invoicing.",
       "source_mode": "simulated",
       "source_date": null,
-      "retrieved_at": "2026-10-13T04:04:26.224555+00:00",
+      "retrieved_at": "2026-10-19T23:07:02.879521+00:00",
       "source_sha256": "522af177abdddef0dacb2d8676d058e7d2a0de71f1550dc83288b6124c03e59d",
       "scope": "Northbridge Services teaching environment"
     },
@@ -139,7 +139,7 @@
       "quote": "Additional devices: 40 managed wireless APs (N11) and 30 printers (P01). Appliance firmware and precise patch builds are unknown. HQ has two firewalls in an active/passive pair; the branch and recovery site each have one. The HQ VPN and WAF each have active/standby pairs.",
       "source_mode": "simulated",
       "source_date": null,
-      "retrieved_at": "2026-10-13T04:04:26.224582+00:00",
+      "retrieved_at": "2026-10-19T23:07:02.879521+00:00",
       "source_sha256": "522af177abdddef0dacb2d8676d058e7d2a0de71f1550dc83288b6124c03e59d",
       "scope": "Northbridge Services teaching environment"
     },
@@ -147,8 +147,8 @@
       "publisher": "Fortinet CNA via official CVE list",
       "source": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2024/21xxx/CVE-2024-21762.json",
       "source_mode": "live",
-      "retrieved_at": "2026-10-19T21:00:52.286648+00:00",
-      "used_at": "2026-10-19T21:00:52.287567+00:00",
+      "retrieved_at": "2026-10-20T00:58:25.877052+00:00",
+      "used_at": "2026-10-20T00:58:25.880551+00:00",
       "source_sha256": "1b38e10fb9c1c445e0da4a3560a068c5eb995d2c31ccb46b901784eafbd9bab4",
       "saved_sha256": "1b38e10fb9c1c445e0da4a3560a068c5eb995d2c31ccb46b901784eafbd9bab4",
       "saved_artifact": "evidence/cna.json",
@@ -230,10 +230,10 @@
       "publisher": "CERT-EU",
       "source": "https://cert.europa.eu/publications/security-advisories/2024-018/",
       "source_mode": "live",
-      "retrieved_at": "2026-10-19T21:00:53.024110+00:00",
-      "used_at": "2026-10-19T21:00:53.027196+00:00",
-      "source_sha256": "51f135a9f3e259589f785476ac2feca410a1281dd409c035c97f9dcfc9dc32a8",
-      "saved_sha256": "51f135a9f3e259589f785476ac2feca410a1281dd409c035c97f9dcfc9dc32a8",
+      "retrieved_at": "2026-10-20T00:58:27.263202+00:00",
+      "used_at": "2026-10-20T00:58:27.270351+00:00",
+      "source_sha256": "6a04881df07cde345da3783d1b75c63252162587cf4dfd30859c1ccfd8988f71",
+      "saved_sha256": "6a04881df07cde345da3783d1b75c63252162587cf4dfd30859c1ccfd8988f71",
       "saved_artifact": "evidence/cert.html",
       "fallback_reason": null,
       "evidence_id": "THREAT-COMPONENT",
@@ -245,8 +245,8 @@
       "publisher": "CISA",
       "source": "https://raw.githubusercontent.com/cisagov/kev-data/main/known_exploited_vulnerabilities.json",
       "source_mode": "live",
-      "retrieved_at": "2026-10-19T21:00:53.251476+00:00",
-      "used_at": "2026-10-19T21:00:53.300401+00:00",
+      "retrieved_at": "2026-10-20T00:58:27.940541+00:00",
+      "used_at": "2026-10-20T00:58:27.997488+00:00",
       "source_sha256": "b6e27975f6635ecfc546fbd4fd6e444ba63a07ab2abc8876229d77fe083d357d",
       "saved_sha256": "b6e27975f6635ecfc546fbd4fd6e444ba63a07ab2abc8876229d77fe083d357d",
       "saved_artifact": "evidence/kev.json",
@@ -287,13 +287,13 @@
   ],
   "limitations": [
     "DOCX-derived subset; companion JSON/CSV/lookup script were not supplied.",
-    "The original DOCX documents public VPN TCP/443 but does not identify SSL-VPN termination or enabled status; fixture values are explicit simulated overrides.",
-    "No per-gateway state, configuration date, exact internal flows, or VPN-specific RTO is supplied.",
+    "Public VPN access on TCP/443 is documented, but reachability and enabled status of the vulnerable SSL-VPN component are unknown in the baseline.",
+    "The original document supplies no per-gateway firmware/configuration observations, exact internal flows, or VPN-specific RTO. Variant values are simulated test conditions, not observed gateway settings.",
     "No telemetry events establish actual exploitation or compromise."
   ],
   "confidence": {
     "level": "limited",
-    "reason": "Synthetic environment and pending human review; confidence is not a numeric probability."
+    "reason": "Simulated environment; human review pending. Confidence is qualitative."
   },
   "exploitation_context": "known_exploited",
   "human_review": {
@@ -321,7 +321,7 @@
       ]
     },
     "C-IMPACT": {
-      "text": "Business impact is High; this is a policy interpretation of the cited business context, not observed compromise.",
+      "text": "Business impact: High, based on the cited business context. Local compromise is unconfirmed.",
       "evidence_ids": [
         "ENV-ASSET",
         "ENV-ORGANIZATION"
@@ -340,7 +340,7 @@
       ]
     },
     "C-KEV": {
-      "text": "CISA catalog lookup reports known exploitation; it does not establish local compromise.",
+      "text": "CISA reports known exploitation. Local compromise is unconfirmed.",
       "evidence_ids": [
         "THREAT-KEV"
       ]
@@ -348,7 +348,7 @@
   },
   "recommended_actions": {
     "A-RESOLVE": {
-      "text": "Obtain dated firmware and SSL-VPN configuration evidence for each assessed gateway, verify the affected endpoint and attack path, and reconcile decisive conflicts before reassessment.",
+      "text": "Get dated firmware and SSL-VPN configuration evidence for each gateway. Verify the endpoint and attack path, and resolve conflicts before reassessing.",
       "owner": "VPN owner and SOC analyst",
       "urgency": "Prompt evidence resolution",
       "evidence_ids": [
@@ -363,8 +363,8 @@
     }
   },
   "stop_reason": null,
-  "evidence_needed_to_change_decision": "Dated firmware, component state, supported route/exposure, and business-dependency evidence for the assessed scope; version/configuration changes or reconciled contradictions trigger reassessment.",
-  "run_id": "4f990635-615d-446e-b8c7-938cf2a149e9",
+  "evidence_needed_to_change_decision": "Dated firmware, component, route, and business-dependency evidence for this scope. Reassess after configuration changes or conflict resolution.",
+  "run_id": "37fb4f34-f06e-482c-9ed9-8b82f13dc5bf",
   "model": {
     "provider": "Duke AI Gateway",
     "model": "GPT 4.1",
@@ -379,16 +379,16 @@
     "priority": "Insufficient evidence",
     "claim_ids": [
       "C-POLICY",
+      "C-GAPS",
       "C-SCOPE",
       "C-IMPACT",
-      "C-GAPS",
       "C-KEV"
     ],
     "action_ids": [
       "A-RESOLVE"
     ]
   },
-  "snapshot_sha256": "b7205c6cfdd297d67a7a87019e64dbaf3e58b19b2c6ea329f94e808f5741029d",
+  "snapshot_sha256": "ef55448f211acfa3ca1f628eb277fd882dc89c5194b43d4d7683f8cdbd7847a1",
   "tool_errors": [],
   "execution_status": "complete"
 }

@@ -1,17 +1,17 @@
 [
   {
-    "tool_call_id": "call_RbVxPDlFHRiyqXNvecleRmSQ",
+    "tool_call_id": "call_UiPjRNw8OjF951FiApRsizqn",
     "tool": "lookup_environment",
     "status": "ok",
-    "time": "2026-10-19T21:01:19.587634+00:00",
+    "time": "2026-10-20T00:58:25.673892+00:00",
     "arguments": {
       "asset_id": "N02",
-      "snapshot_id": "northbridge-positive-v1"
+      "snapshot_id": "northbridge-docx-v1"
     },
     "data": {
       "asset_id": "N02",
-      "snapshot_id": "northbridge-positive-v1",
-      "assessment_scope": "One explicitly simulated N02 test instance; does not assert the state of both cohort members",
+      "snapshot_id": "northbridge-docx-v1",
+      "assessment_scope": "N02 cohort; individual gateway versions and configurations are not supplied",
       "facts": {
         "product": {
           "value": "FortiOS",
@@ -20,27 +20,29 @@
           ]
         },
         "firmware": {
-          "value": "7.2.6",
+          "value": null,
           "evidence_ids": [
-            "SIM-POSITIVE-FIRMWARE"
+            "ENV-UNKNOWN"
           ]
         },
         "ssl_vpn_enabled": {
-          "value": true,
+          "value": null,
           "evidence_ids": [
-            "SIM-POSITIVE-SSL_VPN_ENABLED"
+            "ENV-ASSET",
+            "ENV-NETWORK"
           ]
         },
         "attack_path": {
-          "value": true,
+          "value": null,
           "evidence_ids": [
-            "SIM-POSITIVE-ATTACK_PATH"
+            "ENV-NETWORK",
+            "S02"
           ]
         },
         "internet_reachable": {
-          "value": true,
+          "value": null,
           "evidence_ids": [
-            "SIM-POSITIVE-INTERNET_REACHABLE"
+            "ENV-NETWORK"
           ]
         },
         "impact": {
@@ -62,7 +64,7 @@
           "quote": "N02 Remote access VPN gateways | 2 | Fortinet FortiGate 100F; FortiOS",
           "source_mode": "simulated",
           "source_date": null,
-          "retrieved_at": "2026-10-13T04:04:26.224334+00:00",
+          "retrieved_at": "2026-10-19T23:07:02.878516+00:00",
           "source_sha256": "522af177abdddef0dacb2d8676d058e7d2a0de71f1550dc83288b6124c03e59d",
           "scope": "Northbridge Services teaching environment"
         },
@@ -74,7 +76,7 @@
           "quote": "Default policy denies unlisted inter-zone traffic and unsolicited inbound Internet traffic. Public services use documentation addresses: portal 192.0.2.10:443, VPN 192.0.2.20:443 and partner SFTP 192.0.2.30:22. No public RDP, SMB, LDAP, SQL or management interface is published.",
           "source_mode": "simulated",
           "source_date": null,
-          "retrieved_at": "2026-10-13T04:04:26.224437+00:00",
+          "retrieved_at": "2026-10-19T23:07:02.879521+00:00",
           "source_sha256": "522af177abdddef0dacb2d8676d058e7d2a0de71f1550dc83288b6124c03e59d",
           "scope": "Northbridge Services teaching environment"
         },
@@ -86,7 +88,7 @@
           "quote": "Northbridge Services has 1,000 staff: 700 assigned to headquarters, 150 to a branch and 150 working remotely. Its applications support customer service, orders, invoicing and payroll. A recovery site hosts infrastructure and replicated data. The company uses one Active Directory forest and domain, corp.northbridge.example, synchronized to one Microsoft Entra tenant.",
           "source_mode": "simulated",
           "source_date": null,
-          "retrieved_at": "2026-10-13T04:04:26.224469+00:00",
+          "retrieved_at": "2026-10-19T23:07:02.879521+00:00",
           "source_sha256": "522af177abdddef0dacb2d8676d058e7d2a0de71f1550dc83288b6124c03e59d",
           "scope": "Northbridge Services teaching environment"
         },
@@ -98,7 +100,7 @@
           "quote": "S02 network design and reviewed access policy | Unlisted inter-zone traffic and unsolicited Internet ingress denied by default. No Internet-facing RDP, SMB, LDAP, SQL or appliance management.",
           "source_mode": "simulated",
           "source_date": null,
-          "retrieved_at": "2026-10-13T04:04:26.224498+00:00",
+          "retrieved_at": "2026-10-19T23:07:02.879521+00:00",
           "source_sha256": "522af177abdddef0dacb2d8676d058e7d2a0de71f1550dc83288b6124c03e59d",
           "scope": "Northbridge Services teaching environment"
         },
@@ -110,7 +112,7 @@
           "quote": "S04 telemetry coverage summary | AD authentication, Microsoft 365 audit, firewall and VPN logs retained online for 90 days. Twelve E02 endpoint sensor heartbeats are older than seven days.",
           "source_mode": "simulated",
           "source_date": null,
-          "retrieved_at": "2026-10-13T04:04:26.224526+00:00",
+          "retrieved_at": "2026-10-19T23:07:02.879521+00:00",
           "source_sha256": "522af177abdddef0dacb2d8676d058e7d2a0de71f1550dc83288b6124c03e59d",
           "scope": "Northbridge Services teaching environment"
         },
@@ -122,7 +124,7 @@
           "quote": "S05 business impact and recovery worksheet | Identity outage can block new logins across 1000 staff; existing sessions may continue temporarily. ERP supports 300 daily operations staff; outages beyond four hours delay orders and invoicing.",
           "source_mode": "simulated",
           "source_date": null,
-          "retrieved_at": "2026-10-13T04:04:26.224555+00:00",
+          "retrieved_at": "2026-10-19T23:07:02.879521+00:00",
           "source_sha256": "522af177abdddef0dacb2d8676d058e7d2a0de71f1550dc83288b6124c03e59d",
           "scope": "Northbridge Services teaching environment"
         },
@@ -134,53 +136,9 @@
           "quote": "Additional devices: 40 managed wireless APs (N11) and 30 printers (P01). Appliance firmware and precise patch builds are unknown. HQ has two firewalls in an active/passive pair; the branch and recovery site each have one. The HQ VPN and WAF each have active/standby pairs.",
           "source_mode": "simulated",
           "source_date": null,
-          "retrieved_at": "2026-10-13T04:04:26.224582+00:00",
+          "retrieved_at": "2026-10-19T23:07:02.879521+00:00",
           "source_sha256": "522af177abdddef0dacb2d8676d058e7d2a0de71f1550dc83288b6124c03e59d",
           "scope": "Northbridge Services teaching environment"
-        },
-        {
-          "evidence_id": "SIM-POSITIVE-FIRMWARE",
-          "publisher": "Group controlled scenario variant",
-          "source": "data/environment/positive.json",
-          "locator": "/facts/firmware",
-          "quote": "Test override: firmware = \"7.2.6\".",
-          "source_mode": "simulated",
-          "source_date": null,
-          "retrieved_at": "2026-10-13T04:04:26.225584+00:00",
-          "scope": "One explicitly simulated N02 test instance; does not assert the state of both cohort members"
-        },
-        {
-          "evidence_id": "SIM-POSITIVE-SSL_VPN_ENABLED",
-          "publisher": "Group controlled scenario variant",
-          "source": "data/environment/positive.json",
-          "locator": "/facts/ssl_vpn_enabled",
-          "quote": "Test override: ssl_vpn_enabled = true.",
-          "source_mode": "simulated",
-          "source_date": null,
-          "retrieved_at": "2026-10-13T04:04:26.225592+00:00",
-          "scope": "One explicitly simulated N02 test instance; does not assert the state of both cohort members"
-        },
-        {
-          "evidence_id": "SIM-POSITIVE-ATTACK_PATH",
-          "publisher": "Group controlled scenario variant",
-          "source": "data/environment/positive.json",
-          "locator": "/facts/attack_path",
-          "quote": "Test override: attack_path = true. An unauthenticated threat source can reach the affected SSL-VPN service within the fixture's declared scope.",
-          "source_mode": "simulated",
-          "source_date": null,
-          "retrieved_at": "2026-10-13T04:04:26.225596+00:00",
-          "scope": "One explicitly simulated N02 test instance; does not assert the state of both cohort members"
-        },
-        {
-          "evidence_id": "SIM-POSITIVE-INTERNET_REACHABLE",
-          "publisher": "Group controlled scenario variant",
-          "source": "data/environment/positive.json",
-          "locator": "/facts/internet_reachable",
-          "quote": "Test override: internet_reachable = true.",
-          "source_mode": "simulated",
-          "source_date": null,
-          "retrieved_at": "2026-10-13T04:04:26.225599+00:00",
-          "scope": "One explicitly simulated N02 test instance; does not assert the state of both cohort members"
         }
       ],
       "assumptions": [
@@ -188,50 +146,25 @@
       ],
       "limitations": [
         "DOCX-derived subset; companion JSON/CSV/lookup script were not supplied.",
-        "The original DOCX documents public VPN TCP/443 but does not identify SSL-VPN termination or enabled status; fixture values are explicit simulated overrides.",
-        "No per-gateway state, configuration date, exact internal flows, or VPN-specific RTO is supplied.",
+        "Public VPN access on TCP/443 is documented, but reachability and enabled status of the vulnerable SSL-VPN component are unknown in the baseline.",
+        "The original document supplies no per-gateway firmware/configuration observations, exact internal flows, or VPN-specific RTO. Variant values are simulated test conditions, not observed gateway settings.",
         "No telemetry events establish actual exploitation or compromise."
       ],
-      "overrides": [
-        {
-          "field": "firmware",
-          "before": null,
-          "after": "7.2.6",
-          "evidence_id": "SIM-POSITIVE-FIRMWARE"
-        },
-        {
-          "field": "ssl_vpn_enabled",
-          "before": null,
-          "after": true,
-          "evidence_id": "SIM-POSITIVE-SSL_VPN_ENABLED"
-        },
-        {
-          "field": "attack_path",
-          "before": null,
-          "after": true,
-          "evidence_id": "SIM-POSITIVE-ATTACK_PATH"
-        },
-        {
-          "field": "internet_reachable",
-          "before": null,
-          "after": true,
-          "evidence_id": "SIM-POSITIVE-INTERNET_REACHABLE"
-        }
-      ],
+      "overrides": [],
       "source_mode": "simulated"
     },
-    "completed_at": "2026-10-19T21:01:19.587771+00:00"
+    "completed_at": "2026-10-20T00:58:25.674036+00:00"
   },
   {
-    "tool_call_id": "call_VLt8C3hLmeWmSxG0ocUIQ5Sc",
+    "tool_call_id": "call_wO1F7YiybmV6OZHgNdwAKx2V",
     "tool": "lookup_vulnerability",
     "status": "ok",
-    "time": "2026-10-19T21:01:19.590992+00:00",
+    "time": "2026-10-20T00:58:25.676961+00:00",
     "attempts": [
       {
         "attempt": 1,
         "status": "ok",
-        "time": "2026-10-19T21:01:19.710661+00:00"
+        "time": "2026-10-20T00:58:25.877436+00:00"
       }
     ],
     "arguments": {
@@ -284,8 +217,8 @@
           "publisher": "Fortinet CNA via official CVE list",
           "source": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2024/21xxx/CVE-2024-21762.json",
           "source_mode": "live",
-          "retrieved_at": "2026-10-19T21:01:19.710492+00:00",
-          "used_at": "2026-10-19T21:01:19.711447+00:00",
+          "retrieved_at": "2026-10-20T00:58:25.877052+00:00",
+          "used_at": "2026-10-20T00:58:25.880551+00:00",
           "source_sha256": "1b38e10fb9c1c445e0da4a3560a068c5eb995d2c31ccb46b901784eafbd9bab4",
           "saved_sha256": "1b38e10fb9c1c445e0da4a3560a068c5eb995d2c31ccb46b901784eafbd9bab4",
           "saved_artifact": "evidence/cna.json",
@@ -365,18 +298,18 @@
         }
       ]
     },
-    "completed_at": "2026-10-19T21:01:19.711560+00:00"
+    "completed_at": "2026-10-20T00:58:25.880797+00:00"
   },
   {
-    "tool_call_id": "call_Vkk2ZIlqGvNBUqw1SQuRDuqW",
+    "tool_call_id": "call_I1kIFFvhIGGpWCF8cEC38rq3",
     "tool": "lookup_vulnerability",
     "status": "ok",
-    "time": "2026-10-19T21:01:19.714002+00:00",
+    "time": "2026-10-20T00:58:25.884892+00:00",
     "attempts": [
       {
         "attempt": 1,
         "status": "ok",
-        "time": "2026-10-19T21:01:20.448759+00:00"
+        "time": "2026-10-20T00:58:27.268937+00:00"
       }
     ],
     "arguments": {
@@ -392,10 +325,10 @@
           "publisher": "CERT-EU",
           "source": "https://cert.europa.eu/publications/security-advisories/2024-018/",
           "source_mode": "live",
-          "retrieved_at": "2026-10-19T21:01:20.445820+00:00",
-          "used_at": "2026-10-19T21:01:20.449638+00:00",
-          "source_sha256": "5098eab0e78380ea81d2a3a72bc4182d922c6d8acf515fd62c9ca9eb1b5097db",
-          "saved_sha256": "5098eab0e78380ea81d2a3a72bc4182d922c6d8acf515fd62c9ca9eb1b5097db",
+          "retrieved_at": "2026-10-20T00:58:27.263202+00:00",
+          "used_at": "2026-10-20T00:58:27.270351+00:00",
+          "source_sha256": "6a04881df07cde345da3783d1b75c63252162587cf4dfd30859c1ccfd8988f71",
+          "saved_sha256": "6a04881df07cde345da3783d1b75c63252162587cf4dfd30859c1ccfd8988f71",
           "saved_artifact": "evidence/cert.html",
           "fallback_reason": null,
           "evidence_id": "THREAT-COMPONENT",
@@ -405,18 +338,18 @@
         }
       ]
     },
-    "completed_at": "2026-10-19T21:01:20.452069+00:00"
+    "completed_at": "2026-10-20T00:58:27.274051+00:00"
   },
   {
-    "tool_call_id": "call_qNaNLqXAfJoxSz4KEApMai3D",
+    "tool_call_id": "call_hCA6jhu0YywPGRoXecqDUmUA",
     "tool": "lookup_kev",
     "status": "ok",
-    "time": "2026-10-19T21:01:20.455446+00:00",
+    "time": "2026-10-20T00:58:27.278296+00:00",
     "attempts": [
       {
         "attempt": 1,
         "status": "ok",
-        "time": "2026-10-19T21:01:20.717977+00:00"
+        "time": "2026-10-20T00:58:27.962316+00:00"
       }
     ],
     "arguments": {
@@ -446,8 +379,8 @@
           "publisher": "CISA",
           "source": "https://raw.githubusercontent.com/cisagov/kev-data/main/known_exploited_vulnerabilities.json",
           "source_mode": "live",
-          "retrieved_at": "2026-10-19T21:01:20.696004+00:00",
-          "used_at": "2026-10-19T21:01:20.755279+00:00",
+          "retrieved_at": "2026-10-20T00:58:27.940541+00:00",
+          "used_at": "2026-10-20T00:58:27.997488+00:00",
           "source_sha256": "b6e27975f6635ecfc546fbd4fd6e444ba63a07ab2abc8876229d77fe083d357d",
           "saved_sha256": "b6e27975f6635ecfc546fbd4fd6e444ba63a07ab2abc8876229d77fe083d357d",
           "saved_artifact": "evidence/kev.json",
@@ -476,6 +409,6 @@
         }
       ]
     },
-    "completed_at": "2026-10-19T21:01:20.764715+00:00"
+    "completed_at": "2026-10-20T00:58:28.006942+00:00"
   }
 ]

@@ -2,10 +2,10 @@
 
 **Asset:** N02  
 **Threat:** CVE-2024-21762  
-**Scope:** N02 cohort; individual gateway versions and configurations are not supplied  
-**Decision:** insufficient_evidence  
-**Priority:** Insufficient evidence  
-**Rule:** R6  
+**Scope:** One explicitly simulated N02 test instance; does not assert the state of both cohort members  
+**Decision:** High  
+**Priority:** Critical  
+**Rule:** R1  
 **Model mode:** live_model  
 **Human review:** pending
 
@@ -13,40 +13,41 @@ Local environment facts are simulated. A scripted replay is not a real LLM demon
 
 ## Rationale
 
-Missing decisive evidence: version_affected, ssl_vpn_enabled, attack_path, internet_reachable.
+Applicable Internet-reachable service with major business consequences.
 
-- Missing decisive evidence: version_affected, ssl_vpn_enabled, attack_path, internet_reachable. Evidence: ENV-ASSET, ENV-NETWORK, ENV-ORGANIZATION, ENV-UNKNOWN, S02, THREAT-CNA, THREAT-COMPONENT.
-- N02 cohort; individual gateway versions and configurations are not supplied; all local evidence is simulated. Evidence: ENV-ASSET.
-- Business impact is High; this is a policy interpretation of the cited business context, not observed compromise. Evidence: ENV-ASSET, ENV-ORGANIZATION.
-- Unknowns: version_affected, ssl_vpn_enabled, attack_path, internet_reachable, exact_firmware_version; conflicts: none. Evidence: ENV-ASSET, ENV-NETWORK, ENV-ORGANIZATION, ENV-UNKNOWN, S02, THREAT-CNA, THREAT-COMPONENT.
-- CISA catalog lookup reports known exploitation; it does not establish local compromise. Evidence: THREAT-KEV.
+- Applicable Internet-reachable service with major business consequences. Evidence: ENV-ASSET, ENV-ORGANIZATION, SIM-POSITIVE-ATTACK_PATH, SIM-POSITIVE-FIRMWARE, SIM-POSITIVE-INTERNET_REACHABLE, SIM-POSITIVE-SSL_VPN_ENABLED, THREAT-CNA, THREAT-COMPONENT.
+- One explicitly simulated N02 test instance; does not assert the state of both cohort members; all local evidence is simulated. Evidence: ENV-ASSET.
+- Affected-version comparison: True. Evidence: SIM-POSITIVE-FIRMWARE, THREAT-CNA.
+- Business impact: High, based on the cited business context. Local compromise is unconfirmed. Evidence: ENV-ASSET, ENV-ORGANIZATION.
+- CISA reports known exploitation. Local compromise is unconfirmed. Evidence: THREAT-KEV.
 
 ## Policy inputs
 
 | Input | Value | Evidence |
 | --- | --- | --- |
 | product_match | true | ENV-ASSET, THREAT-CNA |
-| version_affected | null | ENV-UNKNOWN, THREAT-CNA |
-| ssl_vpn_enabled | null | ENV-ASSET, ENV-NETWORK, THREAT-COMPONENT |
-| attack_path | null | ENV-NETWORK, S02, THREAT-COMPONENT |
-| internet_reachable | null | ENV-NETWORK, THREAT-COMPONENT |
+| version_affected | true | SIM-POSITIVE-FIRMWARE, THREAT-CNA |
+| ssl_vpn_enabled | true | SIM-POSITIVE-SSL_VPN_ENABLED, THREAT-COMPONENT |
+| attack_path | true | SIM-POSITIVE-ATTACK_PATH, THREAT-COMPONENT |
+| internet_reachable | true | SIM-POSITIVE-INTERNET_REACHABLE, THREAT-COMPONENT |
 | impact | "High" | ENV-ASSET, ENV-ORGANIZATION |
 
 ## Recommended actions
 
-- **VPN owner and SOC analyst (Prompt evidence resolution):** Obtain dated firmware and SSL-VPN configuration evidence for each assessed gateway, verify the affected endpoint and attack path, and reconcile decisive conflicts before reassessment. Evidence: ENV-ASSET, ENV-NETWORK, ENV-ORGANIZATION, ENV-UNKNOWN, S02, THREAT-CNA, THREAT-COMPONENT.
+- **VPN owner (Critical):** Follow the vendor upgrade path to a supported release fixed for this CVE. Coordinate failover and change approval. Version 7.2.7 is a test boundary only. Evidence: THREAT-CNA.
+- **SOC analyst (Critical):** Review VPN, firewall, and identity logs. Escalate suspicious findings to incident response; local compromise is unconfirmed. Evidence: S04, THREAT-KEV.
 
 ## Uncertainty
 
-- Unknowns: version_affected, ssl_vpn_enabled, attack_path, internet_reachable, exact_firmware_version
+- Unknowns: none decisive
 - Conflicts: none decisive
-- Confidence: limited. Synthetic environment and pending human review; confidence is not a numeric probability.
-- Evidence needed: Dated firmware, component state, supported route/exposure, and business-dependency evidence for the assessed scope; version/configuration changes or reconciled contradictions trigger reassessment.
+- Confidence: moderate. Simulated environment; human review pending. Confidence is qualitative.
+- Evidence needed: Dated firmware, component, route, and business-dependency evidence for this scope. Reassess after configuration changes or conflict resolution.
 
 - Assumption: High impact is a policy interpretation of the production remote-access role, pending analyst review.
 - Limitation: DOCX-derived subset; companion JSON/CSV/lookup script were not supplied.
-- Limitation: The original DOCX documents public VPN TCP/443 but does not identify SSL-VPN termination or enabled status; fixture values are explicit simulated overrides.
-- Limitation: No per-gateway state, configuration date, exact internal flows, or VPN-specific RTO is supplied.
+- Limitation: Public VPN access on TCP/443 is documented, but reachability and enabled status of the vulnerable SSL-VPN component are unknown in the baseline.
+- Limitation: The original document supplies no per-gateway firmware/configuration observations, exact internal flows, or VPN-specific RTO. Variant values are simulated test conditions, not observed gateway settings.
 - Limitation: No telemetry events establish actual exploitation or compromise.
 
 ## Evidence register
@@ -57,7 +58,7 @@ Source: Windows_Enterprise_Environment.docx
 Locator: Endpoints appliances and cloud services; infrastructure table; N02 row  
 Mode: simulated  
 Source date: not supplied  
-Retrieved: 2026-10-13T04:04:26.224334+00:00  
+Retrieved: 2026-10-19T23:07:02.878516+00:00  
 Saved payload: environment_snapshot.json
 
 ```text
@@ -70,7 +71,7 @@ Source: Windows_Enterprise_Environment.docx
 Locator: Network architecture and access; public services paragraph  
 Mode: simulated  
 Source date: not supplied  
-Retrieved: 2026-10-13T04:04:26.224437+00:00  
+Retrieved: 2026-10-19T23:07:02.879521+00:00  
 Saved payload: environment_snapshot.json
 
 ```text
@@ -83,7 +84,7 @@ Source: Windows_Enterprise_Environment.docx
 Locator: Organization and scope; opening paragraph  
 Mode: simulated  
 Source date: not supplied  
-Retrieved: 2026-10-13T04:04:26.224469+00:00  
+Retrieved: 2026-10-19T23:07:02.879521+00:00  
 Saved payload: environment_snapshot.json
 
 ```text
@@ -96,7 +97,7 @@ Source: Windows_Enterprise_Environment.docx
 Locator: Evidence controls table; S02 row  
 Mode: simulated  
 Source date: not supplied  
-Retrieved: 2026-10-13T04:04:26.224498+00:00  
+Retrieved: 2026-10-19T23:07:02.879521+00:00  
 Saved payload: environment_snapshot.json
 
 ```text
@@ -109,7 +110,7 @@ Source: Windows_Enterprise_Environment.docx
 Locator: Evidence controls table; S04 row  
 Mode: simulated  
 Source date: not supplied  
-Retrieved: 2026-10-13T04:04:26.224526+00:00  
+Retrieved: 2026-10-19T23:07:02.879521+00:00  
 Saved payload: environment_snapshot.json
 
 ```text
@@ -122,7 +123,7 @@ Source: Windows_Enterprise_Environment.docx
 Locator: Evidence controls table; S05 row  
 Mode: simulated  
 Source date: not supplied  
-Retrieved: 2026-10-13T04:04:26.224555+00:00  
+Retrieved: 2026-10-19T23:07:02.879521+00:00  
 Saved payload: environment_snapshot.json
 
 ```text
@@ -135,11 +136,63 @@ Source: Windows_Enterprise_Environment.docx
 Locator: Endpoints appliances and cloud services; additional devices paragraph  
 Mode: simulated  
 Source date: not supplied  
-Retrieved: 2026-10-13T04:04:26.224582+00:00  
+Retrieved: 2026-10-19T23:07:02.879521+00:00  
 Saved payload: environment_snapshot.json
 
 ```text
 Additional devices: 40 managed wireless APs (N11) and 30 printers (P01). Appliance firmware and precise patch builds are unknown. HQ has two firewalls in an active/passive pair; the branch and recovery site each have one. The HQ VPN and WAF each have active/standby pairs.
+```
+
+### SIM-POSITIVE-FIRMWARE
+
+Source: data/environment/positive.json  
+Locator: /facts/firmware  
+Mode: simulated  
+Source date: not supplied  
+Retrieved: 2026-10-19T23:07:02.882026+00:00  
+Saved payload: environment_snapshot.json
+
+```text
+Test override: firmware = "7.2.6".
+```
+
+### SIM-POSITIVE-SSL_VPN_ENABLED
+
+Source: data/environment/positive.json  
+Locator: /facts/ssl_vpn_enabled  
+Mode: simulated  
+Source date: not supplied  
+Retrieved: 2026-10-19T23:07:02.882026+00:00  
+Saved payload: environment_snapshot.json
+
+```text
+Test override: ssl_vpn_enabled = true.
+```
+
+### SIM-POSITIVE-ATTACK_PATH
+
+Source: data/environment/positive.json  
+Locator: /facts/attack_path  
+Mode: simulated  
+Source date: not supplied  
+Retrieved: 2026-10-19T23:07:02.882026+00:00  
+Saved payload: environment_snapshot.json
+
+```text
+Test override: attack_path = true. An unauthenticated threat source can reach the affected SSL-VPN service within the fixture's declared scope.
+```
+
+### SIM-POSITIVE-INTERNET_REACHABLE
+
+Source: data/environment/positive.json  
+Locator: /facts/internet_reachable  
+Mode: simulated  
+Source date: not supplied  
+Retrieved: 2026-10-19T23:07:02.882026+00:00  
+Saved payload: environment_snapshot.json
+
+```text
+Test override: internet_reachable = true.
 ```
 
 ### THREAT-CNA
@@ -148,7 +201,7 @@ Source: https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2024/21
 Locator: /containers/cna/affected/1  
 Mode: live  
 Source date: 2026-08-04T03:55:55.226Z  
-Retrieved: 2026-10-19T21:00:52.286648+00:00  
+Retrieved: 2026-10-20T00:58:38.413936+00:00  
 Saved payload: evidence/cna.json
 
 ```text
@@ -203,7 +256,7 @@ Source: https://cert.europa.eu/publications/security-advisories/2024-018/
 Locator: Technical Details; paragraph beginning The vulnerability CVE-2024-21762  
 Mode: live  
 Source date: 2024-02-09  
-Retrieved: 2026-10-19T21:00:53.024110+00:00  
+Retrieved: 2026-10-20T00:58:39.146977+00:00  
 Saved payload: evidence/cert.html
 
 ```text
@@ -216,7 +269,7 @@ Source: https://raw.githubusercontent.com/cisagov/kev-data/main/known_exploited_
 Locator: /vulnerabilities/672  
 Mode: live  
 Source date: 2026-10-16T17:15:48.8752Z  
-Retrieved: 2026-10-19T21:00:53.251476+00:00  
+Retrieved: 2026-10-20T00:58:39.724872+00:00  
 Saved payload: evidence/kev.json
 
 ```text
