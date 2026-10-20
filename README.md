@@ -69,7 +69,7 @@ The rating depends on two things. Applicability is whether the bug can actually 
 | Rule | When it applies | Rating | Priority |
 | --- | --- | --- | --- |
 | R1 | Applies, reachable from the Internet, major impact | High | Critical |
-| R2 | Applies, major impact, but not reachable from the Internet | High | High |
+| R2 | Applies through a supported internal path, major impact, and verified absence of Internet reachability | High | High |
 | R3 | Applies, limited impact on a service or small group | Medium | Medium |
 | R4 | Applies, minor impact on an isolated low value system | Low | Low |
 | R5 | A required condition is clearly missing | Low | Informational |
@@ -79,7 +79,7 @@ We check in this order. First, if a required condition is clearly missing, like 
 
 Unknown Internet access is never treated as internal only. CVSS and KEV tell us how serious the bug is and how urgent the fix is. They do not change the local rating. A failed lookup or a CVE missing from KEV never counts as proof that we are safe.
 
-We did it this way because severity is about the bug and risk is about us. A critical CVSS bug on a device with SSL VPN turned off is not a high risk for us.
+The rating is scoped to this CVE and snapshot. Confirmed disabled SSL VPN supports R5, Low / Informational; affected firmware still needs patch planning.
 
 ## Setup
 
@@ -200,6 +200,7 @@ We used Codex to help with research and with writing code and docs. Each member 
 
 ## Submission
 
-We are submitting this GitHub repo. If a ZIP is needed, `python3 -m triage package` builds `dist/security-triage-agent.zip` and leaves out secrets and the API key PDF.
+We are submitting this GitHub repo. If a ZIP is needed, `python3 -m scripts.package_submission` builds `dist/security-triage-agent.zip` and leaves out secrets and the API key PDF.
 
 The demo walkthrough is in `docs/DEMO_WALKTHROUGH.md`.
+Recording: pending. Add the instructor-accessible video link before submission if the group is not presenting in class.

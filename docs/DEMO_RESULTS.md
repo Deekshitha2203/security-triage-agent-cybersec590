@@ -1,30 +1,21 @@
-# Duke AI Gateway demonstration results
+# Final demonstration results
 
-Both complete runs used the real Duke model and live CNA, CERT-EU and CISA lookups. All technical demonstration checks passed; human review remains pending.
+The final run manifests match the submitted source files. Baseline and positive runs used Duke AI Gateway and live CNA, CERT-EU, and CISA lookups. The failure run uses scripted replay.
 
-| Scenario | Rule | Rating | Priority | Model turns | Tool executions | Elapsed seconds |
+| Run | Rule | Rating | Priority | Model turns | Tool executions | Seconds |
 | --- | --- | --- | --- | --- | --- | --- |
-| baseline | R6 | Insufficient evidence | Insufficient evidence | 3 | 4 | 9.688 |
-| positive | R1 | High | Critical | 3 | 4 | 10.112 |
+| baseline | R6 | Insufficient evidence | Insufficient evidence | 3 | 4 | 12.164 |
+| positive | R1 | High | Critical | 3 | 4 | 14.385 |
+| failure | R6 | Insufficient evidence | Insufficient evidence | 6 | 6 | 0.013 |
 
-## Inputs and interpretation
+## Saved evidence
 
-The baseline assesses the original N02 cohort. Firmware and SSL-VPN facts remain unknown, so R6 preserves uncertainty and requests decisive configuration evidence. The positive case is one explicitly simulated test instance with affected FortiOS, enabled Internet-reachable SSL-VPN and major business consequences; it supports R1 High / Critical. Neither run establishes actual compromise.
+- baseline: [assessment](../artifacts/runs/final-baseline-duke/assessment.md), [JSON](../artifacts/runs/final-baseline-duke/assessment.json), [model messages](../artifacts/runs/final-baseline-duke/model_messages.json), [tool trace](../artifacts/runs/final-baseline-duke/tool_trace.json), [checklist](../artifacts/runs/final-baseline-duke/demonstration_checklist.json), [manifest](../artifacts/runs/final-baseline-duke/baseline_manifest.json). Run ID: `37fb4f34-f06e-482c-9ed9-8b82f13dc5bf`.
+- positive: [assessment](../artifacts/runs/final-positive-duke/assessment.md), [JSON](../artifacts/runs/final-positive-duke/assessment.json), [model messages](../artifacts/runs/final-positive-duke/model_messages.json), [tool trace](../artifacts/runs/final-positive-duke/tool_trace.json), [checklist](../artifacts/runs/final-positive-duke/demonstration_checklist.json), [manifest](../artifacts/runs/final-positive-duke/baseline_manifest.json). Run ID: `8fe57c8f-3e5b-4d97-87da-911d6c77f393`.
+- failure: [assessment](../artifacts/runs/final-failure-replay/assessment.md), [JSON](../artifacts/runs/final-failure-replay/assessment.json), [model messages](../artifacts/runs/final-failure-replay/model_messages.json), [tool trace](../artifacts/runs/final-failure-replay/tool_trace.json), [checklist](../artifacts/runs/final-failure-replay/demonstration_checklist.json), [manifest](../artifacts/runs/final-failure-replay/baseline_manifest.json). Run ID: `1ce3ac4b-ff83-466e-9d17-5205c4550bef`.
 
-## Evidence and traces
+The baseline retains unknown firmware and SSL-VPN settings. The positive case uses explicit simulated settings for one gateway instance. The controlled failure records two failed attempts for each threat lookup and disables cache fallback.
 
-- **baseline**: [assessment](../artifacts/runs/baseline-duke-demo-2026-10-15/assessment.md), [JSON](../artifacts/runs/baseline-duke-demo-2026-10-15/assessment.json), [model/tool messages](../artifacts/runs/baseline-duke-demo-2026-10-15/model_messages.json), [tool trace](../artifacts/runs/baseline-duke-demo-2026-10-15/tool_trace.json), [checklist](../artifacts/runs/baseline-duke-demo-2026-10-15/demonstration_checklist.json). Run ID: `ea7dfad4-9925-4f97-a7aa-e77bf1f39edf`.
-- **positive**: [assessment](../artifacts/runs/positive-duke-demo-2026-10-15/assessment.md), [JSON](../artifacts/runs/positive-duke-demo-2026-10-15/assessment.json), [model/tool messages](../artifacts/runs/positive-duke-demo-2026-10-15/model_messages.json), [tool trace](../artifacts/runs/positive-duke-demo-2026-10-15/tool_trace.json), [checklist](../artifacts/runs/positive-duke-demo-2026-10-15/demonstration_checklist.json). Run ID: `e3a890a3-d6fd-4704-be01-e8beb6fc79e5`.
+The group review is recorded in [CONTRIBUTIONS_AND_REVIEW.md](CONTRIBUTIONS_AND_REVIEW.md). Automated checklists retain their original human-review flags; the group review record is separate.
 
-All saved artifacts were checked for configured credential values; none were found. Credentials are not displayed in this report.
-
-## Recording plan
-
-Follow [the walkthrough](DEMO_WALKTHROUGH.md). Show the design, the original input and explicit test overrides, a real model-selected tool call, its returned source evidence, both assessments, and the controlled testing report. Close `.env` and the API-key PDF before recording.
-
-## Remaining human steps
-
-- A group member verifies the cited passages, local assumptions and decisions, then records the actual review and policy consensus.
-- Complete each member's actual contribution record.
-- If the group does not present in class, record the walkthrough and provide the required video/link. No recording has been created.
-- Regenerate the package after adding review records or video references.
+Recording: pending. See [DEMO_WALKTHROUGH.md](DEMO_WALKTHROUGH.md) for the recording sequence.

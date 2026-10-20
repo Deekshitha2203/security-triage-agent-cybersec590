@@ -1,4 +1,4 @@
-# Automated test execution
+# Unit test results
 
 ```text
 test_http_errors_do_not_expose_remote_bodies (test_triage.CredentialTests.test_http_errors_do_not_expose_remote_bodies) ... ok
@@ -23,7 +23,7 @@ test_failed_model_setup_still_saves_explicit_failure (test_triage.WorkflowTests.
 test_invalid_tool_never_executes_and_correction_can_finish (test_triage.WorkflowTests.test_invalid_tool_never_executes_and_correction_can_finish) ... ok
 test_kev_failure_does_not_change_supported_rating (test_triage.WorkflowTests.test_kev_failure_does_not_change_supported_rating) ... ok
 test_live_failure_preserves_attempt_history_without_cache (test_triage.WorkflowTests.test_live_failure_preserves_attempt_history_without_cache) ... ok
-test_live_kev_saves_only_selected_entry_with_original_hash (test_triage.WorkflowTests.test_live_kev_saves_only_selected_entry_with_original_hash) ... ok
+test_live_kev_saves_full_catalog_with_original_hash (test_triage.WorkflowTests.test_live_kev_saves_full_catalog_with_original_hash) ... ok
 test_model_synthesis_cannot_invent_claims_or_change_rating (test_triage.WorkflowTests.test_model_synthesis_cannot_invent_claims_or_change_rating) ... ok
 test_original_baseline_preserves_unknowns (test_triage.WorkflowTests.test_original_baseline_preserves_unknowns) ... ok
 test_positive_replay_with_correlated_tools_and_saved_inputs (test_triage.WorkflowTests.test_positive_replay_with_correlated_tools_and_saved_inputs) ... ok
@@ -32,8 +32,7 @@ test_source_instructions_do_not_become_tools_or_policy (test_triage.WorkflowTest
 test_tool_budget_stops_and_reports_review (test_triage.WorkflowTests.test_tool_budget_stops_and_reports_review) ... ok
 
 ----------------------------------------------------------------------
-Ran 29 tests in 0.598s
+Ran 29 tests in 0.560s
 
 OK
-
 ```
