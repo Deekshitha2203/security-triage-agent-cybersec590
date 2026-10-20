@@ -34,4 +34,3 @@ python3 -m unittest discover -s tests -v
 
 For an offline workflow check, use `--provider replay --evidence-mode cached` with the run command. Replay uses scripted responses rather than a live model.
 
-See [the design](docs/STEP_1_DESIGN.md) for the risk rules and [the demo walkthrough](docs/DEMO_WALKTHROUGH.md) for the presentation steps.
