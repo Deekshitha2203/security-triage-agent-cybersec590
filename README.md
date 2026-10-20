@@ -23,10 +23,10 @@ CVE-2024-21762 is an out of bounds write in the FortiOS SSL VPN. Someone who can
 
 | Source | What we take from it | Link |
 | --- | --- | --- |
-| CVE record from Fortinet (CNA) | Affected and fixed versions plus the CVSS score | https://www.cve.org/CVERecord?id=CVE-2024-21762 |
-| Fortinet advisory FG-IR-24-015 | The vendor fix and workaround | https://www.fortiguard.com/psirt/FG-IR-24-015 |
-| CERT-EU advisory | A second source to confirm the affected versions and the fix | Saved copy in `data/evidence/` |
-| CISA KEV catalog | Whether it is known to be exploited | https://www.cisa.gov/known-exploited-vulnerabilities-catalog |
+| Fortinet CNA record in the official CVE list | Affected and fixed versions plus the CVSS score | https://github.com/CVEProject/cvelistV5/blob/main/cves/2024/21xxx/CVE-2024-21762.json |
+| CERT-EU Security Advisory 2024-018 | A second source to confirm the SSL VPN attack details | https://cert.europa.eu/publications/security-advisories/2024-018/ |
+| CISA KEV catalog | Whether it is known to be exploited | https://github.com/cisagov/kev-data/blob/main/known_exploited_vulnerabilities.json |
+| Fortinet advisory FG-IR-24-015 | The vendor fix and workaround (planned source, could not be retrieved reliably) | https://www.fortiguard.com/psirt/FG-IR-24-015 |
 
 Saved copies of the sources are in `data/evidence/`. Each run also saves the exact evidence it used in its own `evidence/` folder.
 

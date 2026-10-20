@@ -1,53 +1,80 @@
-# Step 1 Security Triage Agent Design
+# Step 1 Design: Security Triage Agent
 
-**Case:** CVE-2024-21762 in Northbridge Services' FortiOS VPN gateways  
-**Status:** Design approved for implementation; policy and controlled replay tests implemented. Real-model execution and human review are recorded separately in run artifacts.  
-**Members:** Atharva Ashish Jog, Varun Bhanushali, Shweta Mittal, Deekshitha Manjunatha Reddy. 
+**Case:** CVE-2024-21762 on the N02 FortiOS VPN gateways
+**Environment:** Supplied Windows Enterprise Environment (Northbridge Services)
+**Members:** Atharva Ashish Jog, Varun Bhanushali, Shweta Mittal, Deekshitha Manjunatha Reddy
 
-We propose one agent that gathers attributed environment and threat evidence, compares exploit prerequisites with local facts, and produces a policy-supported High, Medium, or Low risk rating plus a separate response priority, or an explicit Insufficient evidence / Review status. The original scenario cannot establish vulnerability because gateway firmware and SSL-VPN configuration are unknown. We will retain this uncertainty and use separate, labeled simulated variants for a positive demonstration and policy checks.
+## 1. Overview
 
-This document revises the five Week 3 Design Studio responses for Assignment 3. The supplied studio PDF includes Atharva's Team 2 Alert Prioritization worksheet on PDF pages 12–15. We retain its chaining pattern, direct tools, bounded retries, validation, and analyst review, while replacing SIEM prioritization with a CVE applicability and business-impact assessment. Studio team membership is not assumed to be Assignment 3 project membership.
+We built one agent that looks at CVE-2024-21762 and decides how risky it is for the N02 VPN gateways at Northbridge. It collects evidence about the environment and the vulnerability. Then it checks whether the conditions for the attack are actually met in our environment before giving a rating. The output is a risk rating with a separate priority. If a deciding fact is unknown, the agent says Insufficient evidence instead of guessing.
 
-## 1 System contract
+In the environment as given, we don't know the firmware version of the gateways or whether SSL VPN is turned on. So the honest answer for the baseline is Insufficient evidence. To show a full rating, we made separate test versions of the environment and labeled every change as simulated.
 
-### Task and risk question
+### Starting point: Week 3 Design Studio
 
-Assess whether CVE-2024-21762 can affect the N02 remote-access VPN gateway pair in the selected environment snapshot, what consequences exploitation could have for Northbridge's services, and what the analyst should do next.
+This design builds on our Week 3 Design Studio worksheet (Team 2 Alert Prioritization, pages 12 to 15 of the studio PDF). We kept the chaining workflow with direct tools and bounded retries. We also kept the validation step and the analyst review at the end. What we changed is the task. Instead of prioritizing SIEM alerts, the agent now checks whether a CVE applies to an asset and how much it would hurt the business.
 
-The external case is a FortiOS vulnerability involving unauthorized remote code execution. Fortinet's CNA record provides product-specific version ranges and fixes [E1]; CERT-EU describes the SSL-VPN component and unauthenticated attack [E2]; CISA records known exploitation [E3]. This makes a relevant case for N02 without establishing that Northbridge has been compromised.
+## 2. Risk question and scope
 
-### Input scope and environment
+**Risk question:** Can CVE-2024-21762 be used against the N02 VPN gateway pair, and how much would it hurt Northbridge if it was? The agent also recommends the next step for the analyst.
 
-Inputs are the CVE ID, saved external case evidence, a versioned local environment snapshot, and policy version. The model receives the selected asset and relevant context, rather than arbitrary project files.
+**About the CVE:** CVE-2024-21762 is an out of bounds write in the FortiOS SSL VPN. An attacker who is not logged in can send crafted HTTP requests and run code on the device. Fortinet's CNA record gives the affected and fixed versions [E1]. CERT-EU explains the SSL VPN attack [E2]. CISA lists it as known exploited [E3]. None of this means Northbridge has been hacked. It only means the CVE is relevant to N02.
 
-| Item | Evidence in the supplied DOCX | Interpretation or limitation |
+### Inputs
+
+| Input | Source |
+| --- | --- |
+| CVE ID | CVE-2024-21762 |
+| CNA record | Fortinet record in the official CVE list [E1] |
+| CERT-EU advisory | Security Advisory 2024-018 [E2] |
+| KEV entry | CISA KEV catalog [E3] |
+| Environment snapshot | `data/environment/baseline.json` (`northbridge-docx-v1`), built from the DOCX |
+| Policy version | 2.0 |
+
+The model only gets the N02 asset and the context it needs. It cannot read other project files.
+
+### Target environment
+
+| Item | What the DOCX says | What we take from it |
 | --- | --- | --- |
-| N02 | Two Fortinet FortiGate 100F gateways running FortiOS, active/standby at HQ | Direct assessment target; cohort evidence does not establish identical firmware or configuration on each member |
-| Firmware | Precise appliance firmware is unknown | Preserve null; do not infer an affected version |
-| VPN service | Public VPN endpoint 192.0.2.20:443; DMZ and authenticated VPN address pool | Public VPN service is stated; the document does not explicitly identify SSL-VPN or prove which process terminates that endpoint |
-| Access policy S02 | Unlisted inter-zone traffic denied; no public RDP, SMB, LDAP, SQL, or management interfaces | Preserve segmentation; public VPN exposure does not prove direct database or Tier 0 access |
-| Business context | 1,000 employees, including 150 remote staff; customer service, orders, invoicing, payroll | Remote-access outage or gateway compromise could affect production work; impact reasoning must state its assumptions |
-| Telemetry S04 | VPN, firewall, identity, and Microsoft 365 logs retained online for 90 days | Supports recommending review of existing logs; no log events are supplied to prove compromise |
-| Impact S05 | Service consequences and recovery targets | Do not assign a VPN-specific RTO: none is supplied |
+| N02 | Two Fortinet FortiGate 100F gateways running FortiOS, active/standby at HQ | This is the asset we assess. The two gateways could have different firmware or settings, so we don't assume they match. |
+| Firmware | Not given | We keep it as unknown. We never guess a version. |
+| VPN service | Public VPN endpoint 192.0.2.20:443 with a DMZ and a VPN address pool | The VPN is public. The DOCX does not say it is SSL VPN or which process answers on that port. |
+| Access policy S02 | Traffic between zones is denied unless listed. No public RDP, SMB, LDAP, SQL or management interfaces. | A public VPN does not mean direct access to the database or the domain controllers. |
+| Business context | 1,000 employees including 150 remote staff. The business runs customer service, orders, invoicing and payroll. | If the VPN goes down or gets taken over, remote work is affected. We state this as an assumption. |
+| Logs S04 | VPN, firewall, identity and Microsoft 365 logs kept online for 90 days | We can recommend checking these logs. No log events were given that show a compromise. |
+| Impact S05 | Service impact and recovery targets | No recovery time is given for the VPN, so we don't make one up. |
 
-All environment evidence has `source_mode: simulated`. N01 is Palo Alto infrastructure and is not a directly affected FortiOS asset. Windows servers are possible downstream business dependencies, not direct CVE matches. MFA is not proof that an unauthenticated appliance vulnerability is mitigated.
+N01 is Palo Alto, so it is not affected by this FortiOS bug. The Windows servers sit behind the VPN, but they are not direct matches for this CVE. MFA does not stop this bug because the attack happens before login.
 
-The DOCX names `windows_enterprise_environment.json`, `asset_inventory.csv`, `evidence_register.json`, and `lookup_environment.py`, but these companion files are absent from the current project. After approval, derive a minimal, attributed JSON snapshot from the DOCX. Label it as a derived teaching snapshot, preserve unknowns, and do not invent the referenced sixteen flow records, individual gateway names, evidence dates, or permissions. If companion files become available, reconcile them and record the change.
+Every environment fact is labeled `simulated`. The DOCX mentions four companion files (`windows_enterprise_environment.json`, `asset_inventory.csv`, `evidence_register.json` and `lookup_environment.py`) that were never given to us. So we built a small JSON snapshot from the DOCX ourselves. We did not invent the sixteen flow records or the gateway names those files would have had.
 
-### Required assessment output
+### Test variants
 
-Produce a structured JSON assessment and a readable Markdown report. Required fields:
+To test the policy, we copied the baseline and changed one or two facts in each copy. Each change is marked as a simulated override. The original DOCX and `baseline.json` are never edited. The full list is in section 8.
 
-- `run_id`, assessment time, `asset_id`, cohort/instance scope, `threat_id`, snapshot hash, and policy version.
-- `status`: `rated`, `insufficient_evidence`, or `review_required`; `rating`: `High`, `Medium`, `Low`, or null.
-- `priority`: `Critical`, `High`, `Medium`, `Low`, `Informational`, `Insufficient evidence`, or `Review`. Missing decisive evidence maps to `insufficient_evidence` / null rating / `Insufficient evidence` priority; unresolved decisive conflicts map to `review_required` / null rating / `Review` priority.
-- Applicability state, each prerequisite's true/false/unknown/conflicting value, supported attack path, Internet reachability of the vulnerable component, impact level and consequences, policy rule ID, and rationale. Attach evidence references to each decisive policy input.
-- Evidence IDs, source URLs or document locators, facts, publication/update/retrieval dates where available, source mode, and saved artifact references.
-- Facts separated from assumptions and unknowns; qualitative confidence with reasons, not an invented probability.
-- Recommended actions, proposed owner, urgency, and evidence that would change or resolve the decision.
-- Human review state and actual reviewer/decision when review occurs; tool failures and material limitations.
+## 3. Required output
 
-An illustrative baseline decision, not an executed result:
+Each run saves `assessment.json` and a readable `assessment.md`.
+
+| Field | What it holds |
+| --- | --- |
+| `run_id`, `asset_id`, `threat_id` | Which run, which asset, which CVE |
+| `snapshot_hash`, `policy_version` | The exact inputs used |
+| `status` | `rated`, `insufficient_evidence` or `review_required` |
+| `rating` | `High`, `Medium`, `Low` or null |
+| `priority` | `Critical` down to `Informational`, or `Insufficient evidence` or `Review` |
+| Prerequisites | Each one as true, false, unknown or conflicting, with the evidence behind it |
+| Attack path and Internet reachability | Recorded separately from applicability |
+| Impact | The impact level with the consequences and assumptions behind it |
+| `policy_rule` and rationale | Which rule was applied and why |
+| Evidence register | Source URL or locator for each piece of evidence, with its dates and mode (live, cached or simulated) |
+| Facts and unknowns | Facts are kept apart from assumptions and unknowns |
+| Confidence | Written in words with reasons. We don't make up a probability. |
+| Actions | Next step with owner and urgency. Also lists what evidence would change the decision. |
+| Human review | Stays pending until a group member reviews it |
+
+Example for the baseline (this is an illustration, not a real run):
 
 ```json
 {
@@ -63,117 +90,146 @@ An illustrative baseline decision, not an executed result:
   "environment_source_mode": "simulated",
   "unknowns": [
     "Firmware version on each gateway",
-    "Whether SSL-VPN is enabled on each gateway",
-    "Whether the public endpoint reaches the affected SSL-VPN component"
+    "Whether SSL VPN is enabled on each gateway",
+    "Whether the public endpoint reaches the SSL VPN component"
   ],
-  "recommended_action": "Obtain dated firmware and SSL-VPN configuration evidence for both gateways and verify the service mapping, then reassess.",
+  "recommended_action": "Get dated firmware and SSL VPN settings for both gateways and confirm what runs on the public endpoint, then reassess.",
   "human_review": "pending"
 }
 ```
 
-## 2 Workflow and human role
+## 4. Architecture and workflow
 
-### Architecture and model
+We use one tool calling agent inside a simple chaining workflow. It is a small Python app. The model connection, tools, agent loop, policy and validation each live in their own module. We didn't need multiple agents or an MCP server because we only have three read only tools.
 
-Use **one tool-calling agent within a chaining workflow**, implemented as a small Python application with separately identifiable source adapters, tool contracts, orchestration, policy, and validation modules. No multi-agent system or MCP server is needed for three fixed read-only integrations.
-
-Selected model service: Duke AI Gateway, as requested by the group during implementation. Use a configurable tool-capable model ID, with `GPT 4.1` as the default from Duke's developer guide, temperature zero, bounded context, and the provider-reported model ID recorded. Local Ollama was the initial proposal but was unavailable. Cloud model weights/digests are not exposed by the gateway; preserve the reported model ID and response usage instead. A scripted/offline model supports tests but cannot replace the required real model-driven complete run.
+**Model:** Duke AI Gateway with GPT 4.1 at temperature 0. We first planned to use local Ollama, but it was not available, so we switched. The gateway does not expose model weights, so we save the model ID it reports along with the token usage. A scripted replay provider runs our tests, but it is not an LLM and does not count as the real demo.
 
 ```mermaid
 flowchart TD
-    A[Human selects CVE and environment snapshot] --> B[Code validates intake and starts run budget]
-    B --> C[LLM selects an allowed tool and constructs arguments]
-    C --> D[Code validates name, arguments, scope and budget]
-    D -->|Allowed| E[Tools: environment lookup, vulnerability lookup, KEV lookup]
-    D -->|Invalid| F[Code returns structured denial; one correction permitted]
+    A[Human picks the CVE and environment snapshot] --> B[Code checks the inputs and starts the run limits]
+    B --> C[Model picks an allowed tool and builds the arguments]
+    C --> D[Code checks the tool name, arguments and scope]
+    D -->|Allowed| E[Tool runs: environment, vulnerability or KEV lookup]
+    D -->|Not allowed| F[Code sends back a denial. One correction allowed]
     F --> C
-    E --> G[Code saves attributed evidence or structured error]
-    G --> H[LLM receives correlated tool results and identifies prerequisites and gaps]
-    H -->|Useful lookup remains within budget| C
-    H -->|Ready or no useful lookup remains| I[Code validates facts and applies rating and priority policy]
-    I -->|Supported| J[LLM drafts cited rationale and recommended actions]
-    I -->|Decisive gap or conflict| K[Code emits insufficient evidence or review required]
-    J --> L[Code checks schema, citations and consistency with policy]
+    E --> G[Code saves the evidence with source and date, or the error]
+    G --> H[Model reads the result and looks for gaps]
+    H -->|Another lookup would help| C
+    H -->|Enough evidence or nothing left to try| I[Code applies the rating policy]
+    I -->|Rated| J[Model writes the rationale from evidence backed claims]
+    I -->|Deciding fact missing or conflicting| K[Code returns Insufficient evidence or Review]
+    J --> L[Code checks citations and that the text matches the rule]
     L -->|Valid| M[Save assessment, report and run manifest]
-    L -->|Still invalid after one revision| K
+    L -->|Still invalid after one retry| K
     K --> M
-    M --> N[Human checks evidence and accepts or requests revision]
+    M --> N[Group member checks the evidence and accepts or asks for changes]
 ```
 
-The model must actually choose at least one tool/query. Code executes that request, associates the result with its tool-call ID, and returns it to the model. A qualifying complete run must include an executed environment lookup and an executed relevant external lookup that contribute to the assessment. The host checks this requirement; an answer from model memory alone is not a complete demonstration.
+### Who does what
 
-Code computes version matches and the final rating and priority under the same policy rule. The model explains cited evidence and proposes actions. Model-proposed facts must resolve to evidence; unsupported or conflicting decisive claims cannot enter the policy engine as confirmed facts. Impact categorization follows explicit criteria and records its evidence and assumptions; the analyst reviews this judgment.
+| Step | Done by | What happens |
+| --- | --- | --- |
+| 1 | Human | Picks the CVE and the environment snapshot |
+| 2 | Code | Checks the inputs and starts the run limits |
+| 3 | Model | Picks a tool and builds its arguments |
+| 4 | Code | Checks the request against the allowlist and the asset scope. Runs it only if allowed. |
+| 5 | Tool | Returns evidence with its source and date |
+| 6 | Model | Reads the result and decides if another lookup would help |
+| 7 | Code | Applies the policy and sets the rating and priority |
+| 8 | Model | Writes the rationale and actions using only claims backed by evidence |
+| 9 | Code | Checks the citations and makes sure the text matches the policy result |
+| 10 | Code | Saves the assessment and the full trace |
+| 11 | Human | Reviews the evidence and accepts it or asks for changes |
 
-### Rating and priority policy version 2
+**Decision points:** step 4 (allowed or denied), step 6 (look more or stop), step 7 (rated or R6) and step 9 (valid or Review).
 
-The policy assesses risk from this specific CVE in the declared snapshot, not total organizational security. Technical severity, local impact, applicability, confidence, and response priority remain distinct. Priority identifies the response category: both R1 and R2 produce a High risk rating, but supported Internet reachability makes R1 Critical priority. Critical is a priority value, not a fourth risk rating.
+The model never sets the rating. Version matching and the rating are done in code. The model cannot add a fact that is not backed by a tool result. A run only counts as complete if the model picked at least one tool call and both an environment lookup and an external lookup actually ran and were used.
 
-**Applicability prerequisites:** matching product/component, an affected firmware version, and SSL-VPN enabled. Assess the attack path separately: identify the threat source, reachable vulnerable component, and permitted route in the declared scenario. Internet reachability must refer to that component, not merely an unrelated public service on the asset. Compare numeric version tuples within the correct product and release branch. An unrecognized version/build or unsupported branch is unknown, not automatically unaffected. For the planned version-boundary test, FortiOS 7.2.6 is within the affected range and 7.2.7 is a fixed release for this CVE [E1]. This is a historical test boundary, not a recommendation to deploy that old release today.
+## 5. Rating policy
 
-- `confirmed`: every required prerequisite is supported and true.
-- `not_applicable`: reliable scoped evidence disproves at least one necessary prerequisite. State whether this is a fixed version, absent component, or verified disabled service. An affected but disabled component still needs patch planning; Low does not mean permanently safe.
-- `unknown`: no prerequisite is decisively disproved, and at least one decisive fact is missing.
-- `conflicting`: unresolved credible evidence disagrees on a decisive prerequisite. Preserve both records and their dates.
+The rating is based on two things. Applicability is whether the bug can be used against our device. Impact is what the business loses if it is.
 
-Record attack-path support and Internet reachability independently as supported/absent/unknown/conflicting and true/false/unknown/conflicting respectively. Lack of Internet exposure does not rule out a supported internal attack path. A failed lookup or unknown route does not prove that no attack path exists. If verified absence of every path in the declared scope is used as a decisive absent prerequisite under R5, cite the evidence that establishes that bounded absence.
+### Applicability
 
-**Impact criteria, assuming exploitation succeeds:**
+The CVE applies only if all three conditions hold:
 
-| Impact | Criteria |
+1. The device runs FortiOS with the affected SSL VPN component.
+2. The firmware version is in the affected range.
+3. SSL VPN is turned on.
+
+| State | Meaning |
 | --- | --- |
-| High | Compromise or material interruption of production remote access, sensitive financial/customer data, critical identity/recovery services, or a supported path affecting such services |
-| Medium | Material interruption or disclosure affecting a bounded noncritical team/service, with evidenced separation from sensitive production services and limited recovery consequences |
-| Low | Disposable or isolated test workload with synthetic data, no sensitive credentials, no production dependencies, and negligible operational consequences |
-| Unknown | Evidence cannot establish the relevant business use or distinguish consequence levels |
+| `confirmed` | All three conditions are backed by evidence and true |
+| `not_applicable` | Reliable evidence shows at least one condition is false. We say which one, for example a fixed version or SSL VPN turned off. |
+| `unknown` | Nothing is disproved, but at least one deciding fact is missing |
+| `conflicting` | Credible sources disagree on a deciding fact. We keep both records with their dates. |
 
-For N02, production remote-access role supports a proposed High impact classification based on operational interruption and gateway trust. The 150 remote staff are context, not proof that all 150 simultaneously depend on this VPN. Do not claim domain takeover, direct SQL reachability, actual data loss, or a proven outage duration. Label this impact judgment and its assumptions for analyst review. Unknown downstream paths remain unknown; they do not automatically defeat an independently supported impact consequence.
+Versions are compared as numbers within the same FortiOS branch. A build we don't recognize is unknown, not safe. For our tests, FortiOS 7.2.6 is affected and 7.2.7 is fixed [E1]. We use this only as a test boundary. It is not a version we would recommend running today.
 
-The group's revised rules are:
+A not applicable result still needs a patch plan if the device has an affected version with SSL VPN turned off. Low does not mean safe forever.
 
-| Rule | Evidence-supported conditions | Decision | Priority |
+### Attack path and Internet reachability
+
+We record the attack path and Internet reachability separately from applicability. Internet reachability has to be about the vulnerable SSL VPN component, not just any public service on the device. Not being on the Internet does not rule out an internal attack path. A failed lookup never proves there is no path.
+
+### Impact
+
+Impact assumes the attack works.
+
+| Impact | When |
+| --- | --- |
+| High | Production remote access goes down or is taken over, or sensitive financial or customer data or identity services are at risk |
+| Medium | A noncritical team or service is affected and there is evidence it is separated from production |
+| Low | An isolated test system with fake data, no real credentials and nothing in production depending on it |
+| Unknown | The evidence can't tell us what the system is used for |
+
+For N02 we propose High impact. It is the production remote access gateway, so if it goes down remote work is affected, and an attacker on it would sit on a trusted device. The 150 remote staff is context. It does not prove all 150 use the VPN at the same time. We don't claim domain takeover, direct SQL access or actual data loss. The analyst reviews this impact call.
+
+### Rules
+
+| Rule | Conditions backed by evidence | Rating | Priority |
 | --- | --- | --- | --- |
-| R1 | Vulnerability applies, the vulnerable service is Internet reachable, and compromise could cause major business consequences | High | Critical |
-| R2 | Vulnerability applies through a supported attack path and could cause major consequences, but R1 is not met | High | High |
-| R3 | Vulnerability applies through a supported attack path and consequences are limited to a service or small user group | Medium | Medium |
-| R4 | Vulnerability applies, but supported consequences are minor and confined to a low-value, isolated service | Low | Low |
-| R5 | Evidence confirms a decisive prerequisite is absent, such as an unaffected version or disabled vulnerable component | Low | Informational |
-| R6 | Missing or conflicting evidence prevents determining applicability, attack path, or impact | Insufficient evidence / Review | Insufficient evidence / Review |
+| R1 | The CVE applies, the SSL VPN is reachable from the Internet and the impact is major | High | Critical |
+| R2 | The CVE applies through a supported attack path with major impact, but R1 is not met | High | High |
+| R3 | The CVE applies through a supported attack path and the impact is limited to a service or small group | Medium | Medium |
+| R4 | The CVE applies, but the impact is minor and stays inside an isolated low value system | Low | Low |
+| R5 | Evidence shows a required condition is missing, like a fixed version or SSL VPN turned off | Low | Informational |
+| R6 | Missing or conflicting evidence stops us from deciding applicability, attack path or impact | No rating | Insufficient evidence or Review |
 
-Implementation precedence: validate evidence scope and integrity first; a validation failure produces Review with a distinct validation reason, not a claim that a risk rule was satisfied. A supported absent prerequisite with no unresolved conflict in its proof yields R5; unknown unrelated facts do not prevent that scoped result. Otherwise, missing or conflicting decisive applicability, attack-path, or impact evidence yields R6. For a supported applicable case, evaluate R1 before R2, then R3 or R4 according to impact. Major consequences map to High impact, limited consequences to Medium, and minor isolated consequences to Low. R4 also requires a supported attack path; isolation describes limited consequences, not an assumption that exploitation is possible.
+Critical is a priority, not a fourth rating. R1 and R2 both give a High rating. The priority shows whether the bug is reachable from the Internet.
 
-R2 requires evidence that R1 does not hold: for example, a supported internal attack path and verified absence of Internet reachability. Unknown Internet reachability must not be silently treated as false; if it prevents choosing between Critical and High priority, report R6 and request the decisive exposure evidence. R6 distinguishes missing facts (Insufficient evidence) from unresolved credible contradictions (Review), with null rating in either case.
+### Order the rules are checked
 
-Known exploitation from KEV informs the recommended response urgency but cannot establish local firmware/configuration or overwrite the rule-assigned rating or priority. A KEV miss is not evidence of safety. CVSS is reported with its original source, vector, and version and is not copied into the local risk rating or priority. Conflicting severity metadata is disclosed; it is decisive only if the policy uses it, which this policy does not.
+1. **Validation first.** If evidence is out of scope or broken, the result is Review with a validation reason. This is not counted as any rule being met.
+2. **R5.** If evidence shows a required condition is missing, we give R5. Unrelated unknowns do not block this.
+3. **R6.** If a deciding fact is missing, we give Insufficient evidence. If credible sources conflict, we give Review. The rating is null in both cases.
+4. **R1 to R4.** Otherwise we check R1, then R2, then R3 or R4 based on impact.
 
-**Why this policy:** consequence-based ratings are simple to implement and test, while a separate priority distinguishes Internet-reachable major-impact cases from other supported major-impact paths. Applicability gates prevent a product-name match from becoming a vulnerability finding. The explicit unknown/conflict states prevent arbitrary Medium or Low defaults. Low / Low retains an applicable minor-impact vulnerability; Low / Informational records a supported absent prerequisite. An Internet-exposed production VPN cannot qualify as a disposable test workload.
+R2 needs evidence that R1 does not hold, for example a supported internal path and proof that the SSL VPN is not reachable from the Internet. Unknown Internet reachability is never treated as false. If it is the only thing deciding between Critical and High, we give R6 and ask for exposure evidence.
 
-### Human review and recommended actions
+### CVSS and KEV
 
-The group analyst verifies the saved source excerpts, dates, asset scope, rule, risk rating, priority, supported attack path, impact justification, unknowns, and recommended actions. Record review separately from agent completion. Never fabricate acceptance or consensus.
+KEV tells us the bug is being exploited, so it raises the urgency of the recommended action. It does not change the rating or priority. A CVE missing from KEV does not mean it is safe. CVSS is reported with its source, vector and version, but it is not copied into the local rating.
 
-- Original baseline: request firmware and SSL-VPN status for both gateway members, endpoint/service mapping, configuration dates, and permitted access paths. Flag this as an urgent evidence request because known exploitation is reported externally.
-- High / Critical (R1): recommend immediate analyst attention and prompt upgrade through the vendor-supported path to a currently supported fixed release, coordinated across both gateways; review VPN/firewall/identity logs for suspicious activity. A temporary SSL-VPN restriction or disablement requires verified vendor guidance and analyst/change-owner approval because remote access can be interrupted.
-- High / High (R2): recommend urgent remediation of the supported attack path and affected service, recording why Critical priority does not apply.
-- Medium / Medium (R3): recommend a bounded remediation plan with owner and rationale; confirm the limited business consequences.
-- Low / Low (R4): retain the applicable vulnerability finding and recommend routine remediation; verify the low-value service's isolation.
-- Low / Informational (R5): explain the supported absent prerequisite, retain configuration/version evidence, and identify changes that would require reassessment.
-- Insufficient evidence / Review (R6): specify the missing or conflicting fact, assign an evidence-resolution action, and preserve any urgent investigation recommendation separately from the unresolved priority.
+### Why we chose this policy
 
-The application produces recommendations and local artifacts. Operational patching, network changes, account actions, live scans, and external notifications are outside its tool set. A human would approve any later operational action. Your approval of this design is the gate before implementation in this project.
+Severity is about the bug. Risk is about our environment. A critical CVSS bug on a device with SSL VPN turned off is not a high risk for us, so applicability comes first. The rating follows impact because that is what the business feels. We kept priority separate so we can tell an Internet facing case apart from an internal one when both have major impact.
 
-## 3 Essential tools and evidence flow
+Having unknown and conflicting as real outcomes stops the agent from picking Medium or Low just to give an answer. Low with Low priority means the bug applies but barely matters. Low with Informational priority means it does not apply. Keeping these apart means a real finding is never hidden.
 
-Use three direct Python tools with strict JSON argument schemas. The model cannot supply arbitrary paths, URLs, commands, or headers. Exact allowlisted sources are configured by the application.
+## 6. Tools
 
-| Tool | Purpose and accepted input | Output and attribution | Failure and decision role |
+There are three Python tools. Each takes strict JSON arguments. The model cannot pass in file paths, URLs or commands. The allowed sources are set in our code.
+
+| Tool | Purpose and input | Output and attribution | Role in the decision and failure handling |
 | --- | --- | --- | --- |
-| `lookup_environment` | Read asset and relevant context; `{asset_id: "N02", snapshot_id: "northbridge-docx-v1"}` | Product, cohort size, nullable versions/configuration, exposure statements, controls, business context; DOCX section/table row and S01/S02/S04/S05 when relevant; snapshot hash; mode simulated | Missing file/schema/scope mismatch stops supported rating. No match is a scoped lookup result, not an absence declaration. Provides local prerequisite and impact facts |
-| `lookup_vulnerability` | Obtain affected component, versions, fixes and severity; `{cve_id: "CVE-2024-21762", source: "cna"}`; source enum also permits vendor, NVD and CERT-EU | Saved response, normalized product-specific ranges and prerequisite facts; publisher, URL, JSON pointer or passage locator, publication/update/retrieval dates and mode | Bounded retry; use a verified alternate primary source or labeled cache. If decisive threat facts remain unavailable, Insufficient evidence. Provides threat-side prerequisites |
-| `lookup_kev` | Determine reported exploitation context; `{cve_id: "CVE-2024-21762"}` | CISA catalog match, date added, required action, references and retrieval metadata; valid no-match distinct from lookup failure | Retry once; use saved CISA evidence with cache label if available. Otherwise exploitation state unknown. Does not establish non-applicability or override the impact policy |
+| `lookup_environment` | Reads the asset and its context. Input: `{asset_id: "N02", snapshot_id: "northbridge-docx-v1"}` | Product, firmware and settings (null if unknown), exposure, controls and business context. Each fact points to its DOCX section or table row, with the snapshot hash. Mode is always `simulated`. | Gives the local facts for applicability and impact. If the file is missing or the scope is wrong, no rating is given. A no match result is not treated as proof that something is absent. |
+| `lookup_vulnerability` | Gets the affected versions, fixes and severity. Input: `{cve_id: "CVE-2024-21762", source: "cna"}`. Source can also be `cert_eu`. | Affected version ranges per product and the attack conditions. Each fact has the publisher, URL, JSON pointer or passage, dates and mode. | Gives the threat side conditions. Retries once, then can use another allowed source or the labeled cache. If the deciding facts are still missing, the result is Insufficient evidence. |
+| `lookup_kev` | Checks if the CVE is known to be exploited. Input: `{cve_id: "CVE-2024-21762"}` | The CISA catalog entry with date added, required action and retrieval info. A valid no match is kept separate from a failed lookup. | Adds exploitation context and urgency. Retries once, then uses the saved CISA copy. If that also fails, exploitation stays unknown. It never changes the rating. |
 
-Vendor/CNA evidence governs product ranges and remediation; CERT-EU can corroborate the component; NVD adds technical-severity context. CISA governs catalog membership. Local scenario evidence governs Northbridge facts. Retain differing source claims rather than merging away disagreement. Do not assume a newer generic secondary source outranks product-specific authoritative evidence.
+**Which source wins:** Fortinet's CNA record decides product ranges and fixes. CERT-EU backs up the SSL VPN details. CISA decides KEV membership. The environment snapshot decides Northbridge facts. If sources disagree, we keep both claims instead of merging them.
 
-Each tool returns an envelope containing `tool_call_id`, `status`, evidence IDs, normalized facts with locators, nullable source dates, retrieval time, `source_mode`, artifact hash, and structured error if applicable. External modes are `live` or `cached`; local facts are always `simulated`, with fixture/scenario variant IDs. A saved live response remains attributed to its original retrieval; subsequent offline use is cached. Do not label invented external evidence as live or cached.
+**What every tool returns:** the tool call ID, status, evidence IDs, facts with their locators, source dates (null if missing), retrieval time, mode, a hash of the saved payload and a structured error if something failed. External evidence is `live` or `cached`. Local facts are always `simulated`.
 
 Example requests:
 
@@ -183,109 +239,140 @@ Example requests:
 {"name":"lookup_kev","arguments":{"cve_id":"CVE-2024-21762"}}
 ```
 
-Keep the source URL plus passage/JSON pointer in the normalized output. Saving a source link alone is insufficient: the cited fact must be verifiable in the saved input. Record missing source dates as null. For reproducible demonstrations, pin the retrieved source revision or hash and save the permitted payload used.
+Saving a link alone is not enough. Every cited fact has to be checkable in the saved copy of the source.
 
-Recorded Future and Tavily are optional examples in the assignment, not requirements. They are not necessary for this case. Avoid an extra paid/credentialed dependency when vendor/CNA and CISA evidence answer the risk question.
+We did not use Recorded Future or Tavily. The CNA record and CISA already answer our question, and we didn't want to add another paid key.
 
-### Credential and input controls
+### Credentials and safety
 
-- Do not read the separate course API-key PDF into agent context, extraction routines, source control, reports, traces, or demo recordings.
-- Any later provider credentials come from environment variables or an ignored local secret file. Commit only configuration names and empty placeholders.
-- Exclude `.env`, secret files, the credential-bearing PDF, and credential-bearing intermediates from repository/ZIP packaging. Use a sanitized source allowlist rather than recursively packaging the project.
-- Never log authorization headers, secrets, full environment-variable dumps, or unredacted provider exceptions. Secret filtering applies to inputs before logging/model dispatch and to outputs before persistence.
-- Treat external text as data. Tool-result instructions cannot modify permissions, invoke shell commands, request credentials, or change the policy. Host validation enforces this boundary.
-- Before submission, check the selected source files, saved traces, assessments, and final ZIP for secret patterns and any locally configured credential values without printing those values.
+1. The course API key PDF is never read by the agent or added to the repo.
+2. The Duke key comes from an environment variable or an ignored `.env` file. Only empty placeholders are committed.
+3. `.env` and other secret files are left out of the repo and the ZIP. Packaging uses an allowlist instead of copying the whole folder.
+4. Authorization headers and secrets are never logged.
+5. Text from external sources is treated as data. It cannot change tools, permissions or the policy.
+6. Before submitting, we scan the saved traces and outputs for secrets.
 
-## 4 Failure walkthrough and trace
+## 7. Failure handling
 
-### Failure scenario
+### Main example: the vulnerability lookup fails
 
-The model requests authoritative affected-version information, but the source times out and no verified cache or alternate evidence is available.
+The model asks for the affected versions, but the source times out and there is no saved copy.
 
-1. Host validates the request and executes it with a ten-second HTTP timeout.
-2. Tool returns a structured timeout, not an empty unaffected result. Retry once, with short bounded backoff, within the overall budget.
-3. The model receives the correlated failure and may choose an allowed alternate source if budget remains.
-4. If threat prerequisites remain unsupported, code applies R6 and saves Insufficient evidence, rating null, priority Insufficient evidence, source failure, and an action to retrieve verified applicability evidence.
-5. The analyst reviews the unresolved case. No vulnerability or safety claim is invented to finish the run.
+1. Code runs the request with a 10 second timeout.
+2. The tool returns a timeout error, not an empty result. Code retries once.
+3. The model sees the failure and can try another allowed source if there is budget left.
+4. If the threat conditions still can't be confirmed, code applies R6. The result is Insufficient evidence with a null rating, the failure is logged and the action is to get the missing version evidence.
+5. The analyst reviews it. The agent never invents a vulnerable or safe result to finish the run.
 
-A failed KEV lookup alone may still permit a supported rating if other prerequisite and impact evidence is sufficient, because KEV is not a rating prerequisite. Record reduced exploitation-context confidence. A cached fallback is useful but must be explicitly labeled with age and original retrieval time.
+If only the KEV lookup fails, the agent can still give a rating, because KEV is not one of the rating conditions. Confidence in the exploitation context goes down and this is noted. A cached fallback is always labeled with its original retrieval time.
 
-### Enforceable limits and other failure paths
+### Run limits
 
-Proposed limits: eight total tool executions including retries and alternates, eight model turns, a 180-second run deadline, ten seconds per HTTP attempt, and thirty seconds per model request. These are runtime limits; timeouts are bounded by the remaining deadline. Duplicate queries without new evidence cannot continue indefinitely.
+| Limit | Value |
+| --- | --- |
+| Tool executions (including retries) | 8 |
+| Model turns | 8 |
+| Total run time | 180 seconds |
+| Each HTTP request | 10 seconds |
+| Each model request | 30 seconds |
 
-- Missing firmware, SSL-VPN configuration, decisive attack path, exposure, or impact evidence: do not infer values. Once no authorized evidence source can resolve them within budget, stop investigation with R6 and priority Insufficient evidence.
-- Contradictory dated firmware/configuration, attack-path, exposure, or impact evidence: R6 with priority Review until scope/date reconciliation resolves it; do not average versions.
-- Invalid tool arguments: reject before execution, return structured feedback, permit one correction; repeated invalid calls stop with Review required.
-- Wrong asset/snapshot or cross-scope tool result: reject before adding its payload to model context; stop with Review required and a safe error trace.
-- Budget exhaustion: save unresolved status, outstanding gaps, and `stop_reason`; never imply the complete run passed.
-- Model outage: preserve evidence and report an explicit execution/review failure. A policy-only result does not count as a demonstrated model-driven run.
-- Unsupported rationale or fabricated citation: one bounded revision; if still invalid, Review required with null rating.
-- Failure to save required evidence/output: report execution failure; the demonstration checklist cannot pass.
+The same query can't be repeated without new evidence.
 
-Trace fields: run/step IDs, model/provider and digest, policy/snapshot versions, safe arguments, tool-call correlation ID, attempt number, timestamps/duration, status/error code, evidence IDs/hash/mode, policy inputs/rule, rating, priority, supported attack path, Internet reachability, stop reason, and human review outcome. Record only safe summaries of rejected payloads.
+### Other failures and when the run stops
 
-## 5 Success test and testing plan
+| Situation | What happens | Run stops? |
+| --- | --- | --- |
+| Firmware, SSL VPN, path, exposure or impact unknown | R6, Insufficient evidence | Yes, once no allowed source can answer it within budget |
+| Credible sources conflict | R6, Review. Versions are never averaged. | Yes |
+| Invalid tool arguments | Rejected before running. One correction allowed. | Yes, with Review, if it happens again |
+| Wrong asset or snapshot in a result | Rejected before the model sees it | Yes, with Review |
+| Budget used up | Saves the open gaps and the stop reason | Yes. The run is not counted as passed. |
+| Model or API outage | Evidence is kept and an execution failure is saved with exit code 2 | Yes. Does not count as a real model demo. |
+| Unsupported claim or fake citation | One retry | Yes, with Review and a null rating, if still invalid |
+| Output can't be saved | Execution failure | Yes. The demo checklist fails. |
+
+Every tool call is logged in `tool_trace.json` with its call ID, attempt number and timing. The stop reason and the human review result are saved in the assessment.
+
+## 8. Acceptance test and test plan
 
 ### Acceptance test
 
-From one selected CVE and one versioned snapshot, run the real model. Verify a model-selected valid tool call is executed and its attributed result returned to the model; both environment and external evidence contribute; the policy produces the expected supported rating and priority or explicit Insufficient evidence / Review; citations resolve; unknowns and modes are preserved; recommended actions address the result; and a group member reviews the assessment.
+A complete run passes if all of these are true:
 
-**Proposed metric:** percentage of end-to-end cases that match the documented expected decision and satisfy all evidence/uncertainty requirements. **Target:** 100% on the small controlled set below. This is a proposed acceptance target, not measured accuracy or a claim of broad generalization.
+1. The real model picks a valid tool call, code runs it and the result goes back to the model with the same call ID.
+2. An environment lookup and at least one external lookup both run and are used in the decision.
+3. The policy gives the expected rating and priority, or an explicit Insufficient evidence or Review.
+4. Every citation points to saved evidence.
+5. Unknowns and source modes are kept in the output.
+6. The recommended actions match the result.
+7. A group member reviews the assessment.
 
-Set expected results before running. Group members review policy expectations and record actual consensus after discussion. All test changes are explicit overrides to copied scenario variants; keep the original DOCX and baseline snapshot unchanged.
+Our target is 100% on the controlled cases below. This is our pass bar for this set, not a claim about general accuracy.
 
-| Case | Controlled input and invariant | Expected result |
+### Test cases
+
+We wrote the expected results before running anything. Each case changes only the listed facts.
+
+| Case | What we change | Expected |
 | --- | --- | --- |
-| Original baseline | N02 as documented; unknown firmware and SSL-VPN configuration | R6; null rating / Insufficient evidence priority; exact missing prerequisites and evidence request |
-| Positive complete run | Simulated gateway instance on FortiOS 7.2.6; SSL-VPN enabled and the affected component Internet reachable; production remote-access role with supported major consequences; all additions explicitly labeled | R1; High / Critical; cited version match, operational consequence, unknown downstream reachability retained |
-| Applicability change | Change only firmware from 7.2.6 to 7.2.7 in the positive fixture; impact and exposure constant | R1 to R5; High / Critical to Low / Informational; fixed for this CVE, not a declaration that the entire gateway is secure |
-| Exposure and priority change | Keep applicability and major impact constant; verify Internet reachability false while retaining an evidenced internal attack path | R2; High / High; rating remains High, priority changes from Critical to High |
-| Impact change | Keep affected version, SSL-VPN and Internet-reachable threat path constant; change business context to a bounded noncritical test-team service with evidenced production separation | R3; High / Critical to Medium / Medium; explain changed consequence and separation evidence |
-| Low impact extension | Same applicable threat with a supported attack path on a disposable test workload with synthetic data, no sensitive credentials or production dependencies | R4; Low / Low; retain vulnerability fact and limited scope |
-| Missing or conflicting evidence | Positive fixture with firmware null; second subcase has incompatible credible records for the same instance/time | R6; null rating / Insufficient evidence for missing version; null rating / Review for unresolved conflict |
-| Missing exposure evidence | Applicable vulnerability with a supported internal path and major consequences, but Internet reachability unknown | R6; null rating / Insufficient evidence; do not assume R2, request evidence to distinguish Critical from High priority |
-| Controlled tool failure | Threat applicability lookup and all permitted alternatives unavailable, no verified cache; keep environment fixed | Bounded retries, R6, null rating / Insufficient evidence, recorded errors and evidence request |
+| Baseline | Nothing. Firmware and SSL VPN are unknown. | R6, Insufficient evidence |
+| Positive | FortiOS 7.2.6, SSL VPN on and reachable from the Internet, production remote access role | R1, High, Critical |
+| **Applicability change** (required) | Only the firmware, from 7.2.6 to 7.2.7 | R5, Low, Informational |
+| Disabled component | SSL VPN turned off | R5, Low, Informational |
+| Exposure change | Not reachable from the Internet, but an internal path exists | R2, High, High |
+| **Impact change** (required) | Business context changed to a noncritical test team service separated from production | R3, Medium, Medium |
+| Low impact | Isolated test system with fake data | R4, Low, Low |
+| **Missing evidence** (required) | Firmware set to null | R6, Insufficient evidence |
+| **Conflicting evidence** (required) | Two credible records disagree for the same gateway and time | R6, Review |
+| Missing exposure | Internet reachability unknown | R6, Insufficient evidence |
+| **Controlled failure** (required) | Vulnerability lookup and all fallbacks unavailable | R6, Insufficient evidence |
 
-The required three policy checks are applicability change, impact change, and missing/conflicting evidence. The controlled failure is separate. Also verify that an invalid request causes no tool execution and that KEV failure cannot silently become a negative KEV result.
+We also check that an invalid tool request never runs, and that a KEV lookup failure never turns into a "not in KEV" result.
 
-For every case preserve inputs, overrides, expected and actual status/rating/priority, pass/fail, rule, evidence references, limitations, and reviewer. Actual results remain unfilled until execution. A simulation-only test or scripted model transcript must be labeled and cannot be presented as the real model demonstration.
+The actual results are in `artifacts/testing/results.json` and `artifacts/testing/TESTING_REPORT.md`.
 
-## Planned implementation and submission artifacts after approval
+## 9. Recommended actions by result
 
-| Artifact | Contents |
+| Result | Action |
 | --- | --- |
-| README and dependency/configuration files | Setup, pinned versions, provider/model settings without secrets, complete-run and test commands |
-| Design and Week 3 worksheet | This revised five-response design, workflow diagram, tool contracts/examples, six-rule rating and priority policy, and implementation deviations |
-| Environment snapshot and variants | DOCX-derived facts, source locators, explicit unknowns, immutable baseline, and test overrides |
-| Saved threat evidence | Permitted vendor/CNA/CERT-EU/NVD/CISA inputs with retrieval metadata, locators, hashes, and fallback labels |
-| Runnable agent | Provider adapter, model-driven orchestration, guarded tools, deterministic policy, schema/citation validation, safe persistence |
-| Assessment and demonstration | JSON and readable report; complete-run checklist; correlated tool request/result evidence; actual human review |
-| Testing report | Three policy checks and one controlled failure; expected versus actual results, consensus, limitations |
-| Baseline manifest | Inputs, snapshot, policy, prompt/configuration, dependency/model/code versions and outputs for Assignment 4 reuse |
-| Contributions and AI disclosure | Actual member work and AI assistance; never inferred contributions |
-| Demo video if needed | Required if the group does not present in class; show design, tool calls, rationale, uncertainty and limitations |
+| Baseline (R6) | Get firmware and SSL VPN status for both gateways and confirm what runs on the public endpoint. Mark it urgent because the CVE is known exploited. |
+| R1, High, Critical | Analyst looks at it right away. Upgrade both gateways to a supported fixed release and check VPN, firewall and identity logs for suspicious activity. Turning off SSL VPN as a stopgap needs approval because it cuts remote access. |
+| R2, High, High | Fix the internal attack path and the affected service soon, and note why it is not Critical. |
+| R3, Medium, Medium | Make a remediation plan with an owner and confirm the limited impact. |
+| R4, Low, Low | Keep the finding and patch on the normal schedule. Confirm the system is really isolated. |
+| R5, Low, Informational | Record why it does not apply and keep the evidence. Reassess if the version or settings change. |
+| R6 | Name the missing or conflicting fact and assign someone to get it. Any urgent investigation is noted separately. |
 
-The assignment text inconsistently mentions Assignment 2 in the testing/baseline section; the rubric explicitly asks for a baseline for Assignment 4. Preserve the current project's complete baseline and note the course-text inconsistency without inventing a prior Assignment 2 submission.
+The agent only recommends. It does not patch, change the network or scan anything. A human approves any real action.
 
-and is submitted as an instructor-accessible GitHub repository.
+## 10. Changes from design to implementation
 
-## Sources and research limitations
+| Planned | What we built | Why |
+| --- | --- | --- |
+| Local Ollama model | Duke AI Gateway with GPT 4.1 | Ollama was not available on our machines |
+| Model writes the rationale text | Model picks evidence backed claim and action IDs and the code renders the wording | Stops the model from adding facts that aren't in the evidence |
+| Vendor advisory and NVD as live sources | CNA record and CERT-EU, with the KEV lookup | We could not retrieve the vendor advisory or NVD pages reliably |
+| 9 test cases | 11 test cases | We split missing and conflicting evidence into their own cases and added the disabled component case |
 
-Course sources in the project:
+More detail is in `docs/IMPLEMENTATION_NOTES.md`.
 
-- `Assignment 3_ Build a Security Triage Agent.pdf`, pages 1–4: requirements, deadline, model-driven tool use, submission and 35/45/20 rubric.
-- `Windows_Enterprise_Environment.docx`, Organization and scope; Network architecture and access; Endpoints appliances and cloud services; Evidence controls and business impact; Agent integration and assessment practice; N02/S02/S04/S05 table rows.
-- `CYBERSEC_590_W3_Design Studio.pdf`, pages 1–2 and 12–15: five responses and Atharva's prior worksheet.
-- `590 WK 3 Master.pdf`, pages 11–13 and 33–37: design patterns, unknown outputs, runtime limits and untrusted tool-result instructions.
-- `CYBERSEC 590 (511) Class 2 Fall 2026.pdf`, page 102: application executes tool use and returns results to the model.
+## 11. Sources
 
-External sources checked during this design review:
+### Course material
 
-- **E1** [Fortinet CNA record in the official CVE list](https://github.com/CVEProject/cvelistV5/blob/main/cves/2024/21xxx/CVE-2024-21762.json): `containers.cna.affected`, `solutions`, and source-specific metrics. [Raw record](https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2024/21xxx/CVE-2024-21762.json).
-- **E2** [CERT-EU Security Advisory 2024-018](https://cert.europa.eu/publications/security-advisories/2024-018/): SSL-VPN attack prerequisite and technical details.
-- **E3** [Official CISA KEV data](https://github.com/cisagov/kev-data/blob/main/known_exploited_vulnerabilities.json): entry selected by `cveID == CVE-2024-21762`; reported exploitation, not proof of a Northbridge incident.
-- **E4** [Fortinet vendor advisory FG-IR-24-015](https://www.fortiguard.com/psirt/FG-IR-24-015) and [user-selected NVD record](https://nvd.nist.gov/vuln/detail/CVE-2024-21762): intended live sources; their full content was inaccessible through the research tool in this review. No successful retrieval is claimed. E1–E3 supplied the verified case facts; record source failures/fallbacks in the implementation.
-- **E5** [Ollama Qwen3 8B model listing](https://ollama.com/library/qwen3:8b): proposed model candidate; local availability and complete tool-use behavior are not yet verified.
+| File | What we used |
+| --- | --- |
+| `Assignment 3_ Build a Security Triage Agent.pdf` | Requirements and rubric |
+| `Windows_Enterprise_Environment.docx` | N02 along with S02, S04 and S05 |
+| `CYBERSEC_590_W3_Design Studio.pdf` (pages 1 to 2 and 12 to 15) | The five design responses and our earlier worksheet |
+| `590 WK 3 Master.pdf` (pages 11 to 13 and 33 to 37) | Design patterns, unknown outputs, run limits and untrusted tool results |
+| `CYBERSEC 590 (511) Class 2 Fall 2026.pdf` (page 102) | The app runs the tool and returns the result to the model |
 
-No course credentials were read into this design. The implemented workflow, documented deviations and actual controlled test results are in the project artifacts. Real-model execution, human acceptance and operational actions are not inferred from replay results; inspect the relevant run checklist and member review record.
+### External sources
+
+| ID | Source | What we use it for |
+| --- | --- | --- |
+| E1 | [Fortinet CNA record in the official CVE list](https://github.com/CVEProject/cvelistV5/blob/main/cves/2024/21xxx/CVE-2024-21762.json) | Affected versions, fixes and CVSS from `containers.cna` |
+| E2 | [CERT-EU Security Advisory 2024-018](https://cert.europa.eu/publications/security-advisories/2024-018/) | SSL VPN attack details |
+| E3 | [CISA KEV data](https://github.com/cisagov/kev-data/blob/main/known_exploited_vulnerabilities.json) | Known exploitation, entry where `cveID` is CVE-2024-21762 |
+| E4 | [Fortinet advisory FG-IR-24-015](https://www.fortiguard.com/psirt/FG-IR-24-015) and [NVD record](https://nvd.nist.gov/vuln/detail/CVE-2024-21762) | Planned as extra sources, but we could not retrieve them reliably, so the case facts come from E1 to E3 |
