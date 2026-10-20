@@ -17,9 +17,9 @@ Missing decisive evidence: version_affected, ssl_vpn_enabled, attack_path, inter
 
 - Missing decisive evidence: version_affected, ssl_vpn_enabled, attack_path, internet_reachable. Evidence: ENV-ASSET, ENV-NETWORK, ENV-ORGANIZATION, ENV-UNKNOWN, S02, THREAT-CNA, THREAT-COMPONENT.
 - N02 cohort; individual gateway versions and configurations are not supplied; all local evidence is simulated. Evidence: ENV-ASSET.
-- Business impact is High; this is a policy interpretation of the cited business context, not observed compromise. Evidence: ENV-ASSET, ENV-ORGANIZATION.
+- Business impact: High, based on the cited business context. Local compromise is unconfirmed. Evidence: ENV-ASSET, ENV-ORGANIZATION.
 - Unknowns: version_affected, ssl_vpn_enabled, attack_path, internet_reachable, exact_firmware_version; conflicts: none. Evidence: ENV-ASSET, ENV-NETWORK, ENV-ORGANIZATION, ENV-UNKNOWN, S02, THREAT-CNA, THREAT-COMPONENT.
-- CISA catalog lookup reports known exploitation; it does not establish local compromise. Evidence: THREAT-KEV.
+- CISA reports known exploitation. Local compromise is unconfirmed. Evidence: THREAT-KEV.
 
 ## Policy inputs
 
@@ -34,19 +34,19 @@ Missing decisive evidence: version_affected, ssl_vpn_enabled, attack_path, inter
 
 ## Recommended actions
 
-- **VPN owner and SOC analyst (Prompt evidence resolution):** Obtain dated firmware and SSL-VPN configuration evidence for each assessed gateway, verify the affected endpoint and attack path, and reconcile decisive conflicts before reassessment. Evidence: ENV-ASSET, ENV-NETWORK, ENV-ORGANIZATION, ENV-UNKNOWN, S02, THREAT-CNA, THREAT-COMPONENT.
+- **VPN owner and SOC analyst (Prompt evidence resolution):** Get dated firmware and SSL-VPN configuration evidence for each gateway. Verify the endpoint and attack path, and resolve conflicts before reassessing. Evidence: ENV-ASSET, ENV-NETWORK, ENV-ORGANIZATION, ENV-UNKNOWN, S02, THREAT-CNA, THREAT-COMPONENT.
 
 ## Uncertainty
 
 - Unknowns: version_affected, ssl_vpn_enabled, attack_path, internet_reachable, exact_firmware_version
 - Conflicts: none decisive
-- Confidence: limited. Synthetic environment and pending human review; confidence is not a numeric probability.
-- Evidence needed: Dated firmware, component state, supported route/exposure, and business-dependency evidence for the assessed scope; version/configuration changes or reconciled contradictions trigger reassessment.
+- Confidence: limited. Simulated environment; human review pending. Confidence is qualitative.
+- Evidence needed: Dated firmware, component, route, and business-dependency evidence for this scope. Reassess after configuration changes or conflict resolution.
 
 - Assumption: High impact is a policy interpretation of the production remote-access role, pending analyst review.
 - Limitation: DOCX-derived subset; companion JSON/CSV/lookup script were not supplied.
-- Limitation: The original DOCX documents public VPN TCP/443 but does not identify SSL-VPN termination or enabled status; fixture values are explicit simulated overrides.
-- Limitation: No per-gateway state, configuration date, exact internal flows, or VPN-specific RTO is supplied.
+- Limitation: Public VPN access on TCP/443 is documented, but reachability and enabled status of the vulnerable SSL-VPN component are unknown in the baseline.
+- Limitation: The original document supplies no per-gateway firmware/configuration observations, exact internal flows, or VPN-specific RTO. Variant values are simulated test conditions, not observed gateway settings.
 - Limitation: No telemetry events establish actual exploitation or compromise.
 
 ## Evidence register
@@ -57,7 +57,7 @@ Source: Windows_Enterprise_Environment.docx
 Locator: Endpoints appliances and cloud services; infrastructure table; N02 row  
 Mode: simulated  
 Source date: not supplied  
-Retrieved: 2026-10-13T04:04:26.224334+00:00  
+Retrieved: 2026-10-19T23:07:02.878516+00:00  
 Saved payload: environment_snapshot.json
 
 ```text
@@ -70,7 +70,7 @@ Source: Windows_Enterprise_Environment.docx
 Locator: Network architecture and access; public services paragraph  
 Mode: simulated  
 Source date: not supplied  
-Retrieved: 2026-10-13T04:04:26.224437+00:00  
+Retrieved: 2026-10-19T23:07:02.879521+00:00  
 Saved payload: environment_snapshot.json
 
 ```text
@@ -83,7 +83,7 @@ Source: Windows_Enterprise_Environment.docx
 Locator: Organization and scope; opening paragraph  
 Mode: simulated  
 Source date: not supplied  
-Retrieved: 2026-10-13T04:04:26.224469+00:00  
+Retrieved: 2026-10-19T23:07:02.879521+00:00  
 Saved payload: environment_snapshot.json
 
 ```text
@@ -96,7 +96,7 @@ Source: Windows_Enterprise_Environment.docx
 Locator: Evidence controls table; S02 row  
 Mode: simulated  
 Source date: not supplied  
-Retrieved: 2026-10-13T04:04:26.224498+00:00  
+Retrieved: 2026-10-19T23:07:02.879521+00:00  
 Saved payload: environment_snapshot.json
 
 ```text
@@ -109,7 +109,7 @@ Source: Windows_Enterprise_Environment.docx
 Locator: Evidence controls table; S04 row  
 Mode: simulated  
 Source date: not supplied  
-Retrieved: 2026-10-13T04:04:26.224526+00:00  
+Retrieved: 2026-10-19T23:07:02.879521+00:00  
 Saved payload: environment_snapshot.json
 
 ```text
@@ -122,7 +122,7 @@ Source: Windows_Enterprise_Environment.docx
 Locator: Evidence controls table; S05 row  
 Mode: simulated  
 Source date: not supplied  
-Retrieved: 2026-10-13T04:04:26.224555+00:00  
+Retrieved: 2026-10-19T23:07:02.879521+00:00  
 Saved payload: environment_snapshot.json
 
 ```text
@@ -135,7 +135,7 @@ Source: Windows_Enterprise_Environment.docx
 Locator: Endpoints appliances and cloud services; additional devices paragraph  
 Mode: simulated  
 Source date: not supplied  
-Retrieved: 2026-10-13T04:04:26.224582+00:00  
+Retrieved: 2026-10-19T23:07:02.879521+00:00  
 Saved payload: environment_snapshot.json
 
 ```text

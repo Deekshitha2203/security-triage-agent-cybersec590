@@ -17,9 +17,9 @@ Applicable supported attack path with minor consequences in an isolated low-valu
 
 - Applicable supported attack path with minor consequences in an isolated low-value service. Evidence: ENV-ASSET, SIM-LOW-ATTACK_PATH, SIM-LOW-FIRMWARE, SIM-LOW-IMPACT, SIM-LOW-INTERNET_REACHABLE, SIM-LOW-SSL_VPN_ENABLED, THREAT-CNA, THREAT-COMPONENT.
 - One explicitly simulated N02 test instance; does not assert the state of both cohort members; all local evidence is simulated. Evidence: ENV-ASSET.
-- Affected-version comparison: True; exact input and source ranges are preserved. Evidence: SIM-LOW-FIRMWARE, THREAT-CNA.
-- Business impact is Low; this is a policy interpretation of the cited business context, not observed compromise. Evidence: SIM-LOW-IMPACT.
-- CISA catalog lookup reports known exploitation; it does not establish local compromise. Evidence: THREAT-KEV.
+- Affected-version comparison: True. Evidence: SIM-LOW-FIRMWARE, THREAT-CNA.
+- Business impact: Low, based on the cited business context. Local compromise is unconfirmed. Evidence: SIM-LOW-IMPACT.
+- CISA reports known exploitation. Local compromise is unconfirmed. Evidence: THREAT-KEV.
 
 ## Policy inputs
 
@@ -34,18 +34,18 @@ Applicable supported attack path with minor consequences in an isolated low-valu
 
 ## Recommended actions
 
-- **VPN owner (Low):** Upgrade through the vendor-supported path to a currently supported release fixed for this CVE; coordinate gateway failover and change approval. Historical test version 7.2.7 is not a current deployment recommendation. Evidence: THREAT-CNA.
+- **VPN owner (Low):** Follow the vendor upgrade path to a supported release fixed for this CVE. Coordinate failover and change approval. Version 7.2.7 is a test boundary only. Evidence: THREAT-CNA.
 
 ## Uncertainty
 
 - Unknowns: none decisive
 - Conflicts: none decisive
-- Confidence: moderate. Synthetic environment and pending human review; confidence is not a numeric probability.
-- Evidence needed: Dated firmware, component state, supported route/exposure, and business-dependency evidence for the assessed scope; version/configuration changes or reconciled contradictions trigger reassessment.
+- Confidence: moderate. Simulated environment; human review pending. Confidence is qualitative.
+- Evidence needed: Dated firmware, component, route, and business-dependency evidence for this scope. Reassess after configuration changes or conflict resolution.
 
 - Limitation: DOCX-derived subset; companion JSON/CSV/lookup script were not supplied.
-- Limitation: The original DOCX documents public VPN TCP/443 but does not identify SSL-VPN termination or enabled status; fixture values are explicit simulated overrides.
-- Limitation: No per-gateway state, configuration date, exact internal flows, or VPN-specific RTO is supplied.
+- Limitation: Public VPN access on TCP/443 is documented, but reachability and enabled status of the vulnerable SSL-VPN component are unknown in the baseline.
+- Limitation: The original document supplies no per-gateway firmware/configuration observations, exact internal flows, or VPN-specific RTO. Variant values are simulated test conditions, not observed gateway settings.
 - Limitation: No telemetry events establish actual exploitation or compromise.
 
 ## Evidence register
@@ -56,7 +56,7 @@ Source: Windows_Enterprise_Environment.docx
 Locator: Endpoints appliances and cloud services; infrastructure table; N02 row  
 Mode: simulated  
 Source date: not supplied  
-Retrieved: 2026-10-13T04:04:26.224334+00:00  
+Retrieved: 2026-10-19T23:07:02.878516+00:00  
 Saved payload: environment_snapshot.json
 
 ```text
@@ -69,7 +69,7 @@ Source: Windows_Enterprise_Environment.docx
 Locator: Network architecture and access; public services paragraph  
 Mode: simulated  
 Source date: not supplied  
-Retrieved: 2026-10-13T04:04:26.224437+00:00  
+Retrieved: 2026-10-19T23:07:02.879521+00:00  
 Saved payload: environment_snapshot.json
 
 ```text
@@ -82,7 +82,7 @@ Source: Windows_Enterprise_Environment.docx
 Locator: Organization and scope; opening paragraph  
 Mode: simulated  
 Source date: not supplied  
-Retrieved: 2026-10-13T04:04:26.224469+00:00  
+Retrieved: 2026-10-19T23:07:02.879521+00:00  
 Saved payload: environment_snapshot.json
 
 ```text
@@ -95,7 +95,7 @@ Source: Windows_Enterprise_Environment.docx
 Locator: Evidence controls table; S02 row  
 Mode: simulated  
 Source date: not supplied  
-Retrieved: 2026-10-13T04:04:26.224498+00:00  
+Retrieved: 2026-10-19T23:07:02.879521+00:00  
 Saved payload: environment_snapshot.json
 
 ```text
@@ -108,7 +108,7 @@ Source: Windows_Enterprise_Environment.docx
 Locator: Evidence controls table; S04 row  
 Mode: simulated  
 Source date: not supplied  
-Retrieved: 2026-10-13T04:04:26.224526+00:00  
+Retrieved: 2026-10-19T23:07:02.879521+00:00  
 Saved payload: environment_snapshot.json
 
 ```text
@@ -121,7 +121,7 @@ Source: Windows_Enterprise_Environment.docx
 Locator: Evidence controls table; S05 row  
 Mode: simulated  
 Source date: not supplied  
-Retrieved: 2026-10-13T04:04:26.224555+00:00  
+Retrieved: 2026-10-19T23:07:02.879521+00:00  
 Saved payload: environment_snapshot.json
 
 ```text
@@ -134,7 +134,7 @@ Source: Windows_Enterprise_Environment.docx
 Locator: Endpoints appliances and cloud services; additional devices paragraph  
 Mode: simulated  
 Source date: not supplied  
-Retrieved: 2026-10-13T04:04:26.224582+00:00  
+Retrieved: 2026-10-19T23:07:02.879521+00:00  
 Saved payload: environment_snapshot.json
 
 ```text
@@ -147,7 +147,7 @@ Source: data/environment/low.json
 Locator: /facts/firmware  
 Mode: simulated  
 Source date: not supplied  
-Retrieved: 2026-10-13T04:04:26.228661+00:00  
+Retrieved: 2026-10-19T23:07:02.891534+00:00  
 Saved payload: environment_snapshot.json
 
 ```text
@@ -160,7 +160,7 @@ Source: data/environment/low.json
 Locator: /facts/ssl_vpn_enabled  
 Mode: simulated  
 Source date: not supplied  
-Retrieved: 2026-10-13T04:04:26.228664+00:00  
+Retrieved: 2026-10-19T23:07:02.891534+00:00  
 Saved payload: environment_snapshot.json
 
 ```text
@@ -173,7 +173,7 @@ Source: data/environment/low.json
 Locator: /facts/attack_path  
 Mode: simulated  
 Source date: not supplied  
-Retrieved: 2026-10-13T04:04:26.228667+00:00  
+Retrieved: 2026-10-19T23:07:02.891534+00:00  
 Saved payload: environment_snapshot.json
 
 ```text
@@ -186,7 +186,7 @@ Source: data/environment/low.json
 Locator: /facts/internet_reachable  
 Mode: simulated  
 Source date: not supplied  
-Retrieved: 2026-10-13T04:04:26.228669+00:00  
+Retrieved: 2026-10-19T23:07:02.891534+00:00  
 Saved payload: environment_snapshot.json
 
 ```text
@@ -199,11 +199,11 @@ Source: data/environment/low.json
 Locator: /facts/impact  
 Mode: simulated  
 Source date: not supplied  
-Retrieved: 2026-10-13T04:04:26.228671+00:00  
+Retrieved: 2026-10-19T23:07:02.891534+00:00  
 Saved payload: environment_snapshot.json
 
 ```text
-Test override: impact = "Low". Disposable isolated test service; synthetic data, no sensitive credentials or production dependencies, negligible operational consequences. Isolation limits consequences but a lab threat source can reach SSL-VPN.
+Test override: impact = "Low". Disposable test service with an Internet-reachable SSL-VPN interface; synthetic data, no sensitive credentials or production dependencies, and negligible operational consequences. Isolation applies to downstream access, not Internet ingress.
 ```
 
 ### THREAT-CNA

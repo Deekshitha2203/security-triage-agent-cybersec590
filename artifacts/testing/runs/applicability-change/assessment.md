@@ -17,9 +17,9 @@ Decisive prerequisite absent: version_affected.
 
 - Decisive prerequisite absent: version_affected. Evidence: ENV-ASSET, ENV-ORGANIZATION, SIM-PATCHED-ATTACK_PATH, SIM-PATCHED-FIRMWARE, SIM-PATCHED-INTERNET_REACHABLE, SIM-PATCHED-SSL_VPN_ENABLED, THREAT-CNA, THREAT-COMPONENT.
 - One explicitly simulated N02 test instance; does not assert the state of both cohort members; all local evidence is simulated. Evidence: ENV-ASSET.
-- Affected-version comparison: False; exact input and source ranges are preserved. Evidence: SIM-PATCHED-FIRMWARE, THREAT-CNA.
-- Business impact is High; this is a policy interpretation of the cited business context, not observed compromise. Evidence: ENV-ASSET, ENV-ORGANIZATION.
-- CISA catalog lookup reports known exploitation; it does not establish local compromise. Evidence: THREAT-KEV.
+- Affected-version comparison: False. Evidence: SIM-PATCHED-FIRMWARE, THREAT-CNA.
+- Business impact: High, based on the cited business context. Local compromise is unconfirmed. Evidence: ENV-ASSET, ENV-ORGANIZATION.
+- CISA reports known exploitation. Local compromise is unconfirmed. Evidence: THREAT-KEV.
 
 ## Policy inputs
 
@@ -34,19 +34,19 @@ Decisive prerequisite absent: version_affected.
 
 ## Recommended actions
 
-- **VPN owner (Informational):** Retain the evidence for the absent prerequisite and reassess after firmware, component, or route changes. Low is scoped to this CVE. Evidence: ENV-ASSET, ENV-ORGANIZATION, SIM-PATCHED-ATTACK_PATH, SIM-PATCHED-FIRMWARE, SIM-PATCHED-INTERNET_REACHABLE, SIM-PATCHED-SSL_VPN_ENABLED, THREAT-CNA, THREAT-COMPONENT.
+- **VPN owner (Informational):** Keep evidence of the absent prerequisite. Reassess after firmware, component, or route changes. Low applies only to this CVE. Evidence: ENV-ASSET, ENV-ORGANIZATION, SIM-PATCHED-ATTACK_PATH, SIM-PATCHED-FIRMWARE, SIM-PATCHED-INTERNET_REACHABLE, SIM-PATCHED-SSL_VPN_ENABLED, THREAT-CNA, THREAT-COMPONENT.
 
 ## Uncertainty
 
 - Unknowns: none decisive
 - Conflicts: none decisive
-- Confidence: moderate. Synthetic environment and pending human review; confidence is not a numeric probability.
-- Evidence needed: Dated firmware, component state, supported route/exposure, and business-dependency evidence for the assessed scope; version/configuration changes or reconciled contradictions trigger reassessment.
+- Confidence: moderate. Simulated environment; human review pending. Confidence is qualitative.
+- Evidence needed: Dated firmware, component, route, and business-dependency evidence for this scope. Reassess after configuration changes or conflict resolution.
 
 - Assumption: High impact is a policy interpretation of the production remote-access role, pending analyst review.
 - Limitation: DOCX-derived subset; companion JSON/CSV/lookup script were not supplied.
-- Limitation: The original DOCX documents public VPN TCP/443 but does not identify SSL-VPN termination or enabled status; fixture values are explicit simulated overrides.
-- Limitation: No per-gateway state, configuration date, exact internal flows, or VPN-specific RTO is supplied.
+- Limitation: Public VPN access on TCP/443 is documented, but reachability and enabled status of the vulnerable SSL-VPN component are unknown in the baseline.
+- Limitation: The original document supplies no per-gateway firmware/configuration observations, exact internal flows, or VPN-specific RTO. Variant values are simulated test conditions, not observed gateway settings.
 - Limitation: No telemetry events establish actual exploitation or compromise.
 
 ## Evidence register
@@ -57,7 +57,7 @@ Source: Windows_Enterprise_Environment.docx
 Locator: Endpoints appliances and cloud services; infrastructure table; N02 row  
 Mode: simulated  
 Source date: not supplied  
-Retrieved: 2026-10-13T04:04:26.224334+00:00  
+Retrieved: 2026-10-19T23:07:02.878516+00:00  
 Saved payload: environment_snapshot.json
 
 ```text
@@ -70,7 +70,7 @@ Source: Windows_Enterprise_Environment.docx
 Locator: Network architecture and access; public services paragraph  
 Mode: simulated  
 Source date: not supplied  
-Retrieved: 2026-10-13T04:04:26.224437+00:00  
+Retrieved: 2026-10-19T23:07:02.879521+00:00  
 Saved payload: environment_snapshot.json
 
 ```text
@@ -83,7 +83,7 @@ Source: Windows_Enterprise_Environment.docx
 Locator: Organization and scope; opening paragraph  
 Mode: simulated  
 Source date: not supplied  
-Retrieved: 2026-10-13T04:04:26.224469+00:00  
+Retrieved: 2026-10-19T23:07:02.879521+00:00  
 Saved payload: environment_snapshot.json
 
 ```text
@@ -96,7 +96,7 @@ Source: Windows_Enterprise_Environment.docx
 Locator: Evidence controls table; S02 row  
 Mode: simulated  
 Source date: not supplied  
-Retrieved: 2026-10-13T04:04:26.224498+00:00  
+Retrieved: 2026-10-19T23:07:02.879521+00:00  
 Saved payload: environment_snapshot.json
 
 ```text
@@ -109,7 +109,7 @@ Source: Windows_Enterprise_Environment.docx
 Locator: Evidence controls table; S04 row  
 Mode: simulated  
 Source date: not supplied  
-Retrieved: 2026-10-13T04:04:26.224526+00:00  
+Retrieved: 2026-10-19T23:07:02.879521+00:00  
 Saved payload: environment_snapshot.json
 
 ```text
@@ -122,7 +122,7 @@ Source: Windows_Enterprise_Environment.docx
 Locator: Evidence controls table; S05 row  
 Mode: simulated  
 Source date: not supplied  
-Retrieved: 2026-10-13T04:04:26.224555+00:00  
+Retrieved: 2026-10-19T23:07:02.879521+00:00  
 Saved payload: environment_snapshot.json
 
 ```text
@@ -135,7 +135,7 @@ Source: Windows_Enterprise_Environment.docx
 Locator: Endpoints appliances and cloud services; additional devices paragraph  
 Mode: simulated  
 Source date: not supplied  
-Retrieved: 2026-10-13T04:04:26.224582+00:00  
+Retrieved: 2026-10-19T23:07:02.879521+00:00  
 Saved payload: environment_snapshot.json
 
 ```text
@@ -148,7 +148,7 @@ Source: data/environment/patched.json
 Locator: /facts/firmware  
 Mode: simulated  
 Source date: not supplied  
-Retrieved: 2026-10-13T04:04:26.226358+00:00  
+Retrieved: 2026-10-19T23:07:02.885439+00:00  
 Saved payload: environment_snapshot.json
 
 ```text
@@ -161,7 +161,7 @@ Source: data/environment/patched.json
 Locator: /facts/ssl_vpn_enabled  
 Mode: simulated  
 Source date: not supplied  
-Retrieved: 2026-10-13T04:04:26.226362+00:00  
+Retrieved: 2026-10-19T23:07:02.885439+00:00  
 Saved payload: environment_snapshot.json
 
 ```text
@@ -174,7 +174,7 @@ Source: data/environment/patched.json
 Locator: /facts/attack_path  
 Mode: simulated  
 Source date: not supplied  
-Retrieved: 2026-10-13T04:04:26.226365+00:00  
+Retrieved: 2026-10-19T23:07:02.885439+00:00  
 Saved payload: environment_snapshot.json
 
 ```text
@@ -187,7 +187,7 @@ Source: data/environment/patched.json
 Locator: /facts/internet_reachable  
 Mode: simulated  
 Source date: not supplied  
-Retrieved: 2026-10-13T04:04:26.226367+00:00  
+Retrieved: 2026-10-19T23:07:02.885439+00:00  
 Saved payload: environment_snapshot.json
 
 ```text

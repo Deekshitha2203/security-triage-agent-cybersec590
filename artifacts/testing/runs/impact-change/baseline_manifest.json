@@ -1,6 +1,6 @@
 {
-  "run_id": "bc0a9a0b-55cb-4142-af45-a0cf1f163f71",
-  "created_at": "2026-10-19T21:02:46.606086+00:00",
+  "run_id": "685dd2f2-7bb6-451a-b40a-835c09b63c7e",
+  "created_at": "2026-10-20T00:53:55.557339+00:00",
   "python": "3.12.4",
   "model": {
     "provider": "Scripted test fixture",
@@ -11,18 +11,18 @@
     "files": {
       "scripts/evaluate.py": "16979ae5be800a8b7afe21090786b86f4db4db278ee68713bb8dab9454c27ad4",
       "scripts/package_submission.py": "a94ccba133256a4c3d7fa0b9fd90c3437a78f034df880fbfe97a31de4ab9a513",
-      "scripts/prepare_inputs.py": "a14eede247509b8faaa32fb7bcc0d9fb556b02501264851ae45592b161b95551",
+      "scripts/prepare_inputs.py": "e67fd1b9e52b675299cd7dee775e092787931fe99c3ac2d167d037b71288beb1",
       "tests/test_triage.py": "617511308a7782a47d952712c50da9395738b2f1568d30c24ace0aa948650191",
       "triage/__init__.py": "07d0cf521f146119ae46927beab5d80fcd37b90d9433fef423ce5c10bacf12fa",
-      "triage/__main__.py": "53d2fad438da8b838444c3b6827d440b7f7cf661564b504496cb563bc63651f2",
-      "triage/agent.py": "849bf3b6cbb35768b14208ce11391cfecc9d28a2938ee6320201d507fab66f11",
-      "triage/assessment.py": "6e20fc24a716a57c07514a6a743f9486ad813dc16fce9aff56113a86a96d2e30",
-      "triage/common.py": "268476f03fc1e1aa35ec70e4a15332c5a07974328feb98f51425f0433076af24",
-      "triage/models.py": "f2588893b3540d0c64fe20bba86241fe320fe3a3b5ea55def0ee1a677470e16d",
-      "triage/policy.py": "89c78e24d3749342895412625d4dd7342649ab3f71c8efe9048d22d86fe9efe2",
+      "triage/__main__.py": "b0d9bcd521525fac10888a80d8da259a9fa8c00dfeac8e9a54fae9a379c69ab4",
+      "triage/agent.py": "8584807765b195c529ef72b3f5fbc850fb2a2c850ba3352a0567fe02d198112a",
+      "triage/assessment.py": "ed3a5d1babf58c096dc6c5ec82f2385fac967312035cdc975976f205d970dbdc",
+      "triage/common.py": "cde3d480c273976789d121245b02094a647f0d77cd964f4a6963487468ddd32b",
+      "triage/models.py": "37255ea5c0d43cc422a71ec692aa1963a60040da7f64b7ed1714efa576e9d73a",
+      "triage/policy.py": "2db785f59c98ed9fc2297bcbbfac36e0a823df7d03cb2484d0cd57779f39215e",
       "triage/tools.py": "5ca0b4a60ca65c18513e188767837b032c9cd58630955b0bf48f9446f11326f2"
     },
-    "sha256": "07731bec4b8ea45d4dd6e69ed91a8274f4674e42f6168f92dc00862f940099c8"
+    "sha256": "1d0f2bdbd9b81fc4dacfb177629f71fae4c81816c462b5c8ba3c1081dc36377c"
   },
   "configuration": {
     "provider": "duke",
@@ -37,7 +37,7 @@
     "max_output_tokens": 1600
   },
   "policy_version": "2.0",
-  "snapshot_sha256": "f677139a91fcf00fbb5794c322d66bb578932e1d28854664d721c5c75f8b1dc6",
+  "snapshot_sha256": "a89bdd375be62f27165f321cea5590bc8b5c70cafcc0e3680f7440af188f3a22",
   "source_modes": {
     "ENV-ASSET": "simulated",
     "ENV-NETWORK": "simulated",

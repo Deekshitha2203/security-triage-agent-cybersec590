@@ -17,9 +17,9 @@ Applicable service with a supported internal path, major consequences, and no In
 
 - Applicable service with a supported internal path, major consequences, and no Internet reachability. Evidence: ENV-ASSET, ENV-ORGANIZATION, SIM-INTERNAL-ATTACK_PATH, SIM-INTERNAL-FIRMWARE, SIM-INTERNAL-INTERNET_REACHABLE, SIM-INTERNAL-SSL_VPN_ENABLED, THREAT-CNA, THREAT-COMPONENT.
 - One explicitly simulated N02 test instance; does not assert the state of both cohort members; all local evidence is simulated. Evidence: ENV-ASSET.
-- Affected-version comparison: True; exact input and source ranges are preserved. Evidence: SIM-INTERNAL-FIRMWARE, THREAT-CNA.
-- Business impact is High; this is a policy interpretation of the cited business context, not observed compromise. Evidence: ENV-ASSET, ENV-ORGANIZATION.
-- CISA catalog lookup reports known exploitation; it does not establish local compromise. Evidence: THREAT-KEV.
+- Affected-version comparison: True. Evidence: SIM-INTERNAL-FIRMWARE, THREAT-CNA.
+- Business impact: High, based on the cited business context. Local compromise is unconfirmed. Evidence: ENV-ASSET, ENV-ORGANIZATION.
+- CISA reports known exploitation. Local compromise is unconfirmed. Evidence: THREAT-KEV.
 
 ## Policy inputs
 
@@ -34,20 +34,20 @@ Applicable service with a supported internal path, major consequences, and no In
 
 ## Recommended actions
 
-- **VPN owner (High):** Upgrade through the vendor-supported path to a currently supported release fixed for this CVE; coordinate gateway failover and change approval. Historical test version 7.2.7 is not a current deployment recommendation. Evidence: THREAT-CNA.
-- **SOC analyst (High):** Review retained VPN, firewall and identity logs for suspicious activity; escalate actual findings to incident response. No compromise is asserted by this assessment. Evidence: S04, THREAT-KEV.
+- **VPN owner (High):** Follow the vendor upgrade path to a supported release fixed for this CVE. Coordinate failover and change approval. Version 7.2.7 is a test boundary only. Evidence: THREAT-CNA.
+- **SOC analyst (High):** Review VPN, firewall, and identity logs. Escalate suspicious findings to incident response; local compromise is unconfirmed. Evidence: S04, THREAT-KEV.
 
 ## Uncertainty
 
 - Unknowns: none decisive
 - Conflicts: none decisive
-- Confidence: moderate. Synthetic environment and pending human review; confidence is not a numeric probability.
-- Evidence needed: Dated firmware, component state, supported route/exposure, and business-dependency evidence for the assessed scope; version/configuration changes or reconciled contradictions trigger reassessment.
+- Confidence: moderate. Simulated environment; human review pending. Confidence is qualitative.
+- Evidence needed: Dated firmware, component, route, and business-dependency evidence for this scope. Reassess after configuration changes or conflict resolution.
 
 - Assumption: High impact is a policy interpretation of the production remote-access role, pending analyst review.
 - Limitation: DOCX-derived subset; companion JSON/CSV/lookup script were not supplied.
-- Limitation: The original DOCX documents public VPN TCP/443 but does not identify SSL-VPN termination or enabled status; fixture values are explicit simulated overrides.
-- Limitation: No per-gateway state, configuration date, exact internal flows, or VPN-specific RTO is supplied.
+- Limitation: Public VPN access on TCP/443 is documented, but reachability and enabled status of the vulnerable SSL-VPN component are unknown in the baseline.
+- Limitation: The original document supplies no per-gateway firmware/configuration observations, exact internal flows, or VPN-specific RTO. Variant values are simulated test conditions, not observed gateway settings.
 - Limitation: No telemetry events establish actual exploitation or compromise.
 
 ## Evidence register
@@ -58,7 +58,7 @@ Source: Windows_Enterprise_Environment.docx
 Locator: Endpoints appliances and cloud services; infrastructure table; N02 row  
 Mode: simulated  
 Source date: not supplied  
-Retrieved: 2026-10-13T04:04:26.224334+00:00  
+Retrieved: 2026-10-19T23:07:02.878516+00:00  
 Saved payload: environment_snapshot.json
 
 ```text
@@ -71,7 +71,7 @@ Source: Windows_Enterprise_Environment.docx
 Locator: Network architecture and access; public services paragraph  
 Mode: simulated  
 Source date: not supplied  
-Retrieved: 2026-10-13T04:04:26.224437+00:00  
+Retrieved: 2026-10-19T23:07:02.879521+00:00  
 Saved payload: environment_snapshot.json
 
 ```text
@@ -84,7 +84,7 @@ Source: Windows_Enterprise_Environment.docx
 Locator: Organization and scope; opening paragraph  
 Mode: simulated  
 Source date: not supplied  
-Retrieved: 2026-10-13T04:04:26.224469+00:00  
+Retrieved: 2026-10-19T23:07:02.879521+00:00  
 Saved payload: environment_snapshot.json
 
 ```text
@@ -97,7 +97,7 @@ Source: Windows_Enterprise_Environment.docx
 Locator: Evidence controls table; S02 row  
 Mode: simulated  
 Source date: not supplied  
-Retrieved: 2026-10-13T04:04:26.224498+00:00  
+Retrieved: 2026-10-19T23:07:02.879521+00:00  
 Saved payload: environment_snapshot.json
 
 ```text
@@ -110,7 +110,7 @@ Source: Windows_Enterprise_Environment.docx
 Locator: Evidence controls table; S04 row  
 Mode: simulated  
 Source date: not supplied  
-Retrieved: 2026-10-13T04:04:26.224526+00:00  
+Retrieved: 2026-10-19T23:07:02.879521+00:00  
 Saved payload: environment_snapshot.json
 
 ```text
@@ -123,7 +123,7 @@ Source: Windows_Enterprise_Environment.docx
 Locator: Evidence controls table; S05 row  
 Mode: simulated  
 Source date: not supplied  
-Retrieved: 2026-10-13T04:04:26.224555+00:00  
+Retrieved: 2026-10-19T23:07:02.879521+00:00  
 Saved payload: environment_snapshot.json
 
 ```text
@@ -136,7 +136,7 @@ Source: Windows_Enterprise_Environment.docx
 Locator: Endpoints appliances and cloud services; additional devices paragraph  
 Mode: simulated  
 Source date: not supplied  
-Retrieved: 2026-10-13T04:04:26.224582+00:00  
+Retrieved: 2026-10-19T23:07:02.879521+00:00  
 Saved payload: environment_snapshot.json
 
 ```text
@@ -149,7 +149,7 @@ Source: data/environment/internal.json
 Locator: /facts/firmware  
 Mode: simulated  
 Source date: not supplied  
-Retrieved: 2026-10-13T04:04:26.227153+00:00  
+Retrieved: 2026-10-19T23:07:02.886949+00:00  
 Saved payload: environment_snapshot.json
 
 ```text
@@ -162,7 +162,7 @@ Source: data/environment/internal.json
 Locator: /facts/ssl_vpn_enabled  
 Mode: simulated  
 Source date: not supplied  
-Retrieved: 2026-10-13T04:04:26.227156+00:00  
+Retrieved: 2026-10-19T23:07:02.886949+00:00  
 Saved payload: environment_snapshot.json
 
 ```text
@@ -175,7 +175,7 @@ Source: data/environment/internal.json
 Locator: /facts/attack_path  
 Mode: simulated  
 Source date: not supplied  
-Retrieved: 2026-10-13T04:04:26.227159+00:00  
+Retrieved: 2026-10-19T23:07:02.886949+00:00  
 Saved payload: environment_snapshot.json
 
 ```text
@@ -188,7 +188,7 @@ Source: data/environment/internal.json
 Locator: /facts/internet_reachable  
 Mode: simulated  
 Source date: not supplied  
-Retrieved: 2026-10-13T04:04:26.227161+00:00  
+Retrieved: 2026-10-19T23:07:02.886949+00:00  
 Saved payload: environment_snapshot.json
 
 ```text
