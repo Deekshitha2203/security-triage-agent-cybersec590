@@ -353,8 +353,8 @@ The agent only recommends. It does not patch, change the network or scan anythin
 | Model writes the rationale text | Model picks evidence backed claim and action IDs and the code renders the wording | Stops the model from adding facts that aren't in the evidence |
 | Vendor advisory and NVD as live sources | CNA record and CERT-EU, with the KEV lookup | We could not retrieve the vendor advisory or NVD pages reliably |
 | 9 test cases | 11 test cases | We split missing and conflicting evidence into their own cases and added the disabled component case |
-
-More detail is in `docs/IMPLEMENTATION_NOTES.md`.
+| Companion environment JSON/CSV files | A snapshot derived from the supplied DOCX, with explicit unknowns and test overrides | The companion files were not supplied |
+| Optional tracing | Saved model messages, tool traces, source payloads, and code manifests | Supports checking the complete run and reusing the baseline for Assignment 4 |
 
 ## 11. Sources
 

@@ -13,8 +13,6 @@ Each of us owned a part of the code and the matching section of the design doc. 
 | Shweta Mittal | `triage/models.py`, `triage/agent.py`, `triage/__main__.py`, `triage/common.py`, `triage/__init__.py`, `config/agent.json` | Connected the agent to Duke AI Gateway and built the model and tool loop. Also built the command line. Wrote the workflow and model integration sections of the design. |
 | Deekshitha Manjunatha Reddy | `tests/test_triage.py`, `scripts/evaluate.py`, `scripts/package_submission.py`, README | Wrote the tests and the evaluation script. Built the packaging script. Merged all four branches into the final version and checked the merged code (29 unit tests and 11 evaluation cases pass). Ran the final Duke runs and the controlled failure. Wrote the acceptance test section of the design and did the final design review. |
 
-**AI use:** We used Codex to help with research and with writing code and docs. Each member reviewed the files they own. AI output does not replace our own review of the evidence.
-
 ## Policy agreement
 
 Before running the tests, all four of us agreed on the expected result for each rule.

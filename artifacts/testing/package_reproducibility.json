@@ -1,10 +1,10 @@
 {
-  "checked_at": "2026-10-20T02:14:43.670534+00:00",
+  "checked_at": "2026-10-20T02:34:07.423986+00:00",
   "clean_extract_run_passed": true,
   "unit_tests_passed": 29,
   "controlled_scenarios_passed": 11,
   "provider": "scripted_replay",
   "source_code_sha256": "1d0f2bdbd9b81fc4dacfb177629f71fae4c81816c462b5c8ba3c1081dc36377c",
   "credentials_and_course_key_pdf_excluded": true,
-  "archive_entry_count": 198
+  "archive_entry_count": 194
 }
