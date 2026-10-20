@@ -51,7 +51,7 @@ Every environment fact is labeled `simulated`. The DOCX mentions four companion 
 
 ### Test variants
 
-To test the policy, we copied the baseline and changed one or two facts in each copy. Each change is marked as a simulated override. The original DOCX and `baseline.json` are never edited. The full list is in section 8.
+The test snapshots are derived from the baseline with simulated overrides. The positive case supplies the missing prerequisites; the policy checks then vary firmware, exposure or impact. The original DOCX stays unchanged. Regenerating inputs replaces the derived JSON files and their timestamps, so saved runs keep their own snapshot copies. The full list is in section 8.
 
 ## 3. Required output
 
@@ -60,7 +60,7 @@ Each run saves `assessment.json` and a readable `assessment.md`.
 | Field | What it holds |
 | --- | --- |
 | `run_id`, `asset_id`, `threat_id` | Which run, which asset, which CVE |
-| `snapshot_hash`, `policy_version` | The exact inputs used |
+| `snapshot_sha256`, `policy_version` | The exact inputs used |
 | `status` | `rated`, `insufficient_evidence` or `review_required` |
 | `rating` | `High`, `Medium`, `Low` or null |
 | `priority` | `Critical` down to `Informational`, or `Insufficient evidence` or `Review` |
@@ -72,9 +72,9 @@ Each run saves `assessment.json` and a readable `assessment.md`.
 | Facts and unknowns | Facts are kept apart from assumptions and unknowns |
 | Confidence | Written in words with reasons. We don't make up a probability. |
 | Actions | Next step with owner and urgency. Also lists what evidence would change the decision. |
-| Human review | Stays pending until a group member reviews it |
+| `human_review` | Saved as pending by the code. The group's later review is recorded separately in `CONTRIBUTIONS_AND_REVIEW.md`. |
 
-Example for the baseline (this is an illustration, not a real run):
+Excerpt from `artifacts/runs/final-baseline-duke/assessment.json` (other fields omitted):
 
 ```json
 {
@@ -84,19 +84,26 @@ Example for the baseline (this is an illustration, not a real run):
   "rating": null,
   "priority": "Insufficient evidence",
   "applicability": "unknown",
-  "attack_path": "unknown",
-  "internet_reachable": null,
   "policy_rule": "R6",
-  "environment_source_mode": "simulated",
-  "unknowns": [
-    "Firmware version on each gateway",
-    "Whether SSL VPN is enabled on each gateway",
-    "Whether the public endpoint reaches the SSL VPN component"
-  ],
-  "recommended_action": "Get dated firmware and SSL VPN settings for both gateways and confirm what runs on the public endpoint, then reassess.",
-  "human_review": "pending"
+  "policy_inputs": {
+    "attack_path": {
+      "value": null,
+      "evidence_ids": ["ENV-NETWORK", "S02", "THREAT-COMPONENT"]
+    },
+    "internet_reachable": {
+      "value": null,
+      "evidence_ids": ["ENV-NETWORK", "THREAT-COMPONENT"]
+    }
+  },
+  "human_review": {
+    "status": "pending",
+    "reviewer": null,
+    "reviewed_at": null
+  }
 }
 ```
+
+Actions are stored in `recommended_actions`, keyed by action ID, with `text`, `owner`, `urgency` and `evidence_ids`. Source modes are stored in the evidence records.
 
 ## 4. Architecture and workflow
 
@@ -114,14 +121,19 @@ flowchart TD
     F --> C
     E --> G[Code saves the evidence with source and date, or the error]
     G --> H[Model reads the result and looks for gaps]
-    H -->|Another lookup would help| C
-    H -->|Enough evidence or nothing left to try| I[Code applies the rating policy]
-    I -->|Rated| J[Model writes the rationale from evidence backed claims]
-    I -->|Deciding fact missing or conflicting| K[Code returns Insufficient evidence or Review]
-    J --> L[Code checks citations and that the text matches the rule]
+    H -->|Required queries remain| C
+    H -->|All four required queries attempted and model ends gathering| I[Code applies policy: rated, Insufficient evidence or Review]
+    I --> J[Model selects registered claim and action IDs]
+    J --> L[Code checks IDs, citations and exact policy decision]
     L -->|Valid| M[Save assessment, report and run manifest]
-    L -->|Still invalid after one retry| K
+    L -->|One correction| J
+    L -->|Still invalid| K[Stop with execution Review and null rating]
     K --> M
+    B -->|Execution failure or limit reached| K
+    C -->|Model request fails| K
+    J -->|Model request fails| K
+    D -->|Repeated invalid request| K
+    G -->|Fatal scope or budget error| K
     M --> N[Group member checks the evidence and accepts or asks for changes]
 ```
 
@@ -134,16 +146,16 @@ flowchart TD
 | 3 | Model | Picks a tool and builds its arguments |
 | 4 | Code | Checks the request against the allowlist and the asset scope. Runs it only if allowed. |
 | 5 | Tool | Returns evidence with its source and date |
-| 6 | Model | Reads the result and decides if another lookup would help |
+| 6 | Model and code | Model chooses request order and arguments. Code requires environment, CNA, CERT-EU and KEV queries to be attempted before gathering can finish. |
 | 7 | Code | Applies the policy and sets the rating and priority |
-| 8 | Model | Writes the rationale and actions using only claims backed by evidence |
-| 9 | Code | Checks the citations and makes sure the text matches the policy result |
+| 8 | Model | Selects registered claim and action IDs for every completed assessment, including R6 |
+| 9 | Code | Checks the JSON fields, IDs, citations, required gaps and actions, and exact policy result. Renders the saved wording. |
 | 10 | Code | Saves the assessment and the full trace |
 | 11 | Human | Reviews the evidence and accepts it or asks for changes |
 
-**Decision points:** step 4 (allowed or denied), step 6 (look more or stop), step 7 (rated or R6) and step 9 (valid or Review).
+**Decision points:** step 4 (allowed or denied), step 6 (required queries attempted or continue), step 7 (rated or R6) and step 9 (valid or execution Review).
 
-The model never sets the rating. Version matching and the rating are done in code. The model cannot add a fact that is not backed by a tool result. A run only counts as complete if the model picked at least one tool call and both an environment lookup and an external lookup actually ran and were used.
+The model never sets the rating. Version matching and the rating are done in code. The final model response can only select registered claims and actions. A qualifying real-model demonstration needs model-driven tool use and successful environment and external lookups that contribute to the assessment. `execution_status: complete` alone does not prove this: replay and evidence-gap runs can also finish normally. The demonstration checklist records these checks separately from human review.
 
 ## 5. Rating policy
 
@@ -192,7 +204,7 @@ For N02 we propose High impact. It is the production remote access gateway, so i
 | R1 | The CVE applies, the SSL VPN is reachable from the Internet and the impact is major | High | Critical |
 | R2 | The CVE applies through a supported attack path with major impact, but R1 is not met | High | High |
 | R3 | The CVE applies through a supported attack path and the impact is limited to a service or small group | Medium | Medium |
-| R4 | The CVE applies, but the impact is minor and stays inside an isolated low value system | Low | Low |
+| R4 | The CVE applies through a supported attack path, but the impact is minor and stays inside an isolated low value system | Low | Low |
 | R5 | Evidence shows a required condition is missing, like a fixed version or SSL VPN turned off | Low | Informational |
 | R6 | Missing or conflicting evidence stops us from deciding applicability, attack path or impact | No rating | Insufficient evidence or Review |
 
@@ -201,7 +213,7 @@ Critical is a priority, not a fourth rating. R1 and R2 both give a High rating. 
 ### Order the rules are checked
 
 1. **Validation first.** If evidence is out of scope or broken, the result is Review with a validation reason. This is not counted as any rule being met.
-2. **R5.** If evidence shows a required condition is missing, we give R5. Unrelated unknowns do not block this.
+2. **R5.** If evidence confirms that product, version, enabled component or attack-path prerequisites are false, we give R5. Unrelated unknowns do not block this. Internet reachability being false alone does not meet R5.
 3. **R6.** If a deciding fact is missing, we give Insufficient evidence. If credible sources conflict, we give Review. The rating is null in both cases.
 4. **R1 to R4.** Otherwise we check R1, then R2, then R3 or R4 based on impact.
 
@@ -209,11 +221,11 @@ R2 needs evidence that R1 does not hold, for example a supported internal path a
 
 ### CVSS and KEV
 
-KEV tells us the bug is being exploited, so it raises the urgency of the recommended action. It does not change the rating or priority. A CVE missing from KEV does not mean it is safe. CVSS is reported with its source, vector and version, but it is not copied into the local rating.
+KEV adds exploitation context and makes an evidence-resolution action prompt when exploitation is known. It does not change the rating or priority. A CVE missing from KEV does not mean it is safe. CVSS is saved in the attributed CNA tool result; it is not copied into the local rating.
 
 ### Why we chose this policy
 
-Severity is about the bug. Risk is about our environment. A critical CVSS bug on a device with SSL VPN turned off is not a high risk for us, so applicability comes first. The rating follows impact because that is what the business feels. We kept priority separate so we can tell an Internet facing case apart from an internal one when both have major impact.
+Severity is about the bug. Risk is about our environment. Verified evidence that SSL VPN is turned off gives Low / Informational for this CVE in the assessed snapshot; an affected firmware version still needs a patch plan. The rating follows impact because that is what the business feels. We kept priority separate so we can tell an Internet facing case apart from an internal one when both have major impact.
 
 Having unknown and conflicting as real outcomes stops the agent from picking Medium or Low just to give an answer. Low with Low priority means the bug applies but barely matters. Low with Informational priority means it does not apply. Keeping these apart means a real finding is never hidden.
 
@@ -224,12 +236,14 @@ There are three Python tools. Each takes strict JSON arguments. The model cannot
 | Tool | Purpose and input | Output and attribution | Role in the decision and failure handling |
 | --- | --- | --- | --- |
 | `lookup_environment` | Reads the asset and its context. Input: `{asset_id: "N02", snapshot_id: "northbridge-docx-v1"}` | Product, firmware and settings (null if unknown), exposure, controls and business context. Each fact points to its DOCX section or table row, with the snapshot hash. Mode is always `simulated`. | Gives the local facts for applicability and impact. If the file is missing or the scope is wrong, no rating is given. A no match result is not treated as proof that something is absent. |
-| `lookup_vulnerability` | Gets the affected versions, fixes and severity. Input: `{cve_id: "CVE-2024-21762", source: "cna"}`. Source can also be `cert`. | Affected version ranges per product and the attack conditions. Each fact has the publisher, URL, JSON pointer or passage, dates and mode. | Gives the threat side conditions. Retries once, then can use another allowed source or the labeled cache. If the deciding facts are still missing, the result is Insufficient evidence. |
-| `lookup_kev` | Checks if the CVE is known to be exploited. Input: `{cve_id: "CVE-2024-21762"}` | The CISA catalog entry with date added, required action and retrieval info. A valid no match is kept separate from a failed lookup. | Adds exploitation context and urgency. Retries once, then uses the saved CISA copy. If that also fails, exploitation stays unknown. It never changes the rating. |
+| `lookup_vulnerability` | Gets versions, fixes and CVSS from `cna`, or the SSL VPN component details from `cert`. Input: `{cve_id: "CVE-2024-21762", source: "cna"}` or the same with `cert`. | Product/version ranges or component details, with publisher, URL, JSON pointer or passage, dates and mode. | Both source queries are required because they supply different prerequisites. Each live request retries once; `auto` may then use the verified cache for that same source. Missing deciding facts give Insufficient evidence. |
+| `lookup_kev` | Checks if the CVE is known to be exploited. Input: `{cve_id: "CVE-2024-21762"}` | The matching CISA entry with date added, required action and retrieval info. A valid no match is kept separate from a failed lookup. The full catalog is saved, but only the matching entry is sent to the model. | Adds exploitation context and urgency. Each live request retries once; `auto` may then use the verified CISA copy. Failure leaves exploitation unknown and never changes the rating. |
 
 **Which source wins:** Fortinet's CNA record decides product ranges and fixes. CERT-EU backs up the SSL VPN details. CISA decides KEV membership. The environment snapshot decides Northbridge facts. If sources disagree, we keep both claims instead of merging them.
 
-**What every tool returns:** the tool call ID, status, evidence IDs, facts with their locators, source dates (null if missing), retrieval time, mode, a hash of the saved payload and a structured error if something failed. External evidence is `live` or `cached`. Local facts are always `simulated`.
+**Result format:** every executed request has a tool call ID, tool name, status, and start/completion timestamps. Successful results contain data and attributed evidence. External evidence includes source dates (null if missing), retrieval time, mode, payload hash and saved-file locator. Local evidence points to the DOCX and snapshot. Failures contain an error code rather than invented facts. External evidence is `live` or `cached`; local facts are always `simulated`.
+
+In `live` mode there is no cache fallback. `cached` makes no source HTTP requests. `auto` tries live access before using a verified same-source cache. CNA and CERT-EU are not interchangeable fallbacks.
 
 Example requests:
 
@@ -260,11 +274,11 @@ The model asks for the affected versions, but the source times out and there is 
 
 1. Code runs the request with a 10 second timeout.
 2. The tool returns a timeout error, not an empty result. Code retries once.
-3. The model sees the failure and can try another allowed source if there is budget left.
+3. The model receives the failure. It still attempts the other required queries, but CERT-EU cannot replace the CNA version ranges. `auto` can use a verified same-source cache; the controlled-failure test disables that fallback.
 4. If the threat conditions still can't be confirmed, code applies R6. The result is Insufficient evidence with a null rating, the failure is logged and the action is to get the missing version evidence.
 5. The analyst reviews it. The agent never invents a vulnerable or safe result to finish the run.
 
-If only the KEV lookup fails, the agent can still give a rating, because KEV is not one of the rating conditions. Confidence in the exploitation context goes down and this is noted. A cached fallback is always labeled with its original retrieval time.
+If only the KEV lookup fails, the agent can still give a rating, because KEV is not one of the rating conditions. `exploitation_context` becomes `unknown` and the failure is recorded in `tool_errors`. The confidence level remains `moderate` for a rated result and `limited` for an unrated result. A cached fallback keeps its original retrieval time.
 
 ### Run limits
 
@@ -291,7 +305,7 @@ The same query can't be repeated without new evidence.
 | Unsupported claim or fake citation | One retry | Yes, with Review and a null rating, if still invalid |
 | Output can't be saved | Execution failure | Yes. The demo checklist fails. |
 
-Every tool call is logged in `tool_trace.json` with its call ID, attempt number and timing. The stop reason and the human review result are saved in the assessment.
+Every tool call is logged in `tool_trace.json` with its call ID, start/completion timestamps, outcome and source-attempt records where applicable. The assessment saves the stop reason and a pending human-review record; later group review is documented separately.
 
 ## 8. Acceptance test and test plan
 
@@ -311,17 +325,17 @@ Our target is 100% on the controlled cases below. This is our pass bar for this 
 
 ### Test cases
 
-We wrote the expected results before running anything. Each case changes only the listed facts.
+Expected results are defined before evaluation. The change cases compare with the positive scenario unless stated otherwise; every override is listed in its snapshot. These are controlled policy checks, not measurements of general model accuracy.
 
 | Case | What we change | Expected |
 | --- | --- | --- |
 | Baseline | Nothing. Firmware and SSL VPN are unknown. | R6, Insufficient evidence |
 | Positive | FortiOS 7.2.6, SSL VPN on and reachable from the Internet, production remote access role | R1, High, Critical |
 | **Applicability change** (required) | Only the firmware, from 7.2.6 to 7.2.7 | R5, Low, Informational |
-| Disabled component | SSL VPN turned off | R5, Low, Informational |
+| Disabled component | SSL VPN turned off; path and exposure left unknown | R5, Low, Informational |
 | Exposure change | Not reachable from the Internet, but an internal path exists | R2, High, High |
 | **Impact change** (required) | Business context changed to a noncritical test team service separated from production | R3, Medium, Medium |
-| Low impact | Isolated test system with fake data | R4, Low, Low |
+| Low impact | Test system with fake data and no production dependencies. The vulnerable endpoint is still reachable; isolation limits downstream consequences. | R4, Low, Low |
 | **Missing evidence** (required) | Firmware set to null | R6, Insufficient evidence |
 | **Conflicting evidence** (required) | Two credible records disagree for the same gateway and time | R6, Review |
 | Missing exposure | Internet reachability unknown | R6, Insufficient evidence |
@@ -336,11 +350,11 @@ The actual results are in `artifacts/testing/results.json` and `artifacts/testin
 | Result | Action |
 | --- | --- |
 | Baseline (R6) | Get firmware and SSL VPN status for both gateways and confirm what runs on the public endpoint. Mark it urgent because the CVE is known exploited. |
-| R1, High, Critical | Analyst looks at it right away. Upgrade both gateways to a supported fixed release and check VPN, firewall and identity logs for suspicious activity. Turning off SSL VPN as a stopgap needs approval because it cuts remote access. |
-| R2, High, High | Fix the internal attack path and the affected service soon, and note why it is not Critical. |
-| R3, Medium, Medium | Make a remediation plan with an owner and confirm the limited impact. |
-| R4, Low, Low | Keep the finding and patch on the normal schedule. Confirm the system is really isolated. |
-| R5, Low, Informational | Record why it does not apply and keep the evidence. Reassess if the version or settings change. |
+| R1, High, Critical | `A-PATCH`: follow the vendor upgrade path to a supported fixed release with failover and change approval. `A-LOGS`: review VPN, firewall and identity logs at Critical urgency. The positive case covers one simulated instance, not proof that both gateways are affected. |
+| R2, High, High | The same patch and log-review actions, at High urgency |
+| R3, Medium, Medium | `A-PATCH` at Medium urgency |
+| R4, Low, Low | `A-PATCH` at Low urgency |
+| R5, Low, Informational | `A-RETAIN`: keep evidence of the absent prerequisite and reassess after changes. If firmware is affected, `A-PATCH-LATENT` also plans an upgrade despite the absent component or path. |
 | R6 | Name the missing or conflicting fact and assign someone to get it. Any urgent investigation is noted separately. |
 
 The agent only recommends. It does not patch, change the network or scan anything. A human approves any real action.
@@ -359,6 +373,8 @@ The agent only recommends. It does not patch, change the network or scan anythin
 ## 11. Sources
 
 ### Course material
+
+The course PDFs below are references supplied separately and are not bundled in this repository. The revised activity responses and workflow diagram are included in this document. `Windows_Enterprise_Environment.docx` remains included because `scripts/prepare_inputs.py` uses it to build the snapshots.
 
 | File | What we used |
 | --- | --- |
