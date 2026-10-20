@@ -1,132 +1,205 @@
 # Security Triage Agent
 
-CVE-2024-21762 assessment for Northbridge Services' N02 FortiOS VPN gateways. The agent gathers attributed evidence, applies the group's R1–R6 policy, and produces a risk rating, separate priority, uncertainty, and recommended actions.
+CYBERSEC 590 group project.
 
-**Group:** Atharva Ashish Jog, Varun Bhanushali, Shweta Mittal, Deekshitha Manjunatha Reddy 
+We built an agent that checks one vulnerability, CVE-2024-21762, against the N02 FortiOS VPN gateways in the Northbridge Services environment and gives it a risk rating. The model decides which tools to call and what to ask them. Our code runs those tools and then applies our rating policy to the evidence. If the evidence is not enough to decide, the agent says Insufficient evidence instead of guessing.
 
-The original environment has unknown firmware and SSL-VPN configuration. Its supported result is **Insufficient evidence**, not a presumed vulnerability. The positive scenario is explicitly simulated and produces **High / Critical** under R1. It represents one test instance, not a confirmed finding about both gateway members.
+## Team
 
-## Portable project folder
+| Member | Main work |
+| --- | --- |
+| Atharva Ashish Jog | Rating policy and assessment output (`triage/policy.py`, `triage/assessment.py`) |
+| Varun Bhanushali | Environment snapshot and evidence lookup tools (`triage/tools.py`, `data/`) |
+| Shweta Mittal | Duke AI Gateway connection and the agent loop (`triage/agent.py`, `triage/models.py`) |
+| Deekshitha Manjunatha Reddy | Testing and final integration of all branches (`tests/`, `scripts/`) |
 
-Everything needed to run and review this project is inside this repository folder (`Security-Triage-Agent-CYBERSEC-590/` when cloned from GitHub). You can move this entire folder to another location without relying on the surrounding course folder. Open a terminal in the moved folder before running the commands below. Required assignment and environment documents are included at the project root; class slides are retained under `resources/course/`. The course API-key PDF is excluded.
+Full details and our review sign off are in `docs/CONTRIBUTIONS_AND_REVIEW.md`.
 
-```text
-security-triage-agent/
-  README.md                Setup and run instructions
-  triage/                  Agent, model adapter, tools and risk policy
-  config/                  Safe configuration
-  data/                    Environment variants and public evidence
-  docs/                    Design, review checklist and demo walkthrough
-  scripts/                 Input preparation, evaluation and packaging
-  tests/                   Automated tests
-  artifacts/               Assessments, traces and test results
-  resources/course/        Class reference PDFs
-  dist/                    Submission ZIP and audit
-```
+## Case
+
+CVE-2024-21762 is an out of bounds write in the FortiOS SSL VPN. Someone who can reach the SSL VPN can run code on the device without logging in. CISA lists it in the KEV catalog, which means it has been exploited in the wild.
+
+**Risk question:** What risk rating should CVE-2024-21762 get for the N02 FortiOS VPN gateways, based on whether it applies to them and how much damage it would cause?
+
+| Source | What we take from it | Link |
+| --- | --- | --- |
+| CVE record from Fortinet (CNA) | Affected and fixed versions plus the CVSS score | https://www.cve.org/CVERecord?id=CVE-2024-21762 |
+| Fortinet advisory FG-IR-24-015 | The vendor fix and workaround | https://www.fortiguard.com/psirt/FG-IR-24-015 |
+| CERT-EU advisory | A second source to confirm the affected versions and the fix | Saved copy in `data/evidence/` |
+| CISA KEV catalog | Whether it is known to be exploited | https://www.cisa.gov/known-exploited-vulnerabilities-catalog |
+
+Saved copies of the sources are in `data/evidence/`. Each run also saves the exact evidence it used in its own `evidence/` folder.
+
+## Environment
+
+We used the supplied Windows Enterprise Environment (`Windows_Enterprise_Environment.docx` in the root folder). `scripts/prepare_inputs.py` converts it into JSON snapshots in `data/environment/`.
+
+`baseline.json` is the environment as given. In it, the firmware version of N02 is unknown and so is whether SSL VPN is turned on. So the correct answer for the baseline is Insufficient evidence, not a rating.
+
+The other files in that folder are test variants. In each one we changed a fact on purpose, like setting a firmware version or removing Internet access. These changes are simulated and every snapshot marks them that way. The DOCX also refers to some JSON and CSV files that were never given to us. We did not make up those details.
+
+## Design
+
+The full design is in `docs/STEP_1_DESIGN.md`. It has the workflow diagram and the tool contracts. It also explains the rating policy and what happens when a lookup fails. Changes between the design and the final code are in `docs/IMPLEMENTATION_NOTES.md`.
+
+How a run works:
+
+1. Intake loads the CVE and the environment snapshot.
+2. The model picks a tool and builds the arguments for it.
+3. Our code checks that the request is allowed and then runs it. The result goes back to the model with its source and date.
+4. This repeats until the model has what it needs or hits the tool limit.
+5. Our code, not the model, applies the policy and picks the rule.
+6. The model writes the summary by choosing from claims that are backed by evidence. It cannot change the rating or add new facts.
+7. A group member reviews the output and the cited evidence.
+
+| Part | File |
+| --- | --- |
+| Model connection (Duke AI Gateway) | `triage/models.py` |
+| Agent and tool loop | `triage/agent.py` |
+| Tools and source access | `triage/tools.py` |
+| Rating policy | `triage/policy.py` |
+| Building the assessment output | `triage/assessment.py` |
+| Model settings and limits | `config/agent.json` |
+| Command line | `triage/__main__.py` |
+
+## Rating policy
+
+The rating depends on two things. Applicability is whether the bug can actually be used against our device, meaning the firmware is in the affected range and SSL VPN is turned on. Impact is what the business loses if the device gets hit.
+
+| Rule | When it applies | Rating | Priority |
+| --- | --- | --- | --- |
+| R1 | Applies, reachable from the Internet, major impact | High | Critical |
+| R2 | Applies, major impact, but not reachable from the Internet | High | High |
+| R3 | Applies, limited impact on a service or small group | Medium | Medium |
+| R4 | Applies, minor impact on an isolated low value system | Low | Low |
+| R5 | A required condition is clearly missing | Low | Informational |
+| R6 | A deciding fact is unknown or sources conflict | No rating | Insufficient evidence or Review |
+
+We check in this order. First, if a required condition is clearly missing, like a fixed firmware version, we give R5. Next, if a deciding fact is unknown or conflicting, we give R6 and stop there. Only after that do R1 to R4 apply.
+
+Unknown Internet access is never treated as internal only. CVSS and KEV tell us how serious the bug is and how urgent the fix is. They do not change the local rating. A failed lookup or a CVE missing from KEV never counts as proof that we are safe.
+
+We did it this way because severity is about the bug and risk is about us. A critical CVSS bug on a device with SSL VPN turned off is not a high risk for us.
 
 ## Setup
 
-Use Python 3.12 or newer. Development verification used Python 3.12.3. Runtime, tests, evidence extraction and ZIP packaging use only the standard library; there are no third-party dependencies to install.
+You need Python 3.12 or newer. We tested on 3.12.3 and 3.12.4. The project only uses the Python standard library, so there is nothing to pip install.
 
-Run all commands from this project directory. This is a module-based application; do not execute individual files inside `triage/` directly.
+Run all commands from the repo root. Don't run files inside `triage/` directly.
 
-```bash
+```
 python3 -m triage doctor
 python3 -m unittest discover -s tests -v
-python3 -m triage evaluate
 ```
 
-The cached evidence and environment inputs are included. To regenerate environment variants from the unchanged supplied DOCX:
+### Duke AI Gateway key
 
-```bash
-python3 -m scripts.prepare_inputs
 ```
-
-Regeneration creates a new derived snapshot with acquisition timestamps; preserve submitted run directories before regenerating inputs for Assignment 4 comparisons.
-
-## Duke AI Gateway configuration
-
-The group selected Duke AI Gateway. The adapter uses its OpenAI-compatible chat-completions endpoint through Python's standard HTTP library. Default model is `GPT 4.1`, following Duke's developer guide; access and model availability must be checked against the actual key.
-
-Configure privately:
-
-```bash
 python3 -m triage configure
 python3 -m triage models
 python3 -m triage doctor
 ```
 
-The configuration command prompts for the token without echoing it and writes an ignored `.env` with owner-only permissions. Alternatively, provide `LITELLM_TOKEN` through your terminal's environment. `DUKE_AI_GATEWAY_API_KEY` is also accepted. Set `TRIAGE_MODEL` to another tool-capable model ID if needed. The endpoint is fixed to `https://litellm.oit.duke.edu/v1`; model-generated URLs cannot receive credentials.
+`configure` asks for your token without showing it and saves it to `.env`. That file is in `.gitignore` so it never gets committed. You can also set `LITELLM_TOKEN` in your terminal instead. `.env.example` shows the variable names with empty values.
 
-Do not paste API keys into chat, source code, shell command arguments, screenshots, recordings, or submission artifacts. The course Recorded Future API-key PDF is not used and is excluded from packaging. `.env.example` contains empty placeholders. `.env` is excluded by `.gitignore` and the submission allowlist even if this folder is not initialized as a Git repository.
+The endpoint is `https://litellm.oit.duke.edu/v1` and the default model is GPT 4.1. You can change the model with `TRIAGE_MODEL`. Never put the key in code or screenshots.
 
-Integration reference: [Duke AI Gateway developer guide](https://ai.colab.duke.edu/colab-ai-blog/all-blogs/getting-started-with-dukes-ai-gateway-a-developers-guide/). It documents the endpoint, token environment variable and model discovery. No paid fund-code setup is performed by this project.
+## Running the workflow
 
-## Run the complete workflow
+Real model runs:
 
-After configuring your Duke key:
-
-```bash
-python3 -m triage run --scenario baseline --provider duke --evidence-mode auto --output artifacts/runs/baseline-duke
-python3 -m triage run --scenario positive --provider duke --evidence-mode auto --output artifacts/runs/positive-duke
+```
+python3 -m triage run --scenario baseline --provider duke --evidence-mode auto --output artifacts/runs/final-baseline-duke
+python3 -m triage run --scenario positive --provider duke --evidence-mode auto --output artifacts/runs/final-positive-duke
 ```
 
-`auto` tries each public source with a bounded retry, then uses the verified included cache if necessary. `live` permits no cache fallback. `cached` deliberately uses saved evidence. Every external result states whether it is live or cached; environment and test overrides are always simulated. Neither a lookup failure nor a valid no-match is treated as proof of safety.
+Controlled failure (scripted replay, no API key needed):
 
-The model chooses tool order and arguments, code executes each guarded request, and correlated tool results return to the model. Code then computes policy inputs and applies the documented rules. Finally, the model selects evidence-supported claim and action IDs; the host renders the approved wording. This constrains unsupported factual claims while preserving model-driven investigation and synthesis.
-
-A successful Insufficient evidence assessment exits normally: it is a valid triage outcome. Execution/configuration failure exits with code 2 and saves a stopped/review result when output persistence is available. Missing credentials never trigger a silent switch to replay.
-
-## Offline replay and controlled failure
-
-```bash
-python3 -m triage run --scenario baseline --provider replay --evidence-mode cached --output artifacts/runs/baseline-replay
-python3 -m triage run --scenario positive --provider replay --evidence-mode cached --output artifacts/runs/positive-replay
-python3 -m triage run --scenario positive --provider replay --evidence-mode cached --controlled-failure threat_unavailable --output artifacts/runs/failure-replay
+```
+python3 -m triage run --scenario positive --provider replay --evidence-mode cached --controlled-failure threat_unavailable --output artifacts/runs/final-failure-replay
 ```
 
-Replay is a scripted test provider, not an LLM. It exercises the tool loop, citations, policy and output pipeline. It cannot satisfy the required real-model demonstration. `evaluate` runs eleven scenarios, saves expected outcomes before execution, and records actual results in `artifacts/testing/results.json` and `TESTING_REPORT.md`.
+All 11 test cases:
 
-## Output artifacts
+```
+python3 -m triage evaluate
+```
 
-Every run saves:
+`auto` tries the live source first and falls back to the saved copy if it fails. `live` only uses live sources. `cached` only uses the saved copies. Every result says whether it was live or cached.
 
-| File | Purpose |
+Replay is a scripted provider we use for testing. It is not an LLM, so it does not count as the real model demo.
+
+Each run folder has:
+
+| File | What's in it |
 | --- | --- |
-| `assessment.json` and `assessment.md` | Decision, priority, rule, attributed inputs, rationale, unknowns/conflicts, confidence, actions and pending human review |
-| `environment_snapshot.json` | Exact simulated input and explicit overrides used |
-| `configuration.json` | Safe provider/model, policy, budget and failure settings |
-| `evidence/` | External payloads actually used; acquisition dates/hashes/modes also appear in the assessment register |
-| `model_messages.json` | Sanitized model/tool transcript with correlated call IDs and final checked synthesis |
-| `tool_trace.json` | Tool outcomes, structured failures and bounded attempt records |
-| `demonstration_checklist.json` | Machine-verifiable requirements; real-model and human-review requirements remain explicit |
-| `baseline_manifest.json` | Code hashes, Python/model/configuration versions, snapshot hash, source modes, usage and run limits for Assignment 4 |
+| `assessment.json` and `assessment.md` | The final rating and why, plus what to do next |
+| `environment_snapshot.json` | The exact environment used |
+| `configuration.json` | Model and policy settings with no secrets |
+| `evidence/` | The source data the run actually used |
+| `model_messages.json` | What the model asked for and what it got back |
+| `tool_trace.json` | Every tool call and its result, including failures |
+| `demonstration_checklist.json` | Which demo requirements the run met |
+| `baseline_manifest.json` | Code hashes and versions for Assignment 4 |
 
-## Policy
+## Results
 
-| Rule | Evidence-supported condition | Rating | Priority |
-| --- | --- | --- | --- |
-| R1 | Applicable, Internet-reachable vulnerable component, major consequences | High | Critical |
-| R2 | Applicable supported path, major consequences, R1 demonstrably not met | High | High |
-| R3 | Applicable supported path, limited service/small-group consequences | Medium | Medium |
-| R4 | Applicable supported path, minor consequences in isolated low-value service | Low | Low |
-| R5 | Decisive prerequisite reliably absent | Low | Informational |
-| R6 | Decisive evidence missing or conflicting | No rating | Insufficient evidence or Review |
+All of these were run on the final merged code.
 
-Evaluate reliable absent prerequisites before unrelated unknowns, then decisive gaps/conflicts, then R1–R4. Unknown Internet reachability cannot default to false when it determines Critical versus High priority. CVSS and KEV inform technical/exploitation context and action urgency; neither overwrites local applicability or the rule-assigned priority. Refer to `docs/STEP_1_DESIGN.md` for the detailed criteria and diagram.
+| Check | Where | Result |
+| --- | --- | --- |
+| Unit tests | `tests/` | 29 of 29 pass |
+| Evaluation cases | `artifacts/testing/results.json` | 11 of 11 match expected |
+| Baseline with Duke model | `artifacts/runs/final-baseline-duke` | R6, Insufficient evidence |
+| Positive scenario with Duke model | `artifacts/runs/final-positive-duke` | R1, High rating, Critical priority |
+| Controlled failure | `artifacts/runs/final-failure-replay` | R6, Insufficient evidence |
+
+### Policy checks, expected vs actual
+
+We wrote the expected results from our policy before running anything. They are saved in `artifacts/testing/expected_results.json`. The full results are in `artifacts/testing/results.json` and `artifacts/testing/TESTING_REPORT.md`.
+
+| Test case | What it checks | Expected | Actual | Pass |
+| --- | --- | --- | --- | --- |
+| `baseline` | Environment as given | R6, Insufficient evidence | R6, Insufficient evidence | Yes |
+| `positive` | Simulated vulnerable and exposed gateway | R1, High, Critical | R1, High, Critical | Yes |
+| `applicability-change` | **(required)** Applicability change, the CVE no longer applies | R5, Low, Informational | R5, Low, Informational | Yes |
+| `disabled-component` | Required component turned off | R5, Low, Informational | R5, Low, Informational | Yes |
+| `exposure-change` | Not reachable from the Internet | R2, High, High | R2, High, High | Yes |
+| `impact-change` | **(required)** Impact change, impact lowered to limited | R3, Medium, Medium | R3, Medium, Medium | Yes |
+| `low-impact` | Minor impact on an isolated system | R4, Low, Low | R4, Low, Low | Yes |
+| `missing-evidence` | **(required)** A deciding fact is missing | R6, Insufficient evidence | R6, Insufficient evidence | Yes |
+| `missing-exposure` | Internet access is unknown | R6, Insufficient evidence | R6, Insufficient evidence | Yes |
+| `conflicting-evidence` | **(required)** Two sources disagree | R6, Review | R6, Review | Yes |
+| `controlled-failure` | **(required)** Threat lookup made unavailable | R6, Insufficient evidence | R6, Insufficient evidence | Yes |
+
+In the controlled failure we forced the threat lookup to fail. The agent retried once and logged both attempts in `tool_trace.json`. Then it stopped at Insufficient evidence. It did not crash and it did not treat the failure as safe.
+
+### Review
+
+A group member checked each final run against its cited evidence. Who checked what is in `docs/CONTRIBUTIONS_AND_REVIEW.md`. The `demonstration_checklist.json` files leave human review as false on purpose, because the code can't confirm that a person reviewed it. Our sign off is in the contributions doc instead.
+
+## Baseline for Assignment 4
+
+The `final-*` run folders and `artifacts/testing/` are our saved baseline. Each `baseline_manifest.json` stores the code hashes and the model settings used. Don't run `prepare_inputs` again before copying these, because it creates a new snapshot with new timestamps.
+
+## Limitations
+
+This covers one CVE on one set of assets. The agent does not scan or fix anything. It only reads evidence and gives a rating.
+
+The environment is fictional and incomplete. That is why the real baseline result is Insufficient evidence. The High rating in the positive scenario comes from a simulated snapshot, so it is a test case and not a real finding.
+
+The 11 evaluation cases use scripted replay. They show that the policy and pipeline work, but they don't show how the live model behaves every time.
+
+Live Duke runs can sometimes stop in Review because of an API error. This happened once during our final runs, and rerunning with no changes fixed it.
+
+We did not use Recorded Future. Threat context comes from public sources only.
+
+## AI use
+
+We used Codex to help with research and with writing code and docs. Each member reviewed the files they own, and we checked the sources and results ourselves.
 
 ## Submission
 
-```bash
-python3 -m triage package
-```
+We are submitting this GitHub repo. If a ZIP is needed, `python3 -m triage package` builds `dist/security-triage-agent.zip` and leaves out secrets and the API key PDF.
 
-This builds `dist/security-triage-agent.zip` and a file/hash audit from explicit allowlisted code, docs, inputs and run artifacts. It excludes the API-key PDF, local secrets, temp extraction files, caches of Python bytecode and private run folders. The package scans configured credential values and common credential patterns before creation. We are submitting this GitHub repository link. The ZIP command above is kept as a backup option.
-
-Before submission, complete the actual member contribution record and group consensus/evidence review. Run a real Duke model demonstration and follow `docs/DEMO_WALKTHROUGH.md`. If the group does not present in class, record and submit the required video; the walkthrough is a recording script, not a video.
-
-## Limitations and AI assistance
-
-This project assesses one CVE and one bounded asset scope. It does not scan systems or execute remediation. Local data is fictional and incomplete. A complete, attributable run may conclude Insufficient evidence. The DOCX references companion JSON/CSV/lookup files that were absent; the included snapshot is a documented derived subset and does not invent missing network flows.
-
-See `docs/IMPLEMENTATION_NOTES.md` for design deviations and `docs/CONTRIBUTIONS_AND_REVIEW.md` for actual human work and review fields. Codex assisted with research, design drafting, implementation, fixtures, automated tests and documentation. Human review and contributions are not fabricated.
+The demo walkthrough is in `docs/DEMO_WALKTHROUGH.md`.

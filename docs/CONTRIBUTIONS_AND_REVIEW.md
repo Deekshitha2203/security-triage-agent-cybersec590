@@ -1,40 +1,55 @@
-# Group contributions and evidence review
+# Contributions and Review
 
-**Members:** Atharva Ashish Jog, Varun Bhanushali, Shweta Mittal, Deekshitha Manjunatha Reddy.
+**Members:** Atharva Ashish Jog, Varun Bhanushali, Shweta Mittal, Deekshitha Manjunatha Reddy
 
-## Contribution record
+## Who did what
 
-Each member owned a set of files and was responsible for the code, design section and documentation for that part. Others reviewed and sent suggestions to the owner. All four members ran the agent and reviewed the outputs.
+Each of us owned a part of the code and the matching section of the design doc. The others reviewed it and sent suggestions. All four of us ran the agent and looked at the outputs.
 
-| Member | Responsible for | Contribution |
+| Member | Files | Work |
 | --- | --- | --- |
-| Atharva Ashish Jog | `triage/policy.py`, `triage/assessment.py`; policy, impact criteria and output contract sections of `STEP_1_DESIGN.md` | Provided the threat-case proposal with collaborators, supplied the six-rule priority policy, approved implementation and selected Duke AI Gateway. Worked on the R1–R6 risk policy, firmware version checks and assessment building. |
-| Varun Bhanushali | `triage/tools.py`, `scripts/prepare_inputs.py`, `data/environment/`, `data/evidence/`; environment, sources and tool contract sections of `STEP_1_DESIGN.md` | Worked on the environment snapshot, test variants, and the CNA, CERT-EU and CISA KEV lookup tools. |
-| Shweta Mittal | `triage/models.py`, `triage/agent.py`, `triage/__main__.py`, `triage/common.py`, `triage/__init__.py`, `config/agent.json`; workflow, model integration and runtime limits sections of `STEP_1_DESIGN.md` | Worked on the Duke AI Gateway integration, the model and tool loop, and the command line interface. |
-| Deekshitha Manjunatha Reddy | `tests/test_triage.py`, `scripts/evaluate.py`, `scripts/package_submission.py`, README, requirements, Git settings and submission documentation; acceptance tests and final review of `STEP_1_DESIGN.md` | Worked on the tests, evaluation and packaging scripts, ran the real Duke baseline and positive runs, the controlled failure and the full evaluation (11/11), and updated the README and submission docs. |
+| Atharva Ashish Jog | `triage/policy.py`, `triage/assessment.py` | Proposed the threat case and wrote the six rule policy. Picked Duke AI Gateway. Built the R1 to R6 logic and the firmware version checks. Also built the assessment output. Wrote the policy and impact sections of the design along with the output format. |
+| Varun Bhanushali | `triage/tools.py`, `scripts/prepare_inputs.py`, `data/environment/`, `data/evidence/` | Built the environment snapshot and the test variants. Wrote the lookup tools for the CNA record and CERT-EU, plus the CISA KEV lookup. Wrote the environment and tool contract sections of the design. |
+| Shweta Mittal | `triage/models.py`, `triage/agent.py`, `triage/__main__.py`, `triage/common.py`, `triage/__init__.py`, `config/agent.json` | Connected the agent to Duke AI Gateway and built the model and tool loop. Also built the command line. Wrote the workflow and model integration sections of the design. |
+| Deekshitha Manjunatha Reddy | `tests/test_triage.py`, `scripts/evaluate.py`, `scripts/package_submission.py`, README | Wrote the tests and the evaluation script. Built the packaging script. Merged all four branches into the final version and checked the merged code (29 unit tests and 11 evaluation cases pass). Ran the final Duke runs and the controlled failure. Wrote the acceptance test section of the design and did the final design review. |
 
-**AI assistance disclosure:** Codex assisted with external-source research, Step 1 drafting, Python implementation, synthetic variants, automated tests, report generation and documentation. Each member reviewed and is responsible for the files they own. The group is responsible for verifying sources, technical assumptions, policy interpretations and final submission. AI output does not substitute for the required group member evidence review.
+**AI use:** We used Codex to help with research and with writing code and docs. Each member reviewed the files they own. AI output does not replace our own review of the evidence.
 
-## Policy consensus
+## Policy agreement
 
-The supplied six rules define the expected results. Do not claim consensus was measured merely because automated tests passed.
+Before running the tests, all four of us agreed on the expected result for each rule.
 
-- Members participating: Atharva Ashish Jog, Varun Bhanushali, Shweta Mittal, Deekshitha Manjunatha Reddy.
-- Expected-result signoff: all four members agreed on the expected results for the R1–R6 policy (baseline R6, positive R1, fixed version R5, internal major impact R2, limited impact R3, minor impact R4, decisive conflict Review).
-- Disagreements and resolution: none.
-- Link/path to actual testing results reviewed: `artifacts/testing/TESTING_REPORT.md` and `artifacts/testing/results.json`.
+| Case | Expected |
+| --- | --- |
+| Baseline (firmware and SSL VPN unknown) | R6, Insufficient evidence |
+| Positive scenario | R1, High, Critical |
+| Fixed firmware version | R5, Low, Informational |
+| Internal only with major impact | R2, High, High |
+| Limited impact | R3, Medium, Medium |
+| Minor impact | R4, Low, Low |
+| Missing evidence | R6, Insufficient evidence |
+| Conflicting evidence | R6, Review |
 
-## Assessment review
+We had no disagreements. Passing tests alone is not our agreement. We set these expected results first and then checked them against `artifacts/testing/results.json` and `artifacts/testing/TESTING_REPORT.md`.
 
-Each member reviewed the part of the output linked to the files they own.
+## Review of the final runs
 
-- Run directory and run ID: `artifacts/runs/baseline-duke-demo-2026-10-15` (`ea7dfad4-9925-4f97-a7aa-e77bf1f39edf`) and `artifacts/runs/positive-duke-demo-2026-10-15` (`e3a890a3-d6fd-4704-be01-e8beb6fc79e5`).
-- Asset/CVE/snapshot and simulated scope (N02, CVE-2024-21762, northbridge-docx-v1): checked by Varun.
-- Cited source payloads, locators, dates, cache labels and version comparisons: checked by Varun.
-- SSL-VPN and attack-path prerequisites, Internet reachability: checked by Atharva.
-- Major/limited/minor consequences and assumptions against the policy: checked by Atharva.
-- Model tool requests, call IDs and returned results: checked by Shweta.
-- Rule, rating, priority, unknowns/conflicts, confidence and actions against the expected results: checked by Deekshitha.
-- Decision: accepted. The baseline correctly gives Insufficient evidence (R6) because firmware and SSL-VPN are unknown, and the positive scenario correctly gives High / Critical (R1).
+| Run | Folder | Run ID |
+| --- | --- | --- |
+| Baseline, Duke model | `artifacts/runs/final-baseline-duke` | `37fb4f34-f06e-482c-9ed9-8b82f13dc5bf` |
+| Positive, Duke model | `artifacts/runs/final-positive-duke` | `8fe57c8f-3e5b-4d97-87da-911d6c77f393` |
+| Controlled failure | `artifacts/runs/final-failure-replay` | `1ce3ac4b-ff83-466e-9d17-5205c4550bef` |
 
-The generated `demonstration_checklist.json` deliberately leaves human review false. Update it only after a group member actually reviews the evidence; preserve the signoff in this record. Do not change replay's `real_model_used` flag to true.
+| What we checked | Who |
+| --- | --- |
+| Asset and CVE scope in the snapshot | Varun |
+| Cited sources with their dates and cache labels | Varun |
+| Whether the CVE applies (firmware and SSL VPN) | Atharva |
+| Internet reachability | Atharva |
+| Impact and assumptions against the policy | Atharva |
+| Model tool requests and returned results | Shweta |
+| Final rule and rating against the expected results | Deekshitha |
+
+**Decision: accepted.** The baseline gives R6 because the firmware and the SSL VPN setting are unknown. The positive scenario gives High and Critical under R1. The controlled failure stops at R6 and does not treat the failed lookup as safe.
+
+The `demonstration_checklist.json` files keep human review as false because the code can't confirm that a person checked it. This doc is our sign off.
